@@ -12,8 +12,10 @@
 
 /*Will uncomment methods as they are implemented 
  ***Add or let me know if you have something you want implemented ***/
-
-
+{
+    LocalTalk *singleton;
+}
++(LocalTalk *)getSingleton;
 
 /* Store @"tempId" locally before actual values loaded from DB
  * Used so that app will work without server access */

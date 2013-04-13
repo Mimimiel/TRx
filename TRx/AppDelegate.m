@@ -21,6 +21,8 @@
      NSLog(@"The database path is: %@", _databasePath);
     [self createAndCheckDatabase];
     
+    [OnOpen WireNotifications];
+    
     return YES;
 }
 

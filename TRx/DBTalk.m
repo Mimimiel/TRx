@@ -20,12 +20,33 @@
 static NSString *host = nil;
 static NSString *imageDir = nil;
 static NSString *dbPath = nil;
+static DBTalk *singleton;
+
 
 +(void)initialize{
     host = @"http://www.teamecuadortrx.com/TRxTalk/index.php/";
     imageDir = @"http://teamecuadortrx.com/TRxTalk/Data/images/";
     dbPath = [Utility getDatabasePath];
+    
+    static BOOL initialized = false;
+    if (!initialized)
+    {
+        initialized = true;
+        singleton = [[DBTalk alloc] init];
+    }
 }
+
++(DBTalk *)getSingleton {
+    return singleton;
+}
+
+
+-(void)loadListener {
+    NSLog(@"Listener successfully called");
+}
+
+
+
 
 
 #pragma mark - Add Methods

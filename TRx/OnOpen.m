@@ -13,10 +13,12 @@
 +(void)WireNotifications {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     
-    [center addObserverForName:@"" object:nil queue:nil usingBlock:^(NSNotification *note) {
-        NSLog(@"Here we are");
-    }];
+    
+    [center addObserver:[DBTalk getSingleton] selector:@selector(loadListener) name:@"tabloaded" object:nil];
+    
+    
     
 }
+
 
 @end

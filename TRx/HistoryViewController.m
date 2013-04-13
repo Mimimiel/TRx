@@ -50,23 +50,26 @@
 
 -(void) addPatient:(id)sender{
     
-    [self storeNames];
+//    [self storeNames];
+//    
+//    if([firstName isEqualToString:@""] || [lastName isEqualToString:@""]){
+//        [Utility alertWithMessage:@"First and Last name must be filled out"];
+//        return;
+//    }
+//    
+//    NSDateFormatter *df = [[NSDateFormatter alloc] init];
+//    df.dateStyle = NSDateFormatterShortStyle;
+//    //NSInteger day = _birthdayPicker;
+//    pBirthday = [NSString stringWithFormat:@"%@", [df stringFromDate:_birthdayPicker.date]];
+//                 
+//
+//    
+//    /* Take patient Object and add its information to the local database */
+//    [LocalTalkWrapper addPatientObjectToLocal:newPatient];
+//    [LocalTalkWrapper addNewPatientAndSynchData];
     
-    if([firstName isEqualToString:@""] || [lastName isEqualToString:@""]){
-        [Utility alertWithMessage:@"First and Last name must be filled out"];
-        return;
-    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"tabloaded" object:nil];
     
-    NSDateFormatter *df = [[NSDateFormatter alloc] init];
-    df.dateStyle = NSDateFormatterShortStyle;
-    //NSInteger day = _birthdayPicker;
-    pBirthday = [NSString stringWithFormat:@"%@", [df stringFromDate:_birthdayPicker.date]];
-                 
-
-    
-    /* Take patient Object and add its information to the local database */
-    [LocalTalkWrapper addPatientObjectToLocal:newPatient];
-    [LocalTalkWrapper addNewPatientAndSynchData];
 }
 
 #pragma mark - Camera Methods

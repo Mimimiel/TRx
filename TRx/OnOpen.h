@@ -6,8 +6,9 @@
 //  Copyright (c) 2013 Team Ecuador. All rights reserved.
 //
 
-#import "localtalk.h"
+#import "LocalTalk.h"
+#import "DBTalk.h"
 
-@interface OnOpen : LocalTalk
-
+@interface OnOpen
+    +(void)WireNotifications;
 @end

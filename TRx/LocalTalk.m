@@ -16,6 +16,21 @@
 @implementation LocalTalk
 
 
+static LocalTalk *singleton;
++(void)initialize{
+    
+    static BOOL initialized = false;
+    if (!initialized)
+    {
+        initialized = true;
+        singleton = [[LocalTalk alloc] init];
+    }
+}
+
++(LocalTalk *)getSingleton {
+    return singleton;
+}
+
 #pragma mark - Local Store Methods
 
 /*---------------------------------------------------------------------------

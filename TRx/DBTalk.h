@@ -14,7 +14,11 @@
     NSString *host;
     NSString *portraitDir;
     NSString *dbPath;
+    DBTalk *sharedSingleton;
 }
+
++(DBTalk *)getSingleton;
+
 
 
 +(NSArray *)getPatientList;
