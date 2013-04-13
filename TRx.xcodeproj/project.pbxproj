@@ -36,10 +36,8 @@
 		13F3528916EEEF21009321E7 /* AFXMLRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 13F3527F16EEEF21009321E7 /* AFXMLRequestOperation.m */; };
 		13F3528A16EEEF21009321E7 /* UIImageView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 13F3528116EEEF21009321E7 /* UIImageView+AFNetworking.m */; };
 		19087ED016E95363007FE40B /* PatientListViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 196CCD8A16E90ED600B82048 /* PatientListViewCell.m */; };
-		1916CC211713481D002E11AF /* Question.m in Sources */ = {isa = PBXBuildFile; fileRef = 130EF65017120DC9003C1C90 /* Question.m */; };
 		1975163916EFC6C50008AA1F /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1975163816EFC6C50008AA1F /* AVFoundation.framework */; };
 		19C32A3016EFB3B300CC1318 /* SurgeryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 19C32A2F16EFB3B300CC1318 /* SurgeryViewController.m */; };
-		19C3C1D817122B9800BA943E /* HQTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = C402E519170F41E400737787 /* HQTextField.m */; };
 		19C3C1D917122BB000BA943E /* LocalTalkWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1327D4CC1708F464005010BC /* LocalTalkWrapper.m */; };
 		19C3C1DA17122BB700BA943E /* SynchData.m in Sources */ = {isa = PBXBuildFile; fileRef = 13FF64F31700EC3400F0A4FE /* SynchData.m */; };
 		19DAF54D16F8CE00008E1BA7 /* LocalDatabase.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 13CF9B2616ECF829006CF20B /* LocalDatabase.sqlite */; };
@@ -114,12 +112,19 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		A82CDFF91714CC8900657096 /* PBXContainerItemProxy */ = {
+		1908CC5D1719EB83004BD011 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C44D6F1D16D19AD60036E40B /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 1327D4B01704B0AD005010BC;
 			remoteInfo = UnitTests;
+		};
+		1908CC5F1719EB87004BD011 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C44D6F1D16D19AD60036E40B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C44D6F2416D19AD60036E40B;
+			remoteInfo = TRx;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -732,6 +737,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				1908CC601719EB87004BD011 /* PBXTargetDependency */,
 			);
 			name = UnitTests;
 			productName = UnitTests;
@@ -749,7 +755,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				A82CDFFA1714CC8900657096 /* PBXTargetDependency */,
+				1908CC5E1719EB83004BD011 /* PBXTargetDependency */,
 			);
 			name = TRx;
 			productName = TRx;
@@ -926,10 +932,15 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		A82CDFFA1714CC8900657096 /* PBXTargetDependency */ = {
+		1908CC5E1719EB83004BD011 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 1327D4B01704B0AD005010BC /* UnitTests */;
-			targetProxy = A82CDFF91714CC8900657096 /* PBXContainerItemProxy */;
+			targetProxy = 1908CC5D1719EB83004BD011 /* PBXContainerItemProxy */;
+		};
+		1908CC601719EB87004BD011 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C44D6F2416D19AD60036E40B /* TRx */;
+			targetProxy = 1908CC5F1719EB87004BD011 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
