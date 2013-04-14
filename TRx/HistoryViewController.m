@@ -41,7 +41,7 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-    NSArray *tables = @[@"table1", @"table2", @"table3", @"table4"];
+    NSArray *tables = @[@"patient"];
     NSString *patientRecordId = [LocalTalk localGetRecordId];
     NSDictionary *params = @{@"tableNames" : tables,
                              @"patientRecordId" : patientRecordId,

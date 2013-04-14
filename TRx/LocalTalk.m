@@ -34,6 +34,7 @@ static LocalTalk *singleton;
 -(void)loadListener{
     NSLog(@"look at how awesome I am"); 
 }
+
 /*Listener method that checks for connectivity to the server and if there is connectivity, calls loadDataFromServer to load data into SQLite*/ 
 +(void)checkConnectionAndLoadFromServer:(NSNotification *)notification{
     
