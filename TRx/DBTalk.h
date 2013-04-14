@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "Reachability.h"
 
 @interface DBTalk : NSObject
 
@@ -14,6 +15,9 @@
     NSString *host;
     NSString *portraitDir;
     NSString *dbPath;
+    
+    Reachability *internetReachable;
+    
 }
 
 

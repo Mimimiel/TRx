@@ -18,6 +18,7 @@
 		1327D4C91704BA2C005010BC /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1327D4C81704BA2C005010BC /* MobileCoreServices.framework */; };
 		132E70081714D49C00E70988 /* LocalLoad.m in Sources */ = {isa = PBXBuildFile; fileRef = 132E70071714D49C00E70988 /* LocalLoad.m */; };
 		136E218A1719EF40007420ED /* OnOpen.m in Sources */ = {isa = PBXBuildFile; fileRef = 136E21891719EF40007420ED /* OnOpen.m */; };
+		136E2191171A68D9007420ED /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 136E2190171A68D9007420ED /* Reachability.m */; };
 		13C069FB170B384D00044896 /* TestLocalTalk.m in Sources */ = {isa = PBXBuildFile; fileRef = 13C069FA170B384D00044896 /* TestLocalTalk.m */; };
 		13C06A04170E5AF400044896 /* TestAddPatientThenLoad.m in Sources */ = {isa = PBXBuildFile; fileRef = 13C06A03170E5AF400044896 /* TestAddPatientThenLoad.m */; };
 		13CF9B2016EC4BAD006CF20B /* LocalTalk.m in Sources */ = {isa = PBXBuildFile; fileRef = 13CF9B1F16EC4BAD006CF20B /* LocalTalk.m */; };
@@ -113,14 +114,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		1908CC5D1719EB83004BD011 /* PBXContainerItemProxy */ = {
+		136E218B171A641A007420ED /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C44D6F1D16D19AD60036E40B /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 1327D4B01704B0AD005010BC;
 			remoteInfo = UnitTests;
 		};
-		1908CC5F1719EB87004BD011 /* PBXContainerItemProxy */ = {
+		136E218D171A6420007420ED /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C44D6F1D16D19AD60036E40B /* Project object */;
 			proxyType = 1;
@@ -148,6 +149,8 @@
 		132E70071714D49C00E70988 /* LocalLoad.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalLoad.m; sourceTree = "<group>"; };
 		136E21881719EF40007420ED /* OnOpen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OnOpen.h; sourceTree = "<group>"; };
 		136E21891719EF40007420ED /* OnOpen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OnOpen.m; sourceTree = "<group>"; };
+		136E218F171A68D8007420ED /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		136E2190171A68D9007420ED /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		13C069F9170B384D00044896 /* TestLocalTalk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestLocalTalk.h; sourceTree = "<group>"; };
 		13C069FA170B384D00044896 /* TestLocalTalk.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestLocalTalk.m; sourceTree = "<group>"; };
 		13C06A02170E5AF300044896 /* TestAddPatientThenLoad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestAddPatientThenLoad.h; sourceTree = "<group>"; };
@@ -367,6 +370,8 @@
 		1327D4CF1708F487005010BC /* DBTalk */ = {
 			isa = PBXGroup;
 			children = (
+				136E218F171A68D8007420ED /* Reachability.h */,
+				136E2190171A68D9007420ED /* Reachability.m */,
 				1300E3BB16DA9D1B0033151C /* DBTalk.h */,
 				1300E3BC16DA9D1B0033151C /* DBTalk.m */,
 			);
@@ -742,7 +747,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				1908CC601719EB87004BD011 /* PBXTargetDependency */,
+				136E218E171A6420007420ED /* PBXTargetDependency */,
 			);
 			name = UnitTests;
 			productName = UnitTests;
@@ -760,7 +765,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				1908CC5E1719EB83004BD011 /* PBXTargetDependency */,
+				136E218C171A641A007420ED /* PBXTargetDependency */,
 			);
 			name = TRx;
 			productName = TRx;
@@ -932,21 +937,22 @@
 				C402E5211712131500737787 /* HQView.m in Sources */,
 				132E70081714D49C00E70988 /* LocalLoad.m in Sources */,
 				136E218A1719EF40007420ED /* OnOpen.m in Sources */,
+				136E2191171A68D9007420ED /* Reachability.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		1908CC5E1719EB83004BD011 /* PBXTargetDependency */ = {
+		136E218C171A641A007420ED /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 1327D4B01704B0AD005010BC /* UnitTests */;
-			targetProxy = 1908CC5D1719EB83004BD011 /* PBXContainerItemProxy */;
+			targetProxy = 136E218B171A641A007420ED /* PBXContainerItemProxy */;
 		};
-		1908CC601719EB87004BD011 /* PBXTargetDependency */ = {
+		136E218E171A6420007420ED /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C44D6F2416D19AD60036E40B /* TRx */;
-			targetProxy = 1908CC5F1719EB87004BD011 /* PBXContainerItemProxy */;
+			targetProxy = 136E218D171A6420007420ED /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

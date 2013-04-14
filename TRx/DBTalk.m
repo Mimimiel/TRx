@@ -21,6 +21,8 @@ static NSString *host = nil;
 static NSString *imageDir = nil;
 static NSString *dbPath = nil;
 static BOOL connectivity = false;
+static Reachability *internetReachable = nil;
+
 
 +(void)initialize{
     host = @"http://www.teamecuadortrx.com/TRxTalk/index.php/";
@@ -33,22 +35,10 @@ static BOOL connectivity = false;
 }
 
 +(void)checkReachability {
-    AFHTTPClient *client = [AFHTTPClient clientWithBaseURL:[NSURL URLWithString:host]];
-    [client setReachabilityStatusChangeBlock: ^(AFNetworkReachabilityStatus status) {
-        if (status == AFNetworkReachabilityStatusNotReachable) {
-            connectivity = false;
-            NSLog(@"status is false: %d", status);
-        } else {
-            connectivity = true;
-            NSLog(@"status is true: %d", status);
-
-        }
-        if (status == AFNetworkReachabilityStatusReachableViaWiFi) {
-            connectivity = true;
-            NSLog(@"status is wifi: %d", status);
-
-        }
-    }];
+    NSLog(@"IN here checking reachability");
+    internetReachable = [Reachability reachabilityForLocalWiFi];
+    NetworkStatus netStatus = [internetReachable currentReachabilityStatus];
+    connectivity = (netStatus==ReachableViaWiFi);
 }
 
 #pragma mark - Add Methods

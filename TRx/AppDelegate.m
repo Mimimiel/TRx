@@ -22,6 +22,7 @@
     [self createAndCheckDatabase];
     
     [OnOpen WireNotifications];
+ 
     [DBTalk checkReachability];
     BOOL connect = [DBTalk getConnectivity];
     NSLog(@"first connectivity check: %d",connect);
