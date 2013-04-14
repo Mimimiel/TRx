@@ -22,6 +22,7 @@
     [self createAndCheckDatabase];
     
     [OnOpen WireNotifications];
+    [DBTalk checkReachability];
     
     return YES;
 }

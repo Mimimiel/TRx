@@ -31,6 +31,22 @@ static LocalTalk *singleton;
     return singleton;
 }
 
+-(void)loadListener{
+    NSLog(@"look at how awesome I am"); 
+}
+
+-(void)checkConnectionAndLoadFromServer:(NSDictionary *)params{
+    //check for connectivity to the Server
+    BOOL connectivity = [DBTalk getConnectivity];
+
+    if(connectivity){
+        //this method needs to be asynchronous using AFNetworking and the callback will pub
+        [DBTalk loadDataFromServer:params];
+    } else if(!connectivity){
+    
+    }
+    
+}
 #pragma mark - Local Store Methods
 
 /*---------------------------------------------------------------------------

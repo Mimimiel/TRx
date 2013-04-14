@@ -14,10 +14,7 @@
     NSString *host;
     NSString *portraitDir;
     NSString *dbPath;
-    DBTalk *sharedSingleton;
 }
-
-+(DBTalk *)getSingleton;
 
 
 
@@ -80,5 +77,8 @@
 +(NSArray *)getPatientMetaData:(NSString *)patientId;
 
 +(NSDictionary *)getOperationRecordNames:(NSString *)recordId;
++(void)checkReachability;
++(BOOL)getConnectivity;
++(void)loadDataFromServer:(NSDictionary *)params;
 
 @end

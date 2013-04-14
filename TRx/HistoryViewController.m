@@ -35,6 +35,9 @@
     lastNameText.delegate = self;
     
 }
+- (void)viewWillAppear:(BOOL)animated {
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"tabloaded" object:nil];
+}
 
 - (void)viewDidAppear:(BOOL)animated
 {

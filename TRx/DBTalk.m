@@ -20,34 +20,31 @@
 static NSString *host = nil;
 static NSString *imageDir = nil;
 static NSString *dbPath = nil;
-static DBTalk *singleton;
-
+static BOOL connectivity = false;
 
 +(void)initialize{
     host = @"http://www.teamecuadortrx.com/TRxTalk/index.php/";
     imageDir = @"http://teamecuadortrx.com/TRxTalk/Data/images/";
     dbPath = [Utility getDatabasePath];
-    
-    static BOOL initialized = false;
-    if (!initialized)
-    {
-        initialized = true;
-        singleton = [[DBTalk alloc] init];
-    }
 }
 
-+(DBTalk *)getSingleton {
-    return singleton;
++(BOOL)getConnectivity {
+    return connectivity;
 }
 
-
--(void)loadListener {
-    NSLog(@"Listener successfully called");
++(void)checkReachability {
+    AFHTTPClient *client = [AFHTTPClient clientWithBaseURL:[NSURL URLWithString:host]];
+    [client setReachabilityStatusChangeBlock: ^(AFNetworkReachabilityStatus status) {
+        if (status == AFNetworkReachabilityStatusNotReachable) {
+            connectivity = false; 
+        } else {
+            connectivity = true;
+        }
+        if (status == AFNetworkReachabilityStatusReachableViaWiFi) {
+            // On wifi
+        }
+    }];
 }
-
-
-
-
 
 #pragma mark - Add Methods
 
@@ -538,7 +535,18 @@ static DBTalk *singleton;
 //}
 
 
-
++(void) loadDataFromServer:(NSDictionary *)params {
+    NSURL *url = [NSURL URLWithString:host];
+    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+    
+    [httpClient postPath:@"get/dataFromTables" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        //publish here you need to fix this code. 
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"tabloaded" object:nil];
+        NSLog(@"Request successful");
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Request failed");
+    }];
+}
 
 
 

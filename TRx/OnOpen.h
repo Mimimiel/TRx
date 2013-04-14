@@ -7,8 +7,7 @@
 //
 
 #import "LocalTalk.h"
-#import "DBTalk.h"
 
-@interface OnOpen
+@interface OnOpen : NSObject   
     +(void)WireNotifications;
 @end

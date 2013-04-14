@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "OnOpen.h"
+#import "DBTalk.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
