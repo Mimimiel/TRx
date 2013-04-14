@@ -36,12 +36,17 @@ static BOOL connectivity = false;
     AFHTTPClient *client = [AFHTTPClient clientWithBaseURL:[NSURL URLWithString:host]];
     [client setReachabilityStatusChangeBlock: ^(AFNetworkReachabilityStatus status) {
         if (status == AFNetworkReachabilityStatusNotReachable) {
-            connectivity = false; 
+            connectivity = false;
+            NSLog(@"status is false: %d", status);
         } else {
             connectivity = true;
+            NSLog(@"status is true: %d", status);
+
         }
         if (status == AFNetworkReachabilityStatusReachableViaWiFi) {
-            // On wifi
+            connectivity = true;
+            NSLog(@"status is wifi: %d", status);
+
         }
     }];
 }
@@ -538,14 +543,19 @@ static BOOL connectivity = false;
 +(void) loadDataFromServer:(NSDictionary *)params {
     NSURL *url = [NSURL URLWithString:host];
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+    NSLog(@"Request successful");
+
+    for(NSString *key in params) {
+        NSLog(@"%@",[params objectForKey:key]);
+    }
     
-    [httpClient postPath:@"get/dataFromTables" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    /*[httpClient postPath:@"get/dataFromTables" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
         //publish here you need to fix this code. 
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"tabloaded" object:nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"dataLoaded" object:params];
         NSLog(@"Request successful");
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Request failed");
-    }];
+    }];*/
 }
 
 

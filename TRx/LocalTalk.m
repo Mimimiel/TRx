@@ -35,18 +35,24 @@ static LocalTalk *singleton;
     NSLog(@"look at how awesome I am"); 
 }
 
--(void)checkConnectionAndLoadFromServer:(NSDictionary *)params{
+-(void)checkConnectionAndLoadFromServer:(NSNotification *)notification{
+    
     //check for connectivity to the Server
     BOOL connectivity = [DBTalk getConnectivity];
+    NSLog(@"Connectivity is: %d",connectivity);
+    //get the parameters from the notifcation 
+    NSDictionary *params = [notification userInfo];
 
+    //if there is connectivity call the loadDataFromServer:params method, if not, publish dataLoaded
     if(connectivity){
-        //this method needs to be asynchronous using AFNetworking and the callback will pub
         [DBTalk loadDataFromServer:params];
     } else if(!connectivity){
-    
+       // [[NSNotificationCenter defaultCenter] postNotificationName:@"dataLoaded" object:self userInfo:params];
+
     }
     
 }
+
 #pragma mark - Local Store Methods
 
 /*---------------------------------------------------------------------------

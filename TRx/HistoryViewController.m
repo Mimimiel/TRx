@@ -36,7 +36,10 @@
     
 }
 - (void)viewWillAppear:(BOOL)animated {
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"tabloaded" object:nil];
+    NSArray *tables = @[@"table1", @"table2", @"table3", @"table4"];
+    NSString *tableNames = @"tableNames";
+    NSDictionary *params = @{tableNames: tables};
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"tabloaded" object:self userInfo:params];
 }
 
 - (void)viewDidAppear:(BOOL)animated

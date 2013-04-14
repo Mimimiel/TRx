@@ -13,7 +13,7 @@
 +(void)WireNotifications {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     
-    [center addObserver:[LocalTalk getSingleton] selector:@selector(loadListener) name:@"tabloaded" object:nil];
+    [center addObserver:[LocalTalk getSingleton] selector:@selector(checkConnectionAndLoadFromServer:) name:@"tabloaded" object:nil];
     
 }
 
