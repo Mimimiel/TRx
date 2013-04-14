@@ -530,24 +530,28 @@ static Reachability *internetReachable = nil;
 //}
 
 
-+(void) loadDataFromServer:(NSDictionary *)params {
++ (void)loadDataFromServer:(NSDictionary *)params {
+    
     NSURL *url = [NSURL URLWithString:host];
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
-    NSLog(@"Request successful");
-
-    for(NSString *key in params) {
-        NSLog(@"%@",[params objectForKey:key]);
-    }
+    NSMutableURLRequest *request = [httpClient requestWithMethod:@"POST" path:@"get/dataFromTables" parameters:params];
     
-    /*[httpClient postPath:@"get/dataFromTables" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        //publish here you need to fix this code. 
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"dataLoaded" object:params];
-        NSLog(@"Request successful");
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"Request failed");
-    }];*/
-}
+    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+        //Convert JSON to NSArray and put into SQLite, then publish that the data is available
+        NSDictionary *jsonDict = (NSDictionary *) JSON;
+        NSArray *products = [jsonDict objectForKey:@"products"];
+        [products enumerateObjectsUsingBlock:^(id obj,NSUInteger idx, BOOL *stop){
+            NSString *productIconUrl = [obj objectForKey:@"icon_url"];
+        }];
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"dataLoadedIntoLocal" object:self userInfo:params];
 
+    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+            NSLog(@"Request Failure Because %@",[error userInfo]);
+    }];
+    
+    [operation start];
+}
 
 
 
