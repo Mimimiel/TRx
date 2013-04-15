@@ -41,10 +41,11 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-    NSArray *tables = @[@"patient"];
-    NSString *patientRecordId = [LocalTalk localGetRecordId];
+    NSArray *tables = @[@"Patient"];
+    NSString *patientId = [LocalTalk localGetRecordId];
+    NSLog(@"patient ID is %@", patientId);
     NSDictionary *params = @{@"tableNames" : tables,
-                             @"patientRecordId" : patientRecordId,
+                             @"key" : @42,
                              @"location" : @"historyViewController"};
     
     [[NSNotificationCenter defaultCenter] postNotificationName:@"tabloaded" object:self userInfo:params];

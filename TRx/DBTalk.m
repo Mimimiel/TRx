@@ -535,27 +535,41 @@ static Reachability *internetReachable = nil;
     NSURL *url = [NSURL URLWithString:host];
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
     NSMutableURLRequest *request = [httpClient requestWithMethod:@"POST" path:@"get/dataFromTables" parameters:params];
-    
+    [AFJSONRequestOperation addAcceptableContentTypes:[NSSet setWithObject:@"text/html"]];
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
         //Convert JSON to NSArray and put into SQLite, then publish that the data is available
-        NSDictionary *jsonDict = (NSDictionary *) JSON;
-        for(NSString *key in jsonDict) {
-            NSLog(@"%@", jsonDict);
+        //NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:JSON options:0 error:nil];
+        NSLog(@"This was a response: %@", response);
+        NSDictionary *dictionary = (NSDictionary *)JSON;
+        NSLog(@"This was a success: %@", [JSON valueForKeyPath:@"LastName"]);
+        for(NSString *key in dictionary){
+            NSLog(@"%@", key);
         }
-        NSArray *products = [jsonDict objectForKey:@"products"];
+        [self loadDataintoMySQLWith:params andJSON:JSON];
+      /*  NSArray *products = [jsonDict objectForKey:@"products"];
         [products enumerateObjectsUsingBlock:^(id obj,NSUInteger idx, BOOL *stop){
             NSString *productIconUrl = [obj objectForKey:@"icon_url"];
-        }];
+        }];*/
         
       //  [[NSNotificationCenter defaultCenter] postNotificationName:@"dataLoadedIntoLocal" object:self userInfo:params];
 
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
             NSLog(@"Request Failure Because %@",[error userInfo]);
+            NSLog(@"The JSON id: %@", JSON);
+        
     }];
     
     [operation start];
 }
 
++ (void)loadDataintoMySQLWith:(NSDictionary *)tableNames andJSON:(id) JSON {
+    //for each table if the ID exists in that table update the row, otherwise insert the data into that table.
+    //
+    for(NSString *table in tableNames){
+        
+    }
+    
+}
 
 
 @end

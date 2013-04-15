@@ -36,7 +36,7 @@ static LocalTalk *singleton;
 }
 
 /*Listener method that checks for connectivity to the server and if there is connectivity, calls loadDataFromServer to load data into SQLite*/ 
-+(void)checkConnectionAndLoadFromServer:(NSNotification *)notification{
+-(void)checkConnectionAndLoadFromServer:(NSNotification *)notification{
     
     //check for connectivity to the Server
     BOOL connectivity = [DBTalk getConnectivity];
@@ -55,7 +55,7 @@ static LocalTalk *singleton;
 }
 
 /*Method that takes a list of table names and then queries the SQLite database and returns an NSArray of NSDictionaries*/ 
-+(NSArray *)getData:(NSDictionary *)tableNames {
+-(NSArray *)getData:(NSDictionary *)tableNames {
     
 }
 
@@ -233,10 +233,10 @@ static LocalTalk *singleton;
     NSString of Id
  *---------------------------------------------------------------------------*/
 +(NSString *)localGetPatientId {
-    return [self localGetPatientMetaData:@"patientId"];
+    return [self localGetPatient:@"patientId"];
 }
 +(NSString *)localGetRecordId {
-    return [self localGetPatientMetaData:@"recordId"];
+    return [self localGetPatient:@"1"];
 }
 
 
@@ -250,12 +250,12 @@ static LocalTalk *singleton;
     nil - failure to communicate with local database
     NSString with appropriate metadata for current patient
  *---------------------------------------------------------------------------*/
-+(NSString *)localGetPatientMetaData:(NSString *)key {
++(NSString *)localGetPatient:(NSString *)key {
     FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
     [db open];
     
     NSString *query;
-    query = [NSString stringWithFormat:@"SELECT Value FROM PatientMetaData WHERE key = \"%@\"", key];
+    query = [NSString stringWithFormat:@"SELECT Id FROM PatientRecord WHERE AppId = \"%@\"", key];
     FMResultSet *results = [db executeQuery:query];
     
     if (!results) {

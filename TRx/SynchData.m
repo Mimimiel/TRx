@@ -160,7 +160,7 @@
     BOOL IDStored;
     //if RECORD not yet added, get necessary info from LocalDatabase and add
     if ([newPatient.currentRecordId isEqual: @"tmpRecordId"]) {
-        NSString *doctorId = [LocalTalk localGetPatientMetaData:@"doctorId"];                 //doctorId not necessarily set
+        NSString *doctorId = [LocalTalk localGetPatient:@"doctorId"];                 //doctorId not necessarily set
         
         recordId = [DBTalk addRecord:newPatient.patientId
                        surgeryTypeId:newPatient.chiefComplaint
@@ -266,11 +266,10 @@
         return false;
     }
     
-    fName = [LocalTalk localGetPatientMetaData:@"firstName"];
-    mName = [LocalTalk localGetPatientMetaData:@"middleName"];
-    lName = [LocalTalk localGetPatientMetaData:@"lastName"];
-    bDay  = [LocalTalk localGetPatientMetaData:@"birthDay"];
-    chiefComplaint = [LocalTalk localGetPatientMetaData:@"surgeryTypeId"];
+    fName = [LocalTalk localGetPatient:@"FirstName"];
+    mName = [LocalTalk localGetPatient:@"MiddleName"];
+    lName = [LocalTalk localGetPatient:@"LastName"];
+    bDay  = [LocalTalk localGetPatient:@"Birthday"];
     UIImage *image = [LocalTalk localGetPortrait];
     NSURL *url;
     

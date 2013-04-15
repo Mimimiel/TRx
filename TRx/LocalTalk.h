@@ -31,7 +31,7 @@
 
 
 +(NSMutableArray *)localGetPatientList;
-+(NSString *)localGetPatientMetaData:(NSString *)key;
++(NSString *)localGetPatient:(NSString *)key;
 +(UIImage *)localGetPortrait;
 +(id)localGetAudio:(NSString *)fileName;
 
