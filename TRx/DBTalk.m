@@ -513,10 +513,25 @@ static Reachability *internetReachable = nil;
 }
 
 
-+(void) loadDataFromServer:(NSDictionary *)params {
-    //NSURL *url = [NSURL URLWithString:host];
-    //AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
-    NSLog(@"Request successful");
+
++ (void)loadDataFromServer:(NSDictionary *)params {
+    
+    NSURL *url = [NSURL URLWithString:host];
+    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+    NSMutableURLRequest *request = [httpClient requestWithMethod:@"POST" path:@"get/dataFromTables" parameters:params];
+    
+    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+        //Convert JSON to NSArray and put into SQLite, then publish that the data is available
+        NSDictionary *jsonDict = (NSDictionary *) JSON;
+        for(NSString *key in jsonDict) {
+            NSLog(@"%@", jsonDict);
+        }
+        NSArray *products = [jsonDict objectForKey:@"products"];
+        [products enumerateObjectsUsingBlock:^(id obj,NSUInteger idx, BOOL *stop){
+            NSString *productIconUrl = [obj objectForKey:@"icon_url"];
+        }];
+        
+      //  [[NSNotificationCenter defaultCenter] postNotificationName:@"dataLoadedIntoLocal" object:self userInfo:params];
 
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
             NSLog(@"Request Failure Because %@",[error userInfo]);
@@ -534,6 +549,7 @@ static Reachability *internetReachable = nil;
     //unpack and put into a dictionary to return
     
 }
+
 
 
 
