@@ -34,11 +34,19 @@
     middleNameText.delegate = self;
     lastNameText.delegate = self;
     
+    /*listeners for history view controller*/ 
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center addObserver:self selector:@selector(updateDataListener:) name:@"dataLoadedIntoLocal" object:nil];
+    
 }
+
 - (void)viewWillAppear:(BOOL)animated {
-    NSArray *tables = @[@"table1", @"table2", @"table3", @"table4"];
-    NSString *tableNames = @"tableNames";
-    NSDictionary *params = @{tableNames: tables};
+    NSArray *tables = @[@"patient"];
+    NSString *patientRecordId = [LocalTalk localGetRecordId];
+    NSDictionary *params = @{@"tableNames" : tables,
+                             @"patientRecordId" : patientRecordId,
+                             @"location" : @"historyViewController"};
+    
     [[NSNotificationCenter defaultCenter] postNotificationName:@"tabloaded" object:self userInfo:params];
 }
 
@@ -52,6 +60,16 @@
     {
         application.statusBarOrientation = UIInterfaceOrientationLandscapeRight;
     }
+}
+
+/*Listener method waiting for data to be accessible from SQLite if it's not the correct tab, see ya never */ 
++ (void)updatedDataListener:(NSNotification *)notification {
+     NSDictionary *params = [notification userInfo];
+    if([[params objectForKey:@"location"] isEqualToString:@"historyViewController"]){
+        NSArray *data = [LocalTalk getData:params];
+        
+    } else { }
+    
 }
 
 -(void) addPatient:(id)sender{

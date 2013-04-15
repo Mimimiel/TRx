@@ -40,5 +40,6 @@
 -(IBAction)addPatient:(id)sender;
 
 -(void) storeNames;
++(void)updateDataListener:(NSNotification *)notification;
 
 @end

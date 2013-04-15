@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "Reachability.h"
-
+#import "AFJSONRequestOperation.h"
 @interface DBTalk : NSObject
 
 {

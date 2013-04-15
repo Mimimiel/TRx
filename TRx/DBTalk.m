@@ -518,17 +518,11 @@ static Reachability *internetReachable = nil;
     //AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
     NSLog(@"Request successful");
 
-    for(NSString *key in params) {
-        NSLog(@"%@",[params objectForKey:key]);
-    }
+    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+            NSLog(@"Request Failure Because %@",[error userInfo]);
+    }];
     
-    /*[httpClient postPath:@"get/dataFromTables" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        //publish here you need to fix this code. 
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"dataLoaded" object:params];
-        NSLog(@"Request successful");
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"Request failed");
-    }];*/
+    [operation start];
 }
 
 +(NSDictionary *)getValuesFromLocal:(NSDictionary *)dic {
@@ -540,7 +534,6 @@ static Reachability *internetReachable = nil;
     //unpack and put into a dictionary to return
     
 }
-
 
 
 

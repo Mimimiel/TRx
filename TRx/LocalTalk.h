@@ -48,7 +48,10 @@
 
 
 +(BOOL)clearLocalThenLoadPatientRecordIntoLocal:(NSString *)recordId;
+
+
 +(void)checkConnectionAndLoadFromServer:(NSNotification *)notification;
++(NSArray *)getData:(NSDictionary *)tableNames;
 
 
 

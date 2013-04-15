@@ -35,7 +35,8 @@ static LocalTalk *singleton;
     NSLog(@"look at how awesome I am"); 
 }
 
--(void)checkConnectionAndLoadFromServer:(NSNotification *)notification{
+/*Listener method that checks for connectivity to the server and if there is connectivity, calls loadDataFromServer to load data into SQLite*/ 
++(void)checkConnectionAndLoadFromServer:(NSNotification *)notification{
     
     //check for connectivity to the Server
     BOOL connectivity = [DBTalk getConnectivity];
@@ -47,9 +48,14 @@ static LocalTalk *singleton;
     if(connectivity){
         [DBTalk loadDataFromServer:params];
     } else if(!connectivity){
-       // [[NSNotificationCenter defaultCenter] postNotificationName:@"dataLoaded" object:self userInfo:params];
+       [[NSNotificationCenter defaultCenter] postNotificationName:@"dataLoaded" object:self userInfo:params];
 
     }
+    
+}
+
+/*Method that takes a list of table names and then queries the SQLite database and returns an NSArray of NSDictionaries*/ 
++(NSArray *)getData:(NSDictionary *)tableNames {
     
 }
 
