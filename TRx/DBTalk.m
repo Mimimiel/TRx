@@ -28,6 +28,8 @@ static Reachability *internetReachable = nil;
     host = @"http://www.teamecuadortrx.com/TRxTalk/index.php/";
     imageDir = @"http://teamecuadortrx.com/TRxTalk/Data/images/";
     dbPath = [Utility getDatabasePath];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(addRecord) name:@"patientAdded" object:nil];
 }
 
 +(BOOL)getConnectivity {
@@ -47,7 +49,7 @@ static Reachability *internetReachable = nil;
              middleName:(NSString *)middleName
                lastName:(NSString *)lastName
                birthday:(NSString *)birthday {
-    return [self addUpdatePatient:firstName middleName:middleName lastName:lastName birthday:birthday patientId:@"NULL"];
+    [self addUpdatePatient:firstName middleName:middleName lastName:lastName birthday:birthday patientId:@"NULL"];
 }
 
 /*---------------------------------------------------------------------------
@@ -55,43 +57,31 @@ static Reachability *internetReachable = nil;
  * note: to add a patient, pass NULL as patientId. 
  *       to update patient data, pass patientId string as parameter
  *---------------------------------------------------------------------------*/
-+(NSString *)addUpdatePatient:(NSString *)firstName
++(void)addUpdatePatient:(NSString *)firstName
              middleName:(NSString *)middleName
                lastName:(NSString *)lastName
                birthday:(NSString *)birthday
               patientId:(NSString *)patientId {
-
-    if ([middleName isEqualToString:@""]) {
-        middleName = @"NULL";
-    }
     
+    NSURL *url = [NSURL URLWithString:host];
+    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
     
-    NSString *encodedURL = [NSString stringWithFormat:
-                               @"%@add/addPatient/%@/%@/%@/%@/%@", host, patientId,
-                                                                   [Utility urlEncodeData:firstName],
-                                                                   [Utility urlEncodeData:middleName],
-                                                                   [Utility urlEncodeData:lastName], birthday];
+    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
+                            firstName,  @"firstName",
+                            middleName, @"middleName",
+                            lastName,   @"lastName",
+                            birthday,   @"birthday",
+                            patientId,  @"patientId", nil];
     
-    //NSLog(@"AddPatient encodedURL: %@", encodedURL);
-
-    NSData *data = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:encodedURL]];
-    
-    if (data) {
-        NSError *jsonError;
-        NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&jsonError];
-        NSDictionary *dic = jsonArray[0];
+    [httpClient postPath:@"add/patient" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"AddPatient successful");
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"patientAdded" object:nil];
         
-        NSString *retval = [dic objectForKey:@"@returnValue"];
-        if ([retval isEqual: @"0"]) {
-            NSString *err = [dic objectForKey:@"@error"];
-            [Utility alertWithMessage:err];
-            //NSLog(@"jsonError in addUpdatePatient?: %@", jsonError);
-            return NULL;
-        }
-        
-        return retval;
-    }
-    return NULL;
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"AddPatient failed");
+    }];
+    
+    
 }
 
 /*---------------------------------------------------------------------------
@@ -104,6 +94,8 @@ static Reachability *internetReachable = nil;
               doctorId:(NSString *)doctorId
               isActive:(NSString *)isActive
             hasTimeout:(NSString *)hasTimeout {
+    
+    //select data from table //
     
     NSString *encodedString = [NSString stringWithFormat:@"%@add/record/NULL/%@/%@/%@/%@/%@", host,
                                patientId, surgeryTypeId, @"1", isActive, @"0"];
@@ -520,19 +512,10 @@ static Reachability *internetReachable = nil;
     return NULL;
 }
 
-//(BOOL)addOperationRecordFile:(NSString *)patientRecordId name:(NSString *)name  path:(NSString *)path recordTypeId:(NSString *) {
-//    /*update Mischa's table */
-//    /* asynchronously load file to server filesystem */
-//    /* create a method in synchData to synch things */
-//    
-//    /*localTalk needs a synch column that gets updated on load */
-//    return false;
-//}
-
 
 +(void) loadDataFromServer:(NSDictionary *)params {
-    NSURL *url = [NSURL URLWithString:host];
-    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+    //NSURL *url = [NSURL URLWithString:host];
+    //AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
     NSLog(@"Request successful");
 
     for(NSString *key in params) {
@@ -547,6 +530,17 @@ static Reachability *internetReachable = nil;
         NSLog(@"Request failed");
     }];*/
 }
+
++(NSDictionary *)getValuesFromLocal:(NSDictionary *)dic {
+    
+    //find the current patient
+    //iterate through dictionary for each key and table
+    //Select ? from ? Where currentRecordId = Select recordId from Patient where current = 1
+    
+    //unpack and put into a dictionary to return
+    
+}
+
 
 
 
