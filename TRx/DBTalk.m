@@ -552,7 +552,8 @@ static Reachability *internetReachable = nil;
     for(NSString *table in tableNames){
         
     }
-+(NSDictionary *)getValuesFromLocal:(NSDictionary *)dic {
+}
+/*+(NSDictionary *)getValuesFromLocal:(NSDictionary *)dic {
     
     //find the current patient
     //iterate through dictionary for each key and table
@@ -560,7 +561,7 @@ static Reachability *internetReachable = nil;
     
     //unpack and put into a dictionary to return
     
-}
+}*/
 
 
 
