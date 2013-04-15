@@ -552,8 +552,18 @@ static Reachability *internetReachable = nil;
     for(NSString *table in tableNames){
         
     }
++(NSDictionary *)getValuesFromLocal:(NSDictionary *)dic {
+    
+    //find the current patient
+    //iterate through dictionary for each key and table
+    //Select ? from ? Where currentRecordId = Select recordId from Patient where current = 1
+    
+    //unpack and put into a dictionary to return
     
 }
+
+
+
 
 
 @end
