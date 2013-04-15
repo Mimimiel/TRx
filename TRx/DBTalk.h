@@ -49,7 +49,7 @@
                lastName:(NSString *)lastName
                birthday:(NSString *)birthday;
 
-+(NSString *)addUpdatePatient:(NSString *)firstName
++(void)addUpdatePatient:(NSString *)firstName
                    middleName:(NSString *)middleName
                      lastName:(NSString *)lastName
                      birthday:(NSString *)birthday
