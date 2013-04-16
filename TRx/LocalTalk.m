@@ -122,6 +122,77 @@ static LocalTalk *singleton;
 }
 #pragma mark - Local Store Methods
 
+
+
+
+
+/*-----------------Local Store Mega Method---------------------------*/
+
+
++(BOOL)localStoreEverything:(NSDictionary *)params {
+    BOOL success;
+    if ([[params objectForKey:@"viewName"] isEqualToString:@"historyViewController"]) {
+        
+        success = [self addPatientToLocal:params];
+        if (!success) {
+            return false;
+        }
+        success = [self addRecordToLocal:params];
+        if (!success) {
+            return false;
+        }
+        
+    }
+    
+    return false;
+}
+
++(BOOL)addRecordToLocal:(NSDictionary *)params {
+    NSString *firstName     = [params objectForKey:@"FirstName"];
+    NSString *middleName    = [params objectForKey:@"MiddleName"];
+    NSString *lastName      = [params objectForKey:@"LastName"];
+    NSString *birthday      = [params objectForKey:@"Birthday"];
+    
+    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
+    
+    [db open];
+    BOOL retval = [db executeUpdate:@"INSERT INTO Patient (FirstName, MiddleName, LastName) VALUES (?, ?, ?, ?)",
+                   firstName, middleName, lastName, birthday];
+    [db close];
+    
+    return retval;
+}
+
+
++(BOOL)addPatientToLocal:(NSDictionary *)params {
+    NSString *surgeryTypeId = [params objectForKey:@"SurgeryTypeId"];
+    NSString *doctorId      = [params objectForKey:@"DoctorId"];
+    NSString *isActive      = [params objectForKey:@"IsActive"];
+    NSString *hasTimeout    = [params objectForKey:@"HasTimeout"];
+    NSString *patientId     = [self localGetPatientId];
+    
+    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
+    
+    [db open];
+    BOOL retval = [db executeUpdate:@"INSERT INTO PatientRecord (SurgeryTypeId, DoctorId, isActive, hasTimeout, Pa) VALUES (?, ?, ?, ?)",
+                   surgeryTypeId, doctorId, isActive, hasTimeout];
+    [db close];
+    
+    return retval;
+}
+
+
+
+
+/*-------------------End Local Store Mega Method---------------------*/
+
+
+
+
+
+
+
+
 /*---------------------------------------------------------------------------
  Summary:
     Stores a temporary RecordId in the local database
@@ -138,29 +209,6 @@ static LocalTalk *singleton;
     return [self localStorePatientMetaData:@"patientId" value:@"tmpPatientId"];
 }
 
-/*---------------------------------------------------------------------------
- Summary:
-    Stores keys and values in PatientMetaData table
- Details:
-    keys: patientId, recordId, firstName, middleName, lastName, birthday,
-          doctorId, surgeryTypeId
- Returns:
-    true on success, false otherwise
- *---------------------------------------------------------------------------*/
-+(BOOL)localStorePatientMetaData:(NSString *)key
-                           value:(NSString *)value {
-    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
-    [db open];
-    //NSLog(@"In localStorePatientMetaData key: %@ value: %@", key, value);
-    NSString *query = [NSString stringWithFormat:@"REPLACE INTO PatientMetaData (Key, Value) VALUES (\"%@\", \"%@\")", key, value];
-    BOOL retval = [db executeUpdate:query];//@"INSERT INTO
-    if (!retval) {
-        NSLog(@"Error storing into patientMetaData");
-        NSLog(@"%@", [db lastErrorMessage]);
-    }
-    [db close];
-    return retval;
-}
 
 
 /*---------------------------------------------------------------------------

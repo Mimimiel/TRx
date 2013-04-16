@@ -91,7 +91,24 @@
 //    [LocalTalkWrapper addPatientObjectToLocal:newPatient];
 //    [LocalTalkWrapper addNewPatientAndSynchData];
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"tabloaded" object:nil];
+    
+    NSDictionary *params = @{@"viewName"    : @"historyViewController",
+                             @"FirstName"   : newPatient.firstName,
+                             @"MiddleName"  : newPatient.middleName,
+                             @"LastName"    : newPatient.lastName,
+                             @"Birthday"    : newPatient.birthday,
+                             @"Data"        : newPatient.photoID,
+                             @"SurgeryTypeId":newPatient.chiefComplaint,
+                             @"DoctorId"    : @"1",
+                             @"HasTimeout"  : @"0",
+                             @"IsActive"    : @"1",
+                             @"IsCurrent"   : @"1"
+                             };
+    
+    //Note: if no picture is taken,
+    //can use [NSNull null]
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"nextpressed" object:params];
     
 }
 
