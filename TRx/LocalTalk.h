@@ -54,7 +54,7 @@
 
 
 +(void)checkConnectionAndLoadFromServer:(NSNotification *)notification;
-+(NSArray *)getData:(NSDictionary *)tableNames;
++(NSMutableArray *)getData:(NSDictionary *)tableNames;
 
 
 

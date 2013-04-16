@@ -55,15 +55,62 @@ static LocalTalk *singleton;
 }
 
 /*Method that takes a list of table names and then queries the SQLite database and returns an NSArray of NSDictionaries*/ 
--(NSArray *)getData:(NSDictionary *)tableNames{
++(NSMutableArray *)getData:(NSDictionary *)tableNames{
+    NSString *selectorValue, *selectorType, *patientId, *patientRecordId, *query;
+    BOOL useSelector = 1;
+    NSMutableArray *returnArray;
+    patientRecordId = [self localGetRecordId];
+    patientId = [self localGetPatientId];
+    //check for current patient, if none, return nil
+    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
+    [db open]; 
     
+    for(NSString *table in tableNames){
+        //check if it's Doctor, surgery type, or patient and if it is those have special keys
+        //otherwise, use patient record id
+        //to insert (if it doesn't exist or update if it does
+        if([table isEqualToString:@"Patient"]){
+            selectorValue = patientId;
+            selectorType = @"Id";
+            useSelector = 1; 
+        } else if([table isEqualToString:@"PatientRecord"]){
+            selectorValue = patientRecordId;
+            selectorType = @"Id";
+            useSelector = 1; 
+        } else if([table isEqualToString:@"Doctor"] || [table isEqualToString:@"SurgeryType"]) {
+            useSelector = 0;
+        } else {
+            selectorValue = patientRecordId;
+            selectorType = @"PatientRecordId";
+            useSelector = 1;
+        }
+        
+        if(useSelector){
+            query = [NSString stringWithFormat: @"SELECT * FROM  %@ WHERE %@ = %@", table, selectorType, selectorValue];
+        } else {
+            query = [NSString stringWithFormat:@"SELECT * FROM %@", table];
+        }
+        FMResultSet *retval = [db executeQuery:query];
+        
+        if (!retval) {
+            NSLog(@"The query in getData didn't return anything good :(");
+            NSLog(@"%@", [db lastErrorMessage]);
+            //add blank data in the array 
+        } else {
+            //turn return data into a dictionary and put it into an array. 
+        }
+    }
+    [db close];
+    
+    return returnArray; 
+ 
 }
 
 +(BOOL)clearIsLiveFlags {
     //this will go to the database and set all the is live flags to 0
     FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
     [db open];
-    NSString *query = [NSString stringWithFormat:@"UPDATE PatientRecord SET PatientRecord.IsLive = 0"];
+    NSString *query = [NSString stringWithFormat:@"UPDATE PatientRecord SET IsLive = 0"];
 
     BOOL retval = [db executeUpdate:query];
     if (!retval) {
@@ -253,10 +300,15 @@ static LocalTalk *singleton;
         return nil;
     }
     
+    
     [results next];
+    NSLog(@"got to patient record id");
     NSString *patientRecordId = [results stringForColumn:@"PatientRecordId"];
+    NSLog(@"print stuff: %@", [[results resultDictionary] description]);
     [results next];
+    NSLog(@"got to patient id");
     NSString *patientId = [results stringForColumn:@"PatientId"];
+    NSLog(@"print stuff: %@", [[results resultDictionary] description]);
     [db close];
     
     if(patientId != nil && patientRecordId != nil){

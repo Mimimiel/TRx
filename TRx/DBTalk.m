@@ -513,7 +513,6 @@ static Reachability *internetReachable = nil;
 }
 
 
-
 + (void)loadDataFromServer:(NSDictionary *)params {
     
     NSURL *url = [NSURL URLWithString:host];
@@ -521,21 +520,27 @@ static Reachability *internetReachable = nil;
     /*take tables and pass dictionary of patients info from local instead*/
     /*get patient and patientRecordId from local database if there isn't one, don't call it*/
     NSDictionary *dbobj = [LocalTalk getDBObject:params];
+    
     if(dbobj != nil){
         NSMutableURLRequest *request = [httpClient requestWithMethod:@"POST" path:@"get/dataFromTables" parameters:dbobj];
         [AFJSONRequestOperation addAcceptableContentTypes:[NSSet setWithObject:@"text/html"]];
         AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-            
             NSLog(@"This was the response: %@", response);
             [self loadDataintoMySQL:JSON];
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"dataLoadedIntoLocal" object:self userInfo:params];
-            
+              [[NSNotificationCenter defaultCenter] postNotificationName:@"dataLoadedIntoLocal" object:self userInfo:params];
         } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
-            NSLog(@"Request Failure Because %@",[error userInfo]);            
+            NSLog(@"Request Failure Because %@",[error userInfo]);
+              [[NSNotificationCenter defaultCenter] postNotificationName:@"dataLoadedIntoLocal" object:self userInfo:params];
         }];
         
         [operation start];
-    } else { /*it's a new patient or something went wrong*/ }
+    } else {
+        /*it's a new patient or something went wrong*/
+        //TODO: LOCK DOWN OTHER TABS HERE BEFORE WE PUB
+
+       // [[NSNotificationCenter defaultCenter] postNotificationName:@"dataLoadedIntoLocal" object:self userInfo:dbobj];
+        NSLog(@"poop: %@", params);
+    }
 }
 
 + (void)loadDataintoMySQL:(id) JSON {

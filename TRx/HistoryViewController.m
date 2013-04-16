@@ -43,7 +43,7 @@
 /*TODO: Fix localgetrecordId and localgetpatientid*/
 
 - (void)viewWillAppear:(BOOL)animated {
-    NSArray *tables = @[@"Patient, Table2, Table3"];
+    NSArray *tables = @[@"Patient"];
     NSDictionary *params = @{@"tableNames" : tables,
                              @"location" : @"historyViewController"};
     [[NSNotificationCenter defaultCenter] postNotificationName:@"tabloaded" object:self userInfo:params];
