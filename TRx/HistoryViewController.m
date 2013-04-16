@@ -40,14 +40,12 @@
     
 }
 
+/*TODO: Fix localgetrecordId and localgetpatientid*/
+
 - (void)viewWillAppear:(BOOL)animated {
-    NSArray *tables = @[@"Patient"];
-    NSString *patientId = [LocalTalk localGetRecordId];
-    NSLog(@"patient ID is %@", patientId);
+    NSArray *tables = @[@"Patient, Table2, Table3"];
     NSDictionary *params = @{@"tableNames" : tables,
-                             @"key" : @42,
                              @"location" : @"historyViewController"};
-    
     [[NSNotificationCenter defaultCenter] postNotificationName:@"tabloaded" object:self userInfo:params];
 }
 

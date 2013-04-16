@@ -16,6 +16,9 @@
     LocalTalk *singleton;
 }
 +(LocalTalk *)getSingleton;
++(BOOL)clearIsLiveFlags;
++(NSDictionary *)getDBObject:(NSDictionary *)params;
+
 
 /* Store @"tempId" locally before actual values loaded from DB
  * Used so that app will work without server access */

@@ -39,12 +39,15 @@
 
 -(void)addPatients:(id)sender{
     /* clear local database for new patient */
-    [LocalTalk localClearPatientData];
+    /*[LocalTalk localClearPatientData];*/
     
     /* initialize local database with temp values for patientId and recordId */
-    [LocalTalk localStoreTempPatientId];
-    [LocalTalk localStoreTempRecordId];
+   /* [LocalTalk localStoreTempPatientId];
+    [LocalTalk localStoreTempRecordId];*/
+    /*clear all isCurrent flags */
+    [LocalTalk clearIsLiveFlags];
     [self performSegueWithIdentifier:@"listTabSegue" sender:addPatientsButton];
+    
 }
 
 /*Function to refresh patients list, we need to make this async and to disable the refreshButton button until it's done*/ 

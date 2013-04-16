@@ -145,8 +145,8 @@
     }
     else {
         NSLog(@"addOrUpdatePatient. In the else with: %@", newPatient.firstName);
-        patientId = [DBTalk addUpdatePatient:newPatient.firstName middleName:newPatient.middleName
-                                    lastName:newPatient.lastName birthday:@"20081010" patientId:newPatient.patientId];
+       // patientId = [DBTalk addUpdatePatient:newPatient.firstName middleName:newPatient.middleName
+               //                     lastName:newPatient.lastName birthday:@"20081010" patientId:newPatient.patientId];
         if (!patientId) {
             NSLog(@"Failed to update patient: %@ %@", newPatient.firstName, newPatient.lastName);
             return false;

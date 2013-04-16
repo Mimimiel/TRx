@@ -54,7 +54,7 @@ static Reachability *internetReachable = nil;
 
 /*---------------------------------------------------------------------------
  * description: method adds or updates information in the Patient table
- * note: to add a patient, pass NULL as patientId. 
+ * note: to add a patient, pass NULL as patientId.
  *       to update patient data, pass patientId string as parameter
  *---------------------------------------------------------------------------*/
 +(void)addUpdatePatient:(NSString *)firstName
@@ -86,8 +86,8 @@ static Reachability *internetReachable = nil;
 
 /*---------------------------------------------------------------------------
  * description: method adds record for patient with patientId
- * note: Patient and Record need to be added for patient to show 
-         up in getPatientList call
+ * note: Patient and Record need to be added for patient to show
+ up in getPatientList call
  *---------------------------------------------------------------------------*/
 +(NSString *)addRecord:(NSString *)patientId
          surgeryTypeId:(NSString *)surgeryTypeId
@@ -251,7 +251,7 @@ static Reachability *internetReachable = nil;
 /*---------------------------------------------------------------------------
  * description: gets picture from portrait folder on host
  * current host: teamecuadortrx.com/TRxTalk
- * fileName: "patientId" + "n" + "picNumber" 
+ * fileName: "patientId" + "n" + "picNumber"
  * returns UIImage of specified jpeg
  *---------------------------------------------------------------------------*/
 
@@ -327,7 +327,7 @@ static Reachability *internetReachable = nil;
     if (data) {
         NSError *jsonError;
         NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&jsonError];
-
+        
         return jsonArray;
     }
     NSLog(@"getRecordData didn't work: error in PHP");
@@ -397,7 +397,7 @@ static Reachability *internetReachable = nil;
     NSMutableURLRequest *request = [httpClient multipartFormRequestWithMethod:@"POST" path:@"upload.php" parameters:dic constructingBodyWithBlock: ^(id <AFMultipartFormData>formData) {
         [formData appendPartWithFileData:imageData name:@"file" fileName:fNameWithSuffix mimeType:@"image/jpeg"];
     }];
-
+    
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];
     [operation setUploadProgressBlock:^(NSUInteger bytesWritten, long long totalBytesWritten, long long totalBytesExpectedToWrite) {
         NSLog(@"Sent %lld of %lld bytes", totalBytesWritten, totalBytesExpectedToWrite);
@@ -409,7 +409,7 @@ static Reachability *internetReachable = nil;
 
 /*---------------------------------------------------------------------------
  * Updates a picture path in the database. Need to pass in a pictureId
- * 
+ *
  *---------------------------------------------------------------------------*/
 
 +(NSString *)updatePictureInfoInDatabase:(NSString *)pictureId
@@ -418,24 +418,24 @@ static Reachability *internetReachable = nil;
                               customName:(NSString *)customName
                                isProfile:(NSString *)isProfile {
     return [self pictureInfoToDatabase:pictureId patientId:patientId fileName:newPath
-                     customName:customName isProfile:isProfile];
+                            customName:customName isProfile:isProfile];
 }
 /*---------------------------------------------------------------------------
-* Adds a picture path to the database. Path is just a filename right now
-* 
-*---------------------------------------------------------------------------*/
+ * Adds a picture path to the database. Path is just a filename right now
+ *
+ *---------------------------------------------------------------------------*/
 
 +(NSString *)addPictureInfoToDatabase:(NSString *)patientId
                              fileName:(NSString *)fileName
                             isProfile:(NSString *)isProfile {
     return [self pictureInfoToDatabase:@"NULL" patientId:patientId fileName:fileName
-                     customName:fileName isProfile:isProfile];
+                            customName:fileName isProfile:isProfile];
 }
 
 
 /*---------------------------------------------------------------------------
  * base method for addPicturePathToDatabase and updatePathToDatabase
- * 
+ *
  *---------------------------------------------------------------------------*/
 +(NSString *)pictureInfoToDatabase:(NSString *)picId
                          patientId:(NSString *)patientId
@@ -449,7 +449,7 @@ static Reachability *internetReachable = nil;
     
     /* THIS LINE IS THE PROBLEM */
     //NSData *data = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:encodedString]];
-
+    
     /* Using Ziebart's code for kicks */
     [NZURLConnection getAsynchronousResponseFromURL:encodedString withTimeout:5 completionHandler:^(NSData *response, NSError *error, BOOL timedOut) {
         if (response) {
@@ -465,7 +465,7 @@ static Reachability *internetReachable = nil;
         }
     }];
     
-
+    
     //NSLog(@"Error adding picturePath to Database");
     return NULL;
     
@@ -500,7 +500,7 @@ static Reachability *internetReachable = nil;
     NSString *encodedString = [NSString stringWithFormat:@"%@get/operationRecord/%@", host, recordId];
     NSLog(@"encodedString: %@", encodedString);
     NSData *data = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:encodedString]];
-
+    
     if (data) {
         NSError *jsonError;
         NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&jsonError];
@@ -518,50 +518,59 @@ static Reachability *internetReachable = nil;
     
     NSURL *url = [NSURL URLWithString:host];
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
-    NSMutableURLRequest *request = [httpClient requestWithMethod:@"POST" path:@"get/dataFromTables" parameters:params];
-    [AFJSONRequestOperation addAcceptableContentTypes:[NSSet setWithObject:@"text/html"]];
-    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-        //Convert JSON to NSArray and put into SQLite, then publish that the data is available
-        //NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:JSON options:0 error:nil];
-        NSLog(@"This was a response: %@", response);
-        NSDictionary *dictionary = (NSDictionary *)JSON;
-        NSLog(@"This was a success: %@", [JSON valueForKeyPath:@"LastName"]);
-        for(NSString *key in dictionary){
-            NSLog(@"%@", key);
-        }
-        [self loadDataintoMySQLWith:params andJSON:JSON];
-      /*  NSArray *products = [jsonDict objectForKey:@"products"];
-        [products enumerateObjectsUsingBlock:^(id obj,NSUInteger idx, BOOL *stop){
-            NSString *productIconUrl = [obj objectForKey:@"icon_url"];
-        }];*/
+    /*take tables and pass dictionary of patients info from local instead*/
+    /*get patient and patientRecordId from local database if there isn't one, don't call it*/
+    NSDictionary *dbobj = [LocalTalk getDBObject:params];
+    if(dbobj != nil){
+        NSMutableURLRequest *request = [httpClient requestWithMethod:@"POST" path:@"get/dataFromTables" parameters:dbobj];
+        [AFJSONRequestOperation addAcceptableContentTypes:[NSSet setWithObject:@"text/html"]];
+        AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+            
+            NSLog(@"This was the response: %@", response);
+            [self loadDataintoMySQL:JSON];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"dataLoadedIntoLocal" object:self userInfo:params];
+            
+        } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+            NSLog(@"Request Failure Because %@",[error userInfo]);            
+        }];
         
-      //  [[NSNotificationCenter defaultCenter] postNotificationName:@"dataLoadedIntoLocal" object:self userInfo:params];
-
-    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
-            NSLog(@"Request Failure Because %@",[error userInfo]);
-            NSLog(@"The JSON id: %@", JSON);
-        
-    }];
-    
-    [operation start];
+        [operation start];
+    } else { /*it's a new patient or something went wrong*/ }
 }
 
-+ (void)loadDataintoMySQLWith:(NSDictionary *)tableNames andJSON:(id) JSON {
++ (void)loadDataintoMySQL:(id) JSON {
     //for each table if the ID exists in that table update the row, otherwise insert the data into that table.
-    //
-    for(NSString *table in tableNames){
-        
+    NSError *error=nil;
+    NSDictionary *parsedData = [NSJSONSerialization JSONObjectWithData:JSON options:kNilOptions error:&error];
+    for(NSString *key in parsedData){
+        NSLog(@"%@", key);
     }
+    /*
+    for(NSString *table in parsedData){
+        //check if it's Doctor, surgery type, or patient and if it is those have special keys
+        //otherwise, use patient record id
+        //to insert (if it doesn't exist or update if it does
+        if([table isEqualToString:@"Patient"]){
+            
+        } else if([table isEqualToString:@"Doctor"] || [table isEqualToString:@"SurgeryType"]) {
+            
+        }
+        else {
+            
+        }
+        
+        
+    }*/
 }
 /*+(NSDictionary *)getValuesFromLocal:(NSDictionary *)dic {
-    
-    //find the current patient
-    //iterate through dictionary for each key and table
-    //Select ? from ? Where currentRecordId = Select recordId from Patient where current = 1
-    
-    //unpack and put into a dictionary to return
-    
-}*/
+ 
+ //find the current patient
+ //iterate through dictionary for each key and table
+ //Select ? from ? Where currentRecordId = Select recordId from Patient where current = 1
+ 
+ //unpack and put into a dictionary to return
+ 
+ }*/
 
 
 

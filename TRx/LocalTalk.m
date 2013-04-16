@@ -55,10 +55,24 @@ static LocalTalk *singleton;
 }
 
 /*Method that takes a list of table names and then queries the SQLite database and returns an NSArray of NSDictionaries*/ 
--(NSArray *)getData:(NSDictionary *)tableNames {
+-(NSArray *)getData:(NSDictionary *)tableNames{
     
 }
 
++(BOOL)clearIsLiveFlags {
+    //this will go to the database and set all the is live flags to 0
+    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
+    [db open];
+    NSString *query = [NSString stringWithFormat:@"UPDATE PatientRecord SET PatientRecord.IsLive = 0"];
+
+    BOOL retval = [db executeUpdate:query];
+    if (!retval) {
+        NSLog(@"Error updating isLive in PatientRecord's table");
+        NSLog(@"%@", [db lastErrorMessage]);
+    }
+    [db close];
+    return retval; 
+}
 #pragma mark - Local Store Methods
 
 /*---------------------------------------------------------------------------
@@ -223,52 +237,38 @@ static LocalTalk *singleton;
     return patients; 
 }
 
-/*---------------------------------------------------------------------------
- Summary:
-    Helper methods for retrieving patientId and recordId from local database 
- Details:
-    Methods wrap localGetPatientMetaData
- Returns:
-    nil - failure to communicate with database
-    NSString of Id
- *---------------------------------------------------------------------------*/
-+(NSString *)localGetPatientId {
-    return [self localGetPatient:@"patientId"];
-}
-+(NSString *)localGetRecordId {
-    return [self localGetPatient:@"1"];
-}
 
-
-/*---------------------------------------------------------------------------
- Summary:
-    Retrieves data stored in LocalDatabase's PatientMetaData table
- Details:
-    keys: patientId, recordId, firstName, middleName, lastName, birthday,
-          doctorId, surgeryTypeId
- Returns:
-    nil - failure to communicate with local database
-    NSString with appropriate metadata for current patient
- *---------------------------------------------------------------------------*/
-+(NSString *)localGetPatient:(NSString *)key {
++(NSDictionary *)getDBObject:(NSDictionary *)params {
     FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
     [db open];
-    
     NSString *query;
-    query = [NSString stringWithFormat:@"SELECT Id FROM PatientRecord WHERE AppId = \"%@\"", key];
+    NSDictionary *dbobj;
+    query = [NSString stringWithFormat:@"SELECT a.Id, b.Id FROM PatientRecord as a JOIN Patient as b ON a.AppPatientId = b.AppId WHERE a.IsLive = 1"];
+    
     FMResultSet *results = [db executeQuery:query];
     
+    /*test to see if the query failed */
     if (!results) {
         NSLog(@"%@", [db lastErrorMessage]);
         return nil;
     }
     
     [results next];
-    NSString *retval = [results stringForColumnIndex:0];
+    NSString *patientRecordId = [results stringForColumn:@"PatientRecordId"];
+    [results next];
+    NSString *patientId = [results stringForColumn:@"PatientId"];
     [db close];
     
-    return retval;
+    if(patientId != nil && patientRecordId != nil){
+        dbobj = @{@"tableNames" : [params objectForKey:@"tableNames"],
+            @"patientRecordId" : patientRecordId,
+            @"patientId" : patientId,
+            @"location" : [params objectForKey:@"location"] };
+    } else { return nil; }
+    
+    return dbobj;
 }
+
 
 
 
