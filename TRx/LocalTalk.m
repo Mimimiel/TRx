@@ -57,11 +57,11 @@ static LocalTalk *singleton;
 }
 
 /*Method that takes a list of table names and then queries the SQLite database and returns an NSArray of NSDictionaries*/ 
-+(NSMutableArray *)getData:(NSDictionary *)tableNames {
++(NSMutableDictionary *)getData:(NSDictionary *)tableNames {
     NSString *selectorValue, *selectorType, *patientId, *patientRecordId, *query;
     BOOL useSelector = 1;
     NSMutableDictionary *dictionary; 
-    patientRecordId = [self localGetRecordId];
+    patientRecordId = [self localGetPatientRecordId];
     patientId = [self localGetPatientId];
     //check for current patient, if none, return nil
     FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
@@ -105,9 +105,7 @@ static LocalTalk *singleton;
     [db close];
     
     return dictionary;
-    for(NSString *key in dictionary){
-        NSLog(@"%@", key);
-    }
+    
 }
 
 +(BOOL)clearIsLiveFlags {
@@ -227,7 +225,8 @@ static LocalTalk *singleton;
     
     NSString *query;
     query = [NSString stringWithFormat:@"SELECT Id FROM PatientRecord WHERE IsLive = 1"];
-    return [self localGetId:query];
+    NSString *retval = [self localGetId:query];
+    return retval;
 }
 +(NSString *)localGetAppPatientId {
     
@@ -235,23 +234,31 @@ static LocalTalk *singleton;
     query = [NSString stringWithFormat:@"SELECT AppId FROM Patient a.IsLive = 1"];
     return [self localGetId:query];
 }
+
 +(NSString *)localGetId:(NSString *)query {
     FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
+    db.logsErrors = TRUE;
     [db open];
     
     FMResultSet *result = [db executeQuery:query];
-    
+    if([db hadError]){
+         NSLog(@"Err %d: %@", [db lastErrorCode], [db lastErrorMessage]);
+    }
     /*test to see if the query failed */
     
     if (!result) {
         NSLog(@"%@", [db lastErrorMessage]);
         return nil;
     }
-    [result next];
+    //[result next];
     
-    NSString *str = [result stringForColumnIndex:0];
-    
+    //NSString *str = [result stringForColumnIndex:0];
+    NSString *str; 
+    while ([result next]) {
+        NSLog(@"result next:%@", [result stringForColumnIndex:0]);
+    }
     [db close];
+    NSLog(@"The string from local get Id is: %@", str);
     return str;
 }
 
@@ -362,77 +369,60 @@ static LocalTalk *singleton;
     NSString *firstName, *lastName, *patientId, *imageId, *middleName, *recordId, *birthday, *complaint;
     NSURL *pictureURL;
     UIImage *picture; 
+    //check for connectivity to the Server
+    BOOL connectivity = [DBTalk getConnectivity];
+    NSLog(@"Connectivity in localGetPatientList is: %d",connectivity);
+    
+    //if there is connectivity call the loadDataFromServer:params method, if not, publish dataLoaded
+    //TODO: UPDATE THE LOCAL DATABASE WITH THE PATIENTS ARRAY WE GET FROM MYSQL
+    if(connectivity){
         
-    patientsArrayFromDB = [DBTalk getPatientList];
-    if(patientsArrayFromDB == NULL){
-        NSLog(@"DBTalk Couldn't return patients List");
+        patientsArrayFromDB = [DBTalk getPatientList];
+        
+        if(patientsArrayFromDB == NULL){
+            NSLog(@"DBTalk returned a NULL patients List even though there is a connection");
+            return NULL;
+        }
+        patients = [NSMutableArray array];
+        
+        for(NSDictionary *item in patientsArrayFromDB){
+            //NSLog(@"%@", item);
+            firstName   = [item objectForKey:@"FirstName"];
+            middleName  = [item objectForKey:@"MiddleName"];
+            lastName    = [item objectForKey:@"LastName"];
+            patientId   = [item objectForKey:@"Id"];
+            recordId    = [item objectForKey:@"recordId"];
+            birthday    = [item objectForKey:@"birthday"];  //does this exist?
+            complaint   = [item objectForKey:@"SurgeryTypeId"];
+            complaint   = [AdminInformation getSurgeryNameById:complaint];
+            imageId     = [NSString stringWithFormat:@"%@n000", patientId];
+            
+            pictureURL = [DBTalk getThumbFromServer:imageId];
+            
+            Patient *obj = [[Patient alloc] initWithPatientId:patientId currentRecordId:recordId firstName:firstName MiddleName:middleName LastName:lastName birthday:birthday ChiefComplaint:complaint PhotoID:picture PhotoURL:pictureURL];
+            
+            obj.patientId = patientId;
+            NSLog(@"%@", picture);
+            NSLog(@"%@", imageId);
+            [patients addObject:obj];
+        }
+        
+        return patients;
+        
+    } else if(!connectivity){
+        //get patients from Local
+        NSLog(@"No connectivity to the MySQL database so localGetPatientList returned NULL");
         return NULL;
-    }
-    
-    patients = [NSMutableArray array];
-    
-    for(NSDictionary *item in patientsArrayFromDB){
-       //NSLog(@"%@", item);
-        firstName   = [item objectForKey:@"FirstName"];
-        middleName  = [item objectForKey:@"MiddleName"];
-        lastName    = [item objectForKey:@"LastName"];
-        patientId   = [item objectForKey:@"Id"];
-        recordId    = [item objectForKey:@"recordId"];
-        birthday    = [item objectForKey:@"birthday"];  //does this exist?
-        complaint   = [item objectForKey:@"SurgeryTypeId"];
-        complaint   = [AdminInformation getSurgeryNameById:complaint];
-        imageId     = [NSString stringWithFormat:@"%@n000", patientId];
         
-        pictureURL = [DBTalk getThumbFromServer:imageId];
-        
-        Patient *obj = [[Patient alloc] initWithPatientId:patientId currentRecordId:recordId firstName:firstName MiddleName:middleName LastName:lastName birthday:birthday ChiefComplaint:complaint PhotoID:picture PhotoURL:pictureURL];
-        
-        obj.patientId = patientId;
-        NSLog(@"%@", picture);
-        NSLog(@"%@", imageId);
-        [patients addObject:obj];
     }
 
-    
-    return patients; 
+    NSLog(@"Something is really broken so localGetPatientList returned NULL");
+    return NULL; 
+  
 }
 
 
-+(NSDictionary *)getDBObject:(NSDictionary *)params {
-    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
-    [db open];
-    NSString *query;
-    NSDictionary *dbobj;
-    query = [NSString stringWithFormat:@"SELECT a.Id, b.Id FROM PatientRecord as a JOIN Patient as b ON a.AppPatientId = b.AppId WHERE a.IsLive = 1"];
-    
-    FMResultSet *results = [db executeQuery:query];
-    
-    /*test to see if the query failed */
-    if (!results) {
-        NSLog(@"%@", [db lastErrorMessage]);
-        return nil;
-    }
-    
-    
-    [results next];
-    NSLog(@"got to patient record id");
-    NSString *patientRecordId = [results stringForColumn:@"PatientRecordId"];
-    NSLog(@"print stuff: %@", [[results resultDictionary] description]);
-    [results next];
-    NSLog(@"got to patient id");
-    NSString *patientId = [results stringForColumn:@"PatientId"];
-    NSLog(@"print stuff: %@", [[results resultDictionary] description]);
-    [db close];
-    
-    if(patientId != nil && patientRecordId != nil){
-        dbobj = @{@"tableNames" : [params objectForKey:@"tableNames"],
-            @"patientRecordId" : patientRecordId,
-            @"patientId" : patientId,
-            @"location" : [params objectForKey:@"location"] };
-    } else { return nil; }
-    
-    return dbobj;
-}
+
 
 
 

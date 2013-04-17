@@ -514,23 +514,33 @@ static Reachability *internetReachable = nil;
 
 
 + (void)loadDataFromServer:(NSDictionary *)params {
-    
+    __block typeof(self) this = self;
     NSURL *url = [NSURL URLWithString:host];
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
     /*take tables and pass dictionary of patients info from local instead*/
     /*get patient and patientRecordId from local database if there isn't one, don't call it*/
-    NSDictionary *dbobj = [LocalTalk getDBObject:params];
+    NSDictionary *dbobj;
+    NSString *patientRecordId = [LocalTalk localGetPatientRecordId];
+    NSString *patientId = [LocalTalk localGetPatientId];
+    NSLog(@"the Patient Id is: %@ and the P-Record Id is: %@", patientId, patientRecordId);
+    
+    if(patientId != nil && patientRecordId != nil){
+        dbobj = @{@"tableNames" : [params objectForKey:@"tableNames"],
+                  @"patientRecordId" : patientRecordId,
+                  @"patientId" : patientId,
+                  @"location" : [params objectForKey:@"location"] };
+    } else { dbobj = nil; }
     
     if(dbobj != nil){
         NSMutableURLRequest *request = [httpClient requestWithMethod:@"POST" path:@"get/dataFromTables" parameters:dbobj];
         [AFJSONRequestOperation addAcceptableContentTypes:[NSSet setWithObject:@"text/html"]];
         AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
             NSLog(@"This was the response: %@", response);
-            [self loadDataintoMySQL:JSON];
-              [[NSNotificationCenter defaultCenter] postNotificationName:@"dataLoadedIntoLocal" object:self userInfo:params];
+            [this loadDataintoMySQL:JSON];
+              [[NSNotificationCenter defaultCenter] postNotificationName:@"dataLoadedIntoLocal" object:this userInfo:params];
         } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
             NSLog(@"Request Failure Because %@",[error userInfo]);
-              [[NSNotificationCenter defaultCenter] postNotificationName:@"dataLoadedIntoLocal" object:self userInfo:params];
+              [[NSNotificationCenter defaultCenter] postNotificationName:@"dataLoadedIntoLocal" object:this userInfo:params];
         }];
         
         [operation start];
@@ -538,7 +548,7 @@ static Reachability *internetReachable = nil;
         /*it's a new patient or something went wrong*/
         //TODO: LOCK DOWN OTHER TABS HERE BEFORE WE PUB
 
-       // [[NSNotificationCenter defaultCenter] postNotificationName:@"dataLoadedIntoLocal" object:self userInfo:dbobj];
+      // [[NSNotificationCenter defaultCenter] postNotificationName:@"dataLoadedIntoLocal" object:self userInfo:params];
         NSLog(@"poop: %@", params);
     }
 }
@@ -550,7 +560,7 @@ static Reachability *internetReachable = nil;
     for(NSString *key in parsedData){
         NSLog(@"%@", key);
     }
-    /*
+    
     for(NSString *table in parsedData){
         //check if it's Doctor, surgery type, or patient and if it is those have special keys
         //otherwise, use patient record id
@@ -565,7 +575,7 @@ static Reachability *internetReachable = nil;
         }
         
         
-    }*/
+    }
 }
 /*+(NSDictionary *)getValuesFromLocal:(NSDictionary *)dic {
  

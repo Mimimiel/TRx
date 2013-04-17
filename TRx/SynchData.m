@@ -260,7 +260,7 @@
         return false;
     }
     
-    recordId = [LocalTalk localGetRecordId];
+    recordId = [LocalTalk localGetPatientRecordId];
     if (!recordId) {
         NSLog(@"Failure to retrieve recordId from Local in synchPatientData");
         return false;
