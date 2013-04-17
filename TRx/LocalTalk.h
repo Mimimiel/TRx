@@ -23,7 +23,8 @@
 /* Store @"tempId" locally before actual values loaded from DB
  * Used so that app will work without server access */
 
-
++(BOOL)addPatientToLocal:(NSDictionary *)params;
++(BOOL)addRecordToLocal:(NSDictionary *)params;
 
 
 
@@ -62,13 +63,6 @@
 +(NSMutableDictionary *)getData:(NSDictionary *)tableNames;
 
 
-
-
-//+(BOOL)cachePatientData;
-//+(BOOL)loadDataFromCacheIntoLocal:(NSString *)fname;
-//+(BOOL)isUnsynched;
-
-//+(UIImage *)localGetPatientImage:(NSString *)patientId;
 
 
 /* for testing */
