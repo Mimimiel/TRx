@@ -95,7 +95,6 @@ static LocalTalk *singleton;
         if (!retval) {
             NSLog(@"The query in getData didn't return anything good :(");
             NSLog(@"%@", [db lastErrorMessage]);
-            //add blank data in the array
             [Utility alertWithMessage:@"For some reason one of your tables didn't return data!"];
         } else {//turn return data into a dictionary and put it into an array.
             [dictionary setObject:[retval resultDictionary] forKey:table];
