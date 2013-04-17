@@ -38,6 +38,7 @@
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(updateDataListener:) name:@"dataLoadedIntoLocal" object:nil];
     
+    
 }
 
 /*TODO: Fix localgetrecordId and localgetpatientid*/
@@ -91,6 +92,22 @@
 //    [LocalTalkWrapper addPatientObjectToLocal:newPatient];
 //    [LocalTalkWrapper addNewPatientAndSynchData];
     
+    if (!newPatient.middleName) {
+        newPatient.middleName = @"NULL";
+    }
+    if (!newPatient.chiefComplaint) {
+        [Utility alertWithMessage:@"No chief complaint selected. Adding 0"];
+        newPatient.chiefComplaint = @"0";
+    }
+    if (!newPatient.photoID) {
+        [Utility alertWithMessage:@"Please take a picture"];
+        return;
+    }
+    if (!newPatient.birthday) {
+        [Utility alertWithMessage:@"Failed to add birthday. Using default birthday"];
+        newPatient.birthday = @"20040808";
+    }
+    
     
     NSDictionary *params = @{@"viewName"    : @"historyViewController",
                              @"FirstName"   : newPatient.firstName,
@@ -108,7 +125,7 @@
     //Note: if no picture is taken,
     //can use [NSNull null]
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"nextpressed" object:params];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"nextpressed" object:self userInfo:params];
     
 }
 

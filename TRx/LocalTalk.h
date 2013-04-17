@@ -22,6 +22,11 @@
 
 /* Store @"tempId" locally before actual values loaded from DB
  * Used so that app will work without server access */
+
+
+
+
+
 +(BOOL)localStoreTempPatientId;
 +(BOOL)localStoreTempRecordId;
 +(BOOL)localStoreValue:(NSString *)value forQuestionId:(NSString *)questionId;
