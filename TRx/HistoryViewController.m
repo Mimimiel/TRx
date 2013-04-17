@@ -34,9 +34,7 @@
     middleNameText.delegate = self;
     lastNameText.delegate = self;
     
-    /*listeners for history view controller*/ 
-    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(updateDataListener:) name:@"loadFromLocal" object:nil];
+       
     
     
 }
@@ -45,7 +43,7 @@
     /*listeners for history view controller*/
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
 
-    [center addObserver:self selector:@selector(updatedDataListener:) name:@"dataLoadedIntoLocal" object:nil];
+    [center addObserver:self selector:@selector(updatedDataListener:) name:@"loadFromLocal" object:nil];
     
     NSArray *tables = @[@"Patient"];
     NSDictionary *params = @{@"tableNames" : tables,

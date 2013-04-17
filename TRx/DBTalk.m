@@ -11,6 +11,7 @@
 #import "UIImageView+AFNetworking.h"
 #import "NZURLConnection.h"
 #import "Utility.h"
+#import "LocalTalk.h"
 #import <UIKit/UIKit.h>
 
 
@@ -47,6 +48,11 @@ static Reachability *internetReachable = nil;
 
 +(void)pushLocalUnsyncedToServer {
     //check if patientId is null
+    NSString *patientId = [LocalTalk localGetPatientId];
+    if (!patientId) {
+        [self ];
+    }
+    
     //check if recordId is null
     
 }
