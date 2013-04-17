@@ -24,7 +24,7 @@ static BOOL connectivity = false;
 static Reachability *internetReachable = nil;
 
 
-+(void)initialize{
++(void)initialize {
     host = @"http://www.teamecuadortrx.com/TRxTalk/index.php/";
     imageDir = @"http://teamecuadortrx.com/TRxTalk/Data/images/";
     dbPath = [Utility getDatabasePath];
@@ -43,9 +43,19 @@ static Reachability *internetReachable = nil;
     connectivity = (netStatus==ReachableViaWiFi);
 }
 
+
+
++(void)pushLocalUnsyncedToServer {
+    //check if patientId is null
+    //check if recordId is null
+    
+}
+
+
+
 #pragma mark - Add Methods
 
-+(NSString *)addPatient:(NSString *)firstName
++(void)addPatient:(NSString *)firstName
              middleName:(NSString *)middleName
                lastName:(NSString *)lastName
                birthday:(NSString *)birthday {
@@ -526,11 +536,11 @@ static Reachability *internetReachable = nil;
         [AFJSONRequestOperation addAcceptableContentTypes:[NSSet setWithObject:@"text/html"]];
         AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
             NSLog(@"This was the response: %@", response);
-            [self loadDataintoMySQL:JSON];
-              [[NSNotificationCenter defaultCenter] postNotificationName:@"dataLoadedIntoLocal" object:self userInfo:params];
+            [self loadDataintoSQLite:JSON];
+              [[NSNotificationCenter defaultCenter] postNotificationName:@"loadFromLocal" object:self userInfo:params];
         } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
             NSLog(@"Request Failure Because %@",[error userInfo]);
-              [[NSNotificationCenter defaultCenter] postNotificationName:@"dataLoadedIntoLocal" object:self userInfo:params];
+              [[NSNotificationCenter defaultCenter] postNotificationName:@"loadFromLocal" object:self userInfo:params];
         }];
         
         [operation start];
@@ -538,12 +548,12 @@ static Reachability *internetReachable = nil;
         /*it's a new patient or something went wrong*/
         //TODO: LOCK DOWN OTHER TABS HERE BEFORE WE PUB
 
-       // [[NSNotificationCenter defaultCenter] postNotificationName:@"dataLoadedIntoLocal" object:self userInfo:dbobj];
+       // [[NSNotificationCenter defaultCenter] postNotificationName:@"loadFromLocal" object:self userInfo:dbobj];
         NSLog(@"poop: %@", params);
     }
 }
 
-+ (void)loadDataintoMySQL:(id) JSON {
++ (void)loadDataintoSQLite:(id) JSON {
     //for each table if the ID exists in that table update the row, otherwise insert the data into that table.
     NSError *error=nil;
     NSDictionary *parsedData = [NSJSONSerialization JSONObjectWithData:JSON options:kNilOptions error:&error];

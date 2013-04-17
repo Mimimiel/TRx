@@ -36,7 +36,7 @@
     
     /*listeners for history view controller*/ 
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(updateDataListener:) name:@"dataLoadedIntoLocal" object:nil];
+    [center addObserver:self selector:@selector(updateDataListener:) name:@"loadFromLocal" object:nil];
     
     
 }

@@ -16,7 +16,8 @@
     [center addObserver:[LocalTalk getSingleton] selector:@selector(checkConnectionAndLoadFromServer:) name:@"tabloaded" object:nil];
     
     
-    [center addObserver:[LocalTalk getSingleton] selector:@selector(localStoreEverything:) name:@"nextpressed" object:nil];
+    [center addObserver:[LocalTalk getSingleton] selector:@selector(localStoreFromViewsToLocal:) name:@"nextpressed" object:nil];
+    [center addObserver:[LocalTalk getSingleton] selector:@selector(pushLocalUnsyncedToServer) name:@"dataFromViewsStoredIntoLocal" object:nil];
    
     
 }

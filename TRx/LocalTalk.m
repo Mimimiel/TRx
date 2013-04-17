@@ -50,7 +50,7 @@ static LocalTalk *singleton;
     if(connectivity){
         [DBTalk loadDataFromServer:params];
     } else if(!connectivity){
-       [[NSNotificationCenter defaultCenter] postNotificationName:@"dataLoaded" object:self userInfo:params];
+       [[NSNotificationCenter defaultCenter] postNotificationName:@"loadFromLocal" object:self userInfo:params];
 
     }
     
@@ -134,7 +134,7 @@ static LocalTalk *singleton;
 /*-----------------Local Store Mega Method---------------------------*/
 
 
--(BOOL)localStoreEverything:(NSNotification *)notification {
+-(BOOL)localStoreFromViewsToLocal:(NSNotification *)notification {
 
     
     NSDictionary *params = [notification userInfo];
@@ -161,9 +161,9 @@ static LocalTalk *singleton;
         
     }
     
-    
-    
     NSLog(@"Exiting localStoreEverything");
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"dataFromViewsStoredIntoLocal" object:self userInfo:nil];
+
     return true;
 }
 
@@ -220,14 +220,8 @@ static LocalTalk *singleton;
     NSLog(@"PatientId: %@", AppPatientId);
     
     BOOL retval = [db executeUpdate:@"INSERT INTO PatientRecord(SurgeryTypeId, DoctorId, HasTimeout, IsLive, IsCurrent, AppPatientId) VALUES (?, ?, ?, ?, ?, ?)", surgeryTypeId, doctorId, hasTimeout, isLive, isCurrent, AppPatientId];
-    
-    
-    
+  
     [db close];
-    
-    
-    
-    
     return retval;
 }
 
@@ -648,6 +642,7 @@ static LocalTalk *singleton;
     [DBTalk getOperationRecordNames:recordId];
     //[LocalTalk ]
     /* Load into local talk */
+    return false;
     
 }
 

@@ -44,7 +44,7 @@
                     fileName:(NSString *)fileName
                    directory:(NSString *)directory;
 
-+(NSString *)addPatient:(NSString *)firstName
++(void)addPatient:(NSString *)firstName
              middleName:(NSString *)middleName
                lastName:(NSString *)lastName
                birthday:(NSString *)birthday;

@@ -14,5 +14,5 @@
 #import "DBTalk.h"
 
 @interface TestLocalTalk : SenTestCase
-+(Patient *)initPatient;
+
 @end
