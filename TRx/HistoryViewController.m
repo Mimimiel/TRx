@@ -74,7 +74,7 @@
 
 -(void) addPatient:(id)sender{
     
-//    [self storeNames];
+    [self storeNames];
 //    
 //    if([firstName isEqualToString:@""] || [lastName isEqualToString:@""]){
 //        [Utility alertWithMessage:@"First and Last name must be filled out"];
@@ -105,7 +105,7 @@
     }
     if (!newPatient.birthday) {
         [Utility alertWithMessage:@"Failed to add birthday. Using default birthday"];
-        newPatient.birthday = @"20040808";
+        newPatient.birthday = @"2004-08-08";
     }
     
     
@@ -118,7 +118,7 @@
                              @"SurgeryTypeId":newPatient.chiefComplaint,
                              @"DoctorId"    : @"1",
                              @"HasTimeout"  : @"0",
-                             @"IsActive"    : @"1",
+                             @"IsLive"      : @"1",
                              @"IsCurrent"   : @"1"
                              };
     
