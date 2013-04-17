@@ -113,19 +113,19 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		136E218B171A641A007420ED /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = C44D6F1D16D19AD60036E40B /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 1327D4B01704B0AD005010BC;
-			remoteInfo = UnitTests;
-		};
-		136E218D171A6420007420ED /* PBXContainerItemProxy */ = {
+		A8C4D04E171D1DBF00F05FD7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C44D6F1D16D19AD60036E40B /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = C44D6F2416D19AD60036E40B;
 			remoteInfo = TRx;
+		};
+		A8C4D050171D1DC400F05FD7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C44D6F1D16D19AD60036E40B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1327D4B01704B0AD005010BC;
+			remoteInfo = UnitTests;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -742,7 +742,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				136E218E171A6420007420ED /* PBXTargetDependency */,
+				A8C4D04F171D1DBF00F05FD7 /* PBXTargetDependency */,
 			);
 			name = UnitTests;
 			productName = UnitTests;
@@ -760,7 +760,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				136E218C171A641A007420ED /* PBXTargetDependency */,
+				A8C4D051171D1DC400F05FD7 /* PBXTargetDependency */,
 			);
 			name = TRx;
 			productName = TRx;
@@ -938,15 +938,15 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		136E218C171A641A007420ED /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 1327D4B01704B0AD005010BC /* UnitTests */;
-			targetProxy = 136E218B171A641A007420ED /* PBXContainerItemProxy */;
-		};
-		136E218E171A6420007420ED /* PBXTargetDependency */ = {
+		A8C4D04F171D1DBF00F05FD7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = C44D6F2416D19AD60036E40B /* TRx */;
-			targetProxy = 136E218D171A6420007420ED /* PBXContainerItemProxy */;
+			targetProxy = A8C4D04E171D1DBF00F05FD7 /* PBXContainerItemProxy */;
+		};
+		A8C4D051171D1DC400F05FD7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1327D4B01704B0AD005010BC /* UnitTests */;
+			targetProxy = A8C4D050171D1DC400F05FD7 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
