@@ -11,10 +11,17 @@
 
 @implementation AdminInformation 
 
+static NSArray *surgeryList; 
+static NSArray *doctorList; 
+
++ (void)initialize {
+    surgeryList = [DBTalk getSurgeryList];
+    doctorList = [DBTalk getDoctorList];
+}
 
 +(NSMutableArray *)getDoctorNames
 {
-    NSArray *doctorList = [DBTalk getDoctorList];
+   // NSArray *doctorList = [DBTalk getDoctorList];
     NSMutableArray *doctorNamesList = [[NSMutableArray alloc] init];
     
     if (doctorList != NULL) {
@@ -32,7 +39,7 @@
 
 +(NSMutableArray *)getSurgeryNames
 {
-    NSArray *surgeryList = [DBTalk getSurgeryList];
+    //NSArray *surgeryList = [DBTalk getSurgeryList];
     NSMutableArray *surgeryNamesList = [[NSMutableArray alloc] init];
     
     if (surgeryList != NULL) {
@@ -49,7 +56,7 @@
 }
 
 +(NSString *)getSurgeryNameById:(NSString *)complaintId {
-    NSArray *surgeryList = [DBTalk getSurgeryList];
+   // NSArray *surgeryList = [DBTalk getSurgeryList];
     if (surgeryList != NULL) {
         for (NSDictionary *dic in surgeryList) {
             NSString *tmp = [dic objectForKey:@"Id"];
@@ -66,7 +73,7 @@
 }
 
 +(NSString *)getSurgeryIdByName:(NSString *)complaintName{
-    NSArray *surgeryList = [DBTalk getSurgeryList];
+    //NSArray *surgeryList = [DBTalk getSurgeryList];
     if (surgeryList != NULL) {
         for (NSDictionary *dic in surgeryList) {
             NSString *tmp = [dic objectForKey:@"Name"]; 

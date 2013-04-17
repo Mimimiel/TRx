@@ -41,9 +41,12 @@
     
 }
 
-/*TODO: Fix localgetrecordId and localgetpatientid*/
-
 - (void)viewWillAppear:(BOOL)animated {
+    /*listeners for history view controller*/
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+
+    [center addObserver:self selector:@selector(updatedDataListener:) name:@"dataLoadedIntoLocal" object:nil];
+    
     NSArray *tables = @[@"Patient"];
     NSDictionary *params = @{@"tableNames" : tables,
                              @"location" : @"historyViewController"};
@@ -63,7 +66,7 @@
 }
 
 /*Listener method waiting for data to be accessible from SQLite if it's not the correct tab, see ya never */ 
-+ (void)updatedDataListener:(NSNotification *)notification {
+-(void)updatedDataListener:(NSNotification *)notification {
      NSDictionary *params = [notification userInfo];
     if([[params objectForKey:@"location"] isEqualToString:@"historyViewController"]){
         NSMutableDictionary *data = [LocalTalk getData:params];

@@ -17,7 +17,6 @@
 }
 +(LocalTalk *)getSingleton;
 +(BOOL)clearIsLiveFlags;
-+(NSDictionary *)getDBObject:(NSDictionary *)params;
 
 
 /* Store @"tempId" locally before actual values loaded from DB
@@ -45,9 +44,7 @@
 +(id)localGetAudio:(NSString *)fileName;
 
 +(NSString *)localGetPatientId;
-+(NSString *)localGetRecordId;
-
-
++(NSString *)localGetPatientRecordId;
 
 +(BOOL)loadPortraitImageIntoLocal:(NSString *)patientId;
 +(BOOL)loadPatientRecordIntoLocal:(NSString *)recordId;

@@ -68,14 +68,23 @@
         
     }
 }
+- (void)viewWillAppear:(BOOL)animated {
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center addObserver:self selector:@selector(refreshPatients:) name:@"refreshPatients" object:nil];
+    id sender;
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"refreshPatients" object:self userInfo:sender];
+    
+}
 
-
+- (void)viewDidAppear:(BOOL)animated {
+    
+}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-    patients = [LocalTalk localGetPatientList];
-  
+   // patients = [LocalTalk localGetPatientList];
+    
     //[PatientListViewCell class];
     
     // Uncomment the following line to preserve selection between presentations.
