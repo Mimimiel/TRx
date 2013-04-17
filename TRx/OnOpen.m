@@ -15,6 +15,8 @@
     
     [center addObserver:[LocalTalk getSingleton] selector:@selector(checkConnectionAndLoadFromServer:) name:@"tabloaded" object:nil];
     
+    
+    [center addObserver:[LocalTalk getSingleton] selector:@selector(localStoreEverything:) name:@"nextpressed" object:nil];
    
     
 }

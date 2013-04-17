@@ -24,6 +24,8 @@ static LocalTalk *singleton;
     {
         initialized = true;
         singleton = [[LocalTalk alloc] init];
+        
+        
     }
 }
 
@@ -55,7 +57,7 @@ static LocalTalk *singleton;
 }
 
 /*Method that takes a list of table names and then queries the SQLite database and returns an NSArray of NSDictionaries*/ 
-+(NSMutableDictionary *)getData:(NSDictionary *)tableNames{
++(NSMutableArray *)getData:(NSDictionary *)tableNames {
     NSString *selectorValue, *selectorType, *patientId, *patientRecordId, *query;
     BOOL useSelector = 1;
     NSMutableDictionary *dictionary; 
@@ -131,22 +133,33 @@ static LocalTalk *singleton;
 /*-----------------Local Store Mega Method---------------------------*/
 
 
-+(BOOL)localStoreEverything:(NSDictionary *)params {
+-(BOOL)localStoreEverything:(NSNotification *)notification {
+
+    
+    NSDictionary *params = [notification userInfo];
     BOOL success;
+    NSLog(@"In localStoreEverything");
     if ([[params objectForKey:@"viewName"] isEqualToString:@"historyViewController"]) {
         
-        success = [self addPatientToLocal:params];
+        NSLog(@"attempting to add Patient to Local");
+        success = [LocalTalk addPatientToLocal:params];
         if (!success) {
+            [Utility alertWithMessage:@"Unable to add a patient."];
             return false;
         }
-        success = [self addRecordToLocal:params];
+        NSLog(@"attempting to add Record to Local");
+        success = [LocalTalk addRecordToLocal:params];
         if (!success) {
+            [Utility alertWithMessage:@"Unable to add patient record."];
             return false;
         }
         
     }
     
-    return false;
+    
+    
+    NSLog(@"Exiting localStoreEverything");
+    return true;
 }
 
 +(BOOL)addRecordToLocal:(NSDictionary *)params {
@@ -158,9 +171,10 @@ static LocalTalk *singleton;
     FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
     
     [db open];
-    BOOL retval = [db executeUpdate:@"INSERT INTO Patient (FirstName, MiddleName, LastName) VALUES (?, ?, ?, ?)",
+    BOOL retval = [db executeUpdate:@"INSERT INTO Patient (FirstName, MiddleName, LastName, Birthday) VALUES (?, ?, ?, ?)",
                    firstName, middleName, lastName, birthday];
     [db close];
+    
     
     return retval;
 }
@@ -176,8 +190,7 @@ static LocalTalk *singleton;
     FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
     
     [db open];
-    BOOL retval = [db executeUpdate:@"INSERT INTO PatientRecord (SurgeryTypeId, DoctorId, isActive, hasTimeout, Pa) VALUES (?, ?, ?, ?)",
-                   surgeryTypeId, doctorId, isActive, hasTimeout];
+    BOOL retval = [db executeUpdate:@"INSERT INTO PatientRecord (SurgeryTypeId, DoctorId, isActive, hasTimeout, ) VALUES (?, ?, ?, ?, ?)", surgeryTypeId, doctorId, isActive, hasTimeout, patientId];
     [db close];
     
     return retval;
@@ -190,7 +203,57 @@ static LocalTalk *singleton;
 
 
 
-
+/*---------------------------------------------------------------------------
+ Summary:
+ Helper methods for retrieving patientId and recordId from local database
+ GetPatientId        -- Returns the patientId used in server database
+ GetPatientRecordId  -- Returns the recordId used in server database
+ GetAppPatientId     -- Returns the patientId used in the local database
+ -- 'AppId' in the Patient table
+ Details:
+ Methods wrap base method: localGetId
+ Returns:
+ nil - failure to communicate with database
+ NSString of Id
+ *---------------------------------------------------------------------------*/
++(NSString *)localGetPatientId {
+    
+    NSString *query;
+    query = [NSString stringWithFormat:
+             @"SELECT b.Id FROM PatientRecord as a JOIN Patient as b ON a.AppPatientId = b.AppId WHERE a.IsLive = 1"];
+    return [self localGetId:query];
+}
++(NSString *)localGetPatientRecordId {
+    
+    NSString *query;
+    query = [NSString stringWithFormat:@"SELECT Id FROM PatientRecord WHERE IsLive = 1"];
+    return [self localGetId:query];
+}
++(NSString *)localGetAppPatientId {
+    
+    NSString *query;
+    query = [NSString stringWithFormat:@"SELECT AppId FROM Patient a.IsLive = 1"];
+    return [self localGetId:query];
+}
++(NSString *)localGetId:(NSString *)query {
+    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
+    [db open];
+    
+    FMResultSet *result = [db executeQuery:query];
+    
+    /*test to see if the query failed */
+    
+    if (!result) {
+        NSLog(@"%@", [db lastErrorMessage]);
+        return nil;
+    }
+    [result next];
+    
+    NSString *str = [result stringForColumnIndex:0];
+    
+    [db close];
+    return str;
+}
 
 
 
@@ -310,15 +373,15 @@ static LocalTalk *singleton;
     
     for(NSDictionary *item in patientsArrayFromDB){
        //NSLog(@"%@", item);
-        firstName = [item objectForKey:@"FirstName"];
-        middleName = [item objectForKey:@"MiddleName"];
-        lastName = [item objectForKey:@"LastName"];
-        patientId = [item objectForKey:@"Id"];
-        recordId = [item objectForKey:@"recordId"];
-        birthday = [item objectForKey:@"birthday"];  //does this exist?
-        complaint = [item objectForKey:@"SurgeryTypeId"];
-        complaint = [AdminInformation getSurgeryNameById:complaint];
-        imageId = [NSString stringWithFormat:@"%@n000", patientId];
+        firstName   = [item objectForKey:@"FirstName"];
+        middleName  = [item objectForKey:@"MiddleName"];
+        lastName    = [item objectForKey:@"LastName"];
+        patientId   = [item objectForKey:@"Id"];
+        recordId    = [item objectForKey:@"recordId"];
+        birthday    = [item objectForKey:@"birthday"];  //does this exist?
+        complaint   = [item objectForKey:@"SurgeryTypeId"];
+        complaint   = [AdminInformation getSurgeryNameById:complaint];
+        imageId     = [NSString stringWithFormat:@"%@n000", patientId];
         
         pictureURL = [DBTalk getThumbFromServer:imageId];
         
