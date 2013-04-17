@@ -286,13 +286,22 @@ static LocalTalk *singleton;
         NSLog(@"%@", [db lastErrorMessage]);
         return nil;
     }
-    //[result next];
+    NSLog(@"%@", [db lastErrorMessage]);
+    [result next];
     
-    //NSString *str = [result stringForColumnIndex:0];
-    NSString *str; 
-    while ([result next]) {
-        NSLog(@"result next:%@", [result stringForColumnIndex:0]);
-    }
+    NSString *str = [result stringForColumnIndex:0];
+    
+    /*-----------error checking ---------*/
+    
+//    //FMResultSet *result = [db executeQuery:@"Select * FROM PatientRecord", firstName];
+//    if (!result) {
+//        NSLog(@"failed to retrieve patient info");
+//    }
+//    [result next];
+//    NSLog(@"retrieved data: %@", [result stringForColumn:@"FirstName"]);
+    
+    /*-----------error checking ---------*/
+    
     [db close];
     NSLog(@"The string from local get Id is: %@", str);
     return str;
