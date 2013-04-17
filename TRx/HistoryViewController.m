@@ -65,9 +65,9 @@
 + (void)updatedDataListener:(NSNotification *)notification {
      NSDictionary *params = [notification userInfo];
     if([[params objectForKey:@"location"] isEqualToString:@"historyViewController"]){
-        NSArray *data = [LocalTalk getData:params];
-        
-    } else { }
+        NSMutableDictionary *data = [LocalTalk getData:params];
+        NSLog(@"%@", data);
+    } else { NSLog(@"not in the right view controller");}
     
 }
 
@@ -91,7 +91,7 @@
 //    [LocalTalkWrapper addPatientObjectToLocal:newPatient];
 //    [LocalTalkWrapper addNewPatientAndSynchData];
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"tabloaded" object:nil];
+    //[[NSNotificationCenter defaultCenter] postNotificationName:@"tabloaded" object:nil];
     
 }
 

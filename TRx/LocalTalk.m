@@ -55,10 +55,10 @@ static LocalTalk *singleton;
 }
 
 /*Method that takes a list of table names and then queries the SQLite database and returns an NSArray of NSDictionaries*/ 
-+(NSMutableArray *)getData:(NSDictionary *)tableNames{
++(NSMutableDictionary *)getData:(NSDictionary *)tableNames{
     NSString *selectorValue, *selectorType, *patientId, *patientRecordId, *query;
     BOOL useSelector = 1;
-    NSMutableArray *returnArray;
+    NSMutableDictionary *dictionary; 
     patientRecordId = [self localGetRecordId];
     patientId = [self localGetPatientId];
     //check for current patient, if none, return nil
@@ -95,15 +95,18 @@ static LocalTalk *singleton;
         if (!retval) {
             NSLog(@"The query in getData didn't return anything good :(");
             NSLog(@"%@", [db lastErrorMessage]);
-            //add blank data in the array 
-        } else {
-            //turn return data into a dictionary and put it into an array. 
+            //add blank data in the array
+            [Utility alertWithMessage:@"For some reason one of your tables didn't return data!"];
+        } else {//turn return data into a dictionary and put it into an array.
+            [dictionary setObject:[retval resultDictionary] forKey:table];
         }
     }
     [db close];
     
-    return returnArray; 
- 
+    return dictionary;
+    for(NSString *key in dictionary){
+        NSLog(@"%@", key);
+    }
 }
 
 +(BOOL)clearIsLiveFlags {
