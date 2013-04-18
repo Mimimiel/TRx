@@ -62,9 +62,8 @@ static DBTalk *singleton;
 
 +(void)pushLocalUnsyncedToServer {
     //check if patientId is null
-    NSString *patientId = [LocalTalk localGetPatientId];
-    if (!patientId) {
-    }
+   // if (!patientId) {
+   // }
     
     BOOL patientUnsynced    = [LocalTalk tableUnsynced:@"Patient"];
     BOOL recordUnsynced     = [LocalTalk tableUnsynced:@"PatientRecord"];

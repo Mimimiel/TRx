@@ -264,10 +264,7 @@ static LocalTalk *singleton;
     NSLog(@"retrieved data: %@", [result stringForColumn:@"FirstName"]);
     
     /*-----------error checking ---------*/
-    
-    [db lastErrorMessage];
-    
-    //    BOOL retval = [db executeUpdate:@"INSERT INTO Patient (FirstName, MiddleName, LastName, Birthday) VALUES (\"?\", \"?\", \"?\", \"?\")", firstName, middleName, lastName, birthday];
+
     [db close];
     return retval;
 }
@@ -281,7 +278,9 @@ static LocalTalk *singleton;
     NSString *isActive      = [params objectForKey:@"IsActive"];
     NSString *hasTimeout    = [params objectForKey:@"HasTimeout"];
     NSString *isCurrent     = [params objectForKey:@"IsCurrent"];
-    NSString *isLive        = [params objectForKey:@"IsLive"];
+    NSString *isLive        = [params objectForKey:@"IsLive"];    
+    NSString *Id            = [params objectForKey:@"Id"];
+    BOOL retval;
     
     
     
@@ -294,8 +293,17 @@ static LocalTalk *singleton;
     NSString *AppPatientId = [self localGetAppPatientId];
     NSLog(@"PatientId: %@", AppPatientId);
     
-    BOOL retval = [db executeUpdate:@"INSERT INTO PatientRecord(SurgeryTypeId, DoctorId, HasTimeout, IsLive, IsCurrent, AppPatientId) VALUES (?, ?, ?, ?, ?, ?)", surgeryTypeId, doctorId, hasTimeout, isLive, isCurrent, AppPatientId];
-    
+    if (!Id) {
+        retval = [db executeUpdate:@"INSERT INTO PatientRecord(SurgeryTypeId, DoctorId, HasTimeout, IsLive, IsCurrent, AppPatientId) VALUES (?, ?, ?, ?, ?, ?)", surgeryTypeId, doctorId, hasTimeout, isLive, isCurrent, AppPatientId];
+    }
+    else {
+        retval = [db executeUpdate:@"INSERT INTO PatientRecord(Id, SurgeryTypeId, DoctorId, HasTimeout, IsLive, IsCurrent, AppPatientId) VALUES (?, ?, ?, ?, ?, ?, ?)", Id, surgeryTypeId, doctorId, hasTimeout, isLive, isCurrent, AppPatientId];
+    }
+
+    NSLog(@"SurgeryTypeId: %@, DocId: %@ IsActive: %@ HasTimeout %@ IsLive %@ IsCurrent %@",
+            surgeryTypeId, doctorId,    isActive, hasTimeout, isLive, isCurrent);
+
+  
     [db close];
     return retval;
 }
@@ -395,12 +403,18 @@ static LocalTalk *singleton;
 
 /*---------------------------------------------------------------------------
  Summary:
- Stores a temporary RecordId in the local database
+    Helper methods for retrieving patientId and recordId from local database
+ 
+    selectAllFromTable  -- Returns all the fields from the table in a dictionary
+    tableUnsynced       -- Returns whether the table is synced or unsynced
  Details:
- New Patients are given temporary recordIds and patientIds
- until they are synched with the server
+    
  Returns:
- true on success, false otherwise
+
+ TODO:  test that selectAllFromTable gets values and doesn't fail on nil
+        test that tableUnsynced returns correct value for tables with one row
+            -test that tableUnsynced returns correct value for tables with multiple rows
+            select count(rowid) where unsynced if > 1
  *---------------------------------------------------------------------------*/
 
 +(NSMutableArray *)selectAllFromTable:(NSString *)table {
