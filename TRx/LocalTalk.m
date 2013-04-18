@@ -333,20 +333,29 @@ static LocalTalk *singleton;
  *---------------------------------------------------------------------------*/
 
 +(NSMutableArray *)selectAllFromTable:(NSString *)table {
-    NSMutableArray *arrayOfKeysAndValues;
+    NSMutableArray *arrayOfKeysAndValues = [[NSMutableArray alloc] init];
     FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
     FMResultSet *results;
+    NSString *query;
     [db open];
     if ([table isEqualToString:@"PatientRecord"]) {
-        results = [db executeQuery:@"Select * FROM ? WHERE IsAlive = 1", table];
+        query = [NSString stringWithFormat:@"Select * FROM %@ WHERE IsLive = 1", table];
+        NSLog(@"%@", query);
+        results = [db executeQuery:query];
     }
     else {
-        results = [db executeQuery:@"SELECT a.* FROM ? a, PatientRecord rec WHERE rec.IsAlive = 1", table];
+        query = [NSString stringWithFormat:@"SELECT a.* FROM %@ a, PatientRecord rec WHERE rec.IsLive = 1", table];
+        NSLog(@"%@", query);
+        results = [db executeQuery:query];
+    }
+    if (!results) {
+        NSLog(@"failed to select all from tables: %@", [db lastErrorMessage]);
     }
     while ([results next]) {
+        //NSLog(@"here");
         [arrayOfKeysAndValues addObject:[results resultDictionary]];
     }
-    
+    //NSLog(@"In selectAllFromTable: %@", arrayOfKeysAndValues);
     [db close];
     return arrayOfKeysAndValues;
 }
@@ -374,6 +383,20 @@ static LocalTalk *singleton;
 
 
 /*-------------------End Local Database Accessor Methods---------------------*/
+
+/*-------------------Begin Local Database Mutator Methods---------------------*/
+
++(BOOL)insertValue:(NSString *)value intoColumn:(NSString *)column inLocalTable:(NSString *)table {
+    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
+    [db open];
+    NSString *query = [NSString stringWithFormat:@"INSERT INTO %@(%@) VALUES %@", table, column, value];
+    BOOL result = [db executeUpdate:query];
+    [db close];
+    return result;
+}
+
+
+/*-------------------End Local Database Mutator Methods---------------------*/
 
 
 

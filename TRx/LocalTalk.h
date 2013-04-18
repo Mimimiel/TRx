@@ -36,6 +36,20 @@
               fileName:(NSString *)fileName;
 +(BOOL)localStorePortrait:(UIImage *)image;
 
+#pragma mark -- Accessor Methods for Local
+
++(NSString *)localGetPatientId;
++(NSString *)localGetPatientRecordId;
++(NSArray *)selectAllFromTable:(NSString *)table;
++(BOOL)tableUnsynced:(NSString *)table;
+
+
+
+#pragma mark -- Mutator Methods for Local
+
+
++(BOOL)insertValue:(NSString *)value intoColumn:(NSString *)column inLocalTable:(NSString *)table;
+
 
 
 +(NSMutableArray *)localGetPatientList;
@@ -43,8 +57,7 @@
 +(UIImage *)localGetPortrait;
 +(id)localGetAudio:(NSString *)fileName;
 
-+(NSString *)localGetPatientId;
-+(NSString *)localGetPatientRecordId;
+
 
 +(BOOL)loadPortraitImageIntoLocal:(NSString *)patientId;
 +(BOOL)loadPatientRecordIntoLocal:(NSString *)recordId;
@@ -60,8 +73,7 @@
 +(NSMutableDictionary *)getData:(NSDictionary *)tableNames;
 
 
-+(NSArray *)selectAllFromTable:(NSString *)table;
-+(BOOL)tableUnsynced:(NSString *)table;
+
 
 
 @end

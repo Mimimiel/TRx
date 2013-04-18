@@ -126,10 +126,10 @@
     BOOL IDStored;
     
     if ([newPatient.patientId isEqual: @"tmpPatientId"]) {
-        [DBTalk addPatient:newPatient.firstName
-                            middleName:newPatient.middleName
-                              lastName:newPatient.lastName
-                              birthday:@"20081010"];//newPatient.birthday];
+//        [DBTalk addPatient:newPatient.firstName
+//                            middleName:newPatient.middleName
+//                              lastName:newPatient.lastName
+//                              birthday:@"20081010"];//newPatient.birthday];
         if (!patientId) {
             NSLog(@"Failed to add patient: %@ %@", newPatient.firstName, newPatient.lastName);
             NSLog(@"middleName: %@  birthday: %@", newPatient.middleName, newPatient.birthday);

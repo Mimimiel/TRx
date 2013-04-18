@@ -29,7 +29,7 @@ static DBTalk *singleton;
 +(void)initialize {
     
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(addRecord) name:@"patientAdded" object:nil];
+    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(addUpdatePatientRecord) name:@"patientAdded" object:nil];
     
     static BOOL initialized = false;
     if (!initialized)
@@ -85,7 +85,6 @@ static DBTalk *singleton;
 +(void)addUpdatePatient {
     NSArray *patientTableValuesArray    = [LocalTalk selectAllFromTable:@"Patient"];
     NSDictionary *patientTableValues    = [patientTableValuesArray objectAtIndex:0];
-    
     NSLog(@"%@", patientTableValues);
     
     NSURL *url = [NSURL URLWithString:host];
@@ -93,7 +92,12 @@ static DBTalk *singleton;
     
     [httpClient postPath:@"add/patient" parameters:patientTableValues success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"AddPatient successful");
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"patientAdded" object:nil];
+        //[[NSNotificationCenter defaultCenter] postNotificationName:@"patientAdded" object:nil];
+        //add patientId to Local
+        NSString *patientId = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
+        [LocalTalk insertValue:patientId intoColumn:@"Id" inLocalTable:@"Patient"];
+        NSLog(@"new patientId: %@", patientId);
+        [DBTalk addUpdatePatientRecord];
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"AddPatient failed");
@@ -106,11 +110,12 @@ static DBTalk *singleton;
     
     NSArray *recordTableValuesArray     = [LocalTalk selectAllFromTable:@"PatientRecord"];
     NSDictionary *recordTableValues     = [recordTableValuesArray objectAtIndex:0];
+    NSLog(@"%@", recordTableValues);
     
     NSURL *url = [NSURL URLWithString:host];
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
     
-    [httpClient postPath:@"add/record" parameters:recordTableValues success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [httpClient postPath:@"add/patientRecord" parameters:recordTableValues success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"AddRecord successful");
         //[[NSNotificationCenter defaultCenter] postNotificationName:@"patientAdded" object:nil];
         
