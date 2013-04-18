@@ -252,19 +252,7 @@ static LocalTalk *singleton;
     
     [db open];
     BOOL retval = [db executeUpdate:@"INSERT INTO Patient (FirstName, MiddleName, LastName, Birthday) VALUES (?, ?, ?, ?)", firstName, middleName, lastName, birthday];
-    
-    /*-----------error checking ---------*/
-    
-    FMResultSet *result = [db executeQuery:@"Select * FROM Patient WHERE FirstName = ?", firstName];
-    if (!result) {
-        NSLog(@"failed to retrieve patient info");
-        [db lastErrorMessage];
-    }
-    [result next];
-    NSLog(@"retrieved data: %@", [result stringForColumn:@"FirstName"]);
-    
-    /*-----------error checking ---------*/
-    
+
     [db close];
     return retval;
 }
@@ -296,10 +284,7 @@ static LocalTalk *singleton;
         query = [NSString stringWithFormat:@"INSERT INTO PatientRecord(Id, SurgeryTypeId, DoctorId, HasTimeout, IsLive, IsCurrent, AppPatientId) VALUES (%@, %@, %@, %@, %@, %@, %@)", Id, surgeryTypeId, doctorId, hasTimeout, isLive, isCurrent, AppPatientId];
     }
     
-    NSLog(@"SurgeryTypeId: %@, DocId: %@ IsActive: %@ HasTimeout %@ IsLive %@ IsCurrent %@",
-          surgeryTypeId, doctorId,    isActive, hasTimeout, isLive, isCurrent);
-    
-    
+    retval = [db executeUpdate:query]; 
     [db close];
     return retval;
 }
@@ -329,9 +314,6 @@ static LocalTalk *singleton;
         }
     }
     
-    [db close];
-    
-    //
     //    NSString *firstName     = [params objectForKey:@"FirstName"];
     //    NSString *middleName    = [params objectForKey:@"MiddleName"];
     //    NSString *lastName      = [params objectForKey:@"LastName"];
