@@ -23,7 +23,7 @@
 
 - (void)viewDidLoad{
     [super viewDidLoad];
-
+/*
     newPatient = [[Patient alloc] initWithFirstName:@"Rob" MiddleName:@"D" LastName:@"woMan" ChiefComplaint:@"1" PhotoID:NULL];
     newPatient.birthday = @"20010203";
     _complaintsArray = [AdminInformation getSurgeryNames];
@@ -33,7 +33,7 @@
     firstNameText.delegate = self;
     middleNameText.delegate = self;
     lastNameText.delegate = self;
-    
+    */
        
     
     
@@ -68,7 +68,7 @@
      NSDictionary *params = [notification userInfo];
     if([[params objectForKey:@"location"] isEqualToString:@"historyViewController"]){
         NSMutableDictionary *data = [LocalTalk getData:params];
-        NSLog(@"%@", data);
+        NSLog(@"The updated data listener's data in History VC is: %@", data);
     } else { NSLog(@"not in the right view controller");}
     
 }

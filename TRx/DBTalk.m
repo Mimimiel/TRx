@@ -50,7 +50,6 @@ static Reachability *internetReachable = nil;
     //check if patientId is null
     NSString *patientId = [LocalTalk localGetPatientId];
     if (!patientId) {
-        [self ];
     }
     
     //check if recordId is null
@@ -564,12 +563,16 @@ static Reachability *internetReachable = nil;
         /*it's a new patient or something went wrong*/
         //TODO: LOCK DOWN OTHER TABS HERE BEFORE WE PUB
 
-       // [[NSNotificationCenter defaultCenter] postNotificationName:@"loadFromLocal" object:self userInfo:dbobj];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"loadFromLocal" object:self userInfo:params];
         NSLog(@"poop: %@", params);
     }
 }
 
 + (void)loadDataintoSQLite:(id) JSON {
+    /*UPDATE Table1 SET (...) WHERE Column1='SomeValue'
+     IF @@ROWCOUNT=0
+     INSERT INTO Table1 VALUES (...)*/
+    
     //for each table if the ID exists in that table update the row, otherwise insert the data into that table.
     NSError *error=nil;
     NSDictionary *parsedData = [NSJSONSerialization JSONObjectWithData:JSON options:kNilOptions error:&error];

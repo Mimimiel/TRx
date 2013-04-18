@@ -12,7 +12,7 @@
 
 //pretend change...
 
-@synthesize firstName, middleName, lastName, chiefComplaint, photoID, patientId, currentRecordId, birthday;
+@synthesize firstName, middleName, lastName, chiefComplaint, photoID, patientId, currentRecordId, birthday, patientRecordAppId;
 
 -(id)initWithFirstName:(NSString *)fn MiddleName:(NSString*) mn LastName:(NSString*)ln ChiefComplaint:(NSString *)c PhotoID:(UIImage*)p{
     self.firstName = fn;
@@ -25,7 +25,7 @@
 }
 
 -(id)initWithPatientId:(NSString *)patId currentRecordId:(NSString *)currRecordId
-             firstName:(NSString *)fn MiddleName:(NSString*) mn LastName:(NSString*)ln
+patientRecordAppId:(NSString *)PatientRecordAppId firstName:(NSString *)fn MiddleName:(NSString*) mn LastName:(NSString*)ln
               birthday:(NSString *)bDay ChiefComplaint:(NSString *)c PhotoID:(UIImage*)p PhotoURL:(NSURL *)photoURL {
     
     self = [self initWithFirstName:fn MiddleName:mn LastName:ln ChiefComplaint:c PhotoID:p];
@@ -33,6 +33,7 @@
     self.patientId = patId;
     self.currentRecordId = currRecordId;
     self.photoURL = photoURL;
+    self.patientRecordAppId = PatientRecordAppId;
     
     return  self;
 }

@@ -12,6 +12,7 @@
 #import "DBTalk.h" 
 #import "LocalTalk.h"
 #import "Patient.h"
+#import "Utility.h"
 
 /*
     NOTE:
@@ -204,6 +205,42 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    BOOL connection = [LocalTalk checkConnectivity];
+    /*we need to set the IsActive Field of the patient here*/
+    int row = [indexPath row];
+    /*  Patient *obj = [[Patient alloc] initWithPatientId:patientId currentRecordId:recordId patientRecordAppId:PatientRecordAppId firstName:firstName MiddleName:middleName LastName:lastName birthday:birthday ChiefComplaint:complaint PhotoID:picture PhotoURL:pictureURL];*/
+    /* NSString *fn = [[patients objectAtIndex:row] firstName];
+     NSString *mn = [[patients objectAtIndex:row] middleName];
+     NSString *ln = [[patients objectAtIndex:row] lastName];
+     NSURL *url = [[patients objectAtIndex:row] photoURL];*/
+    
+    NSDictionary *params = @{@"viewName"    : @"summaryViewController",
+                             @"FirstName"   :  [[patients objectAtIndex:row] firstName],
+                             @"MiddleName"  : [[patients objectAtIndex:row] middleName],
+                             @"LastName"    : [[patients objectAtIndex:row] lastName],
+                             @"Birthday"    : [[patients objectAtIndex:row] birthday],
+                            // @"Data"        : [[patients objectAtIndex:row] photoID],
+                             @"PhotoURL"    : [[patients objectAtIndex:row] photoURL],
+                             @"SurgeryTypeId":[[patients objectAtIndex:row] chiefComplaint],
+                             @"DoctorId"    : @"1",
+                             @"HasTimeout"  : @"0",
+                             @"IsLive"      : @"1",
+                             @"IsCurrent"   : @"1"
+                             };
+    if(connection){
+         [[NSNotificationCenter defaultCenter] postNotificationName:@"nextpressed" object:self userInfo:params];
+        NSString *patientRecordId = [[patients objectAtIndex:row] currentRecordId];
+        [LocalTalk setIsLive:patientRecordId];
+        NSLog(@"Made it to the clicked cell and everything worked great"); 
+    } else if(!connection) {
+        NSString *patientRecordAppId = [[patients objectAtIndex:row] patientRecordAppId];
+        if(patientRecordAppId != NULL){
+            [LocalTalk setIsLive:patientRecordAppId];
+        } else {
+            [Utility alertWithMessage:@"We're really sorry but we don't have information for this patient at the moment, when the sync button is green try again!"]; 
+            return;
+        }
+    }
     // Navigation logic may go here. Create and push another view controller.
     /*
      <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];

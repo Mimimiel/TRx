@@ -45,6 +45,7 @@
 
 +(NSString *)localGetPatientId;
 +(NSString *)localGetPatientRecordId;
++(NSString *)localGetPatientRecordAppId;
 
 +(BOOL)loadPortraitImageIntoLocal:(NSString *)patientId;
 +(BOOL)loadPatientRecordIntoLocal:(NSString *)recordId;
@@ -58,8 +59,8 @@
 
 +(void)checkConnectionAndLoadFromServer:(NSNotification *)notification;
 +(NSMutableDictionary *)getData:(NSDictionary *)tableNames;
-
-
++(BOOL)setIsLive:(NSString *)patientIdentifier;
++ (BOOL)checkConnectivity;
 
 
 /* for testing */

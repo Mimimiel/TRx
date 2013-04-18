@@ -23,11 +23,33 @@
     return self;
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    
+    /*listeners for history view controller*/
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    
+    [center addObserver:self selector:@selector(updatedDataListener:) name:@"loadFromLocal" object:nil];
+    
+    NSArray *tables = @[@"Patient"];
+    NSDictionary *params = @{@"tableNames" : tables,
+                             @"location" : @"summaryViewController"};
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"tabloaded" object:self userInfo:params];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
     [_patientPicture setImage:[LocalTalk localGetPortrait]];
+    
+}
+
+-(void)updatedDataListener:(NSNotification *)notification {
+    NSDictionary *params = [notification userInfo];
+    if([[params objectForKey:@"location"] isEqualToString:@"summaryViewController"]){
+        NSMutableDictionary *data = [LocalTalk getData:params];
+        NSLog(@"The updated data listener's data in Summary VC is: %@", data);
+    } else { NSLog(@"not in the right view controller");}
     
 }
 

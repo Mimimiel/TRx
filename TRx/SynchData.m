@@ -126,10 +126,10 @@
     BOOL IDStored;
     
     if ([newPatient.patientId isEqual: @"tmpPatientId"]) {
-        patientId = [DBTalk addPatient:newPatient.firstName
+   /*     patientId = [DBTalk addPatient:newPatient.firstName
                             middleName:newPatient.middleName
                               lastName:newPatient.lastName
-                              birthday:@"20081010"];//newPatient.birthday];
+                              birthday:@"20081010"];//newPatient.birthday];*/
         if (!patientId) {
             NSLog(@"Failed to add patient: %@ %@", newPatient.firstName, newPatient.lastName);
             NSLog(@"middleName: %@  birthday: %@", newPatient.middleName, newPatient.birthday);
@@ -252,7 +252,7 @@
  *---------------------------------------------------------------------------*/
 
 +(Patient *)initPatientFromLocal {
-    NSString *patientId, *recordId, *fName, *mName, *lName, *bDay, *chiefComplaint;
+    NSString *patientId, *recordId, *fName, *mName, *lName, *bDay, *chiefComplaint, *PatientRecordAppId;
     
     patientId = [LocalTalk localGetPatientId];
     if (!patientId) {
@@ -266,6 +266,8 @@
         return false;
     }
     
+    PatientRecordAppId = [LocalTalk localGetPatientRecordAppId];
+    
     fName = [LocalTalk localGetPatient:@"FirstName"];
     mName = [LocalTalk localGetPatient:@"MiddleName"];
     lName = [LocalTalk localGetPatient:@"LastName"];
@@ -273,7 +275,8 @@
     UIImage *image = [LocalTalk localGetPortrait];
     NSURL *url;
     
-    Patient *newPatient = [[Patient alloc] initWithPatientId:patientId currentRecordId:recordId firstName:fName MiddleName:mName LastName:lName birthday:bDay ChiefComplaint:chiefComplaint PhotoID:image PhotoURL:url];
+    
+    Patient *newPatient = [[Patient alloc] initWithPatientId:patientId currentRecordId:recordId patientRecordAppId:PatientRecordAppId firstName:fName MiddleName:mName LastName:lName birthday:bDay ChiefComplaint:chiefComplaint PhotoID:image PhotoURL:url];
     
     return newPatient;
 }
