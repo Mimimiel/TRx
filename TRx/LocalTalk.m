@@ -314,18 +314,36 @@ static LocalTalk *singleton;
     return retval;
 }
 
-//TODO: inserts vs updates?
-//TODO: error handling
-+(BOOL)addToLocalTable:(NSString *)tableName withData:(NSMutableArray *)tableData {
-    BOOL retval;
+/*-----------------------------------------------------------------------
+ Method: addToLocalTable withData
+ Returns: 
+    NSMutableArray where each index holds the primary key for each row
+    If individual insert successful, primary key > 0
+    If unsuccessful, primary key = 0
+ 
+    //TRUE if all inserts successful
+    //FALSE if any insert failed
+ Parameters:
+    tableName: name of the table you want to insert
+    tableData: data you want to insert
+        each index in the array is a row to insert into the table
+        each row can look like whatever (i.e. don't have to be identical)
+ Summary: insert rows into some table in the local database
+ //TODO: inserts vs updates? i.e. should this also handle updates
+ //TODO: error handling
+ //TODO: this may only be a temporary method?
+ -----------------------------------------------------------------------*/
++(NSMutableArray*) addToLocalTable:(NSString *)tableName withData:(NSMutableArray *)tableData {
     BOOL success;
+    //BOOL retval = TRUE;
+    NSMutableArray* insertedIDs = [[NSMutableArray alloc] init];
+    NSInteger insertedID;
     NSMutableString *sql;
     FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
     [db open];
     
     //TODO: this could be more efficient
-    
-    retval = TRUE;
+    //TODO: think about appropriate return values (see RETURNS above)
     for(NSDictionary* row in tableData){
         sql = [NSMutableString stringWithFormat:@"INSERT INTO %@ (%@) VALUES ('%@')",
                tableName,
@@ -334,36 +352,20 @@ static LocalTalk *singleton;
     
         success = [db executeUpdate:sql];
         if(!success){
-            retval = FALSE;
+            insertedID = 0;
+            //retval = FALSE;
             //unsuccessful, error handling goes here
         }
+        else{
+            //successful
+            //any further handling?
+            insertedID = [db lastInsertRowId];
+        }
+        
+        [insertedIDs addObject:[NSNumber numberWithInteger:insertedID]];
     }
     
-    //    NSString *firstName     = [params objectForKey:@"FirstName"];
-    //    NSString *middleName    = [params objectForKey:@"MiddleName"];
-    //    NSString *lastName      = [params objectForKey:@"LastName"];
-    //    NSString *birthday      = [params objectForKey:@"Birthday"];
-    //    NSLog(@"FirstName: %@ MiddleName: %@ LastName: %@ Birthday: %@", firstName, middleName, lastName, birthday);
-    //    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
-    //
-    //    [db open];
-    //    BOOL retval = [db executeUpdate:@"INSERT INTO Patient (FirstName, MiddleName, LastName, Birthday) VALUES (?, ?, ?, ?)", firstName, middleName, lastName, birthday];
-    //
-    //    /*-----------error checking ---------*/
-    //
-    //    FMResultSet *result = [db executeQuery:@"Select * FROM Patient WHERE FirstName = ?", firstName];
-    //    if (!result) {
-    //        NSLog(@"failed to retrieve patient info");
-    //        [db lastErrorMessage];
-    //    }
-    //    [result next];
-    //    NSLog(@"retrieved data: %@", [result stringForColumn:@"FirstName"]);
-    //
-    //    /*-----------error checking ---------*/
-    //
-    //    [db close];
-    
-    return retval;
+    return insertedIDs;
 }
 
 
