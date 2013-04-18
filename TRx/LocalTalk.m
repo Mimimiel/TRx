@@ -121,14 +121,14 @@ static LocalTalk *singleton;
 
 +(BOOL)clearIsLiveFlags {
     //this will go to the database and set all the is live flags to 0
+    
     FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
     [db open];
     /*FIX THIS WILLIE YOURE WORKING HERE*/
     NSString *query = [NSString stringWithFormat:@"UPDATE PatientRecord SET IsLive = 0"];
-    
     BOOL retval = [db executeUpdate:query];
+    
     if (!retval) {
-        NSLog(@"Error updating isLive in PatientRecord's table");
         NSLog(@"%@", [db lastErrorMessage]);
     }
     [db close];
@@ -247,7 +247,7 @@ static LocalTalk *singleton;
     NSString *middleName    = [params objectForKey:@"MiddleName"];
     NSString *lastName      = [params objectForKey:@"LastName"];
     NSString *birthday      = [params objectForKey:@"Birthday"];
-    NSLog(@"FirstName: %@ MiddleName: %@ LastName: %@ Birthday: %@", firstName, middleName, lastName, birthday);
+
     FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
     
     [db open];
@@ -275,17 +275,11 @@ static LocalTalk *singleton;
 +(BOOL)addPatientRecordToLocal:(NSDictionary *)params {
     NSString *surgeryTypeId = [params objectForKey:@"SurgeryTypeId"];
     NSString *doctorId      = [params objectForKey:@"DoctorId"];
-    NSString *isActive      = [params objectForKey:@"IsActive"];
     NSString *hasTimeout    = [params objectForKey:@"HasTimeout"];
     NSString *isCurrent     = [params objectForKey:@"IsCurrent"];
     NSString *isLive        = [params objectForKey:@"IsLive"];
     NSString *Id            = [params objectForKey:@"Id"];
     BOOL retval;
-    
-    
-    
-    NSLog(@"SurgeryTypeId: %@, DocId: %@ IsActive: %@ HasTimeout %@ IsLive %@ IsCurrent %@",
-          surgeryTypeId, doctorId,    isActive, hasTimeout, isLive, isCurrent);
     
     FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
     [db open];
@@ -293,11 +287,13 @@ static LocalTalk *singleton;
     NSString *AppPatientId = [self localGetAppPatientId];
     NSLog(@"PatientId: %@", AppPatientId);
     
+    NSString *query;
+    
     if (!Id) {
-        retval = [db executeUpdate:@"INSERT INTO PatientRecord(SurgeryTypeId, DoctorId, HasTimeout, IsLive, IsCurrent, AppPatientId) VALUES (?, ?, ?, ?, ?, ?)", surgeryTypeId, doctorId, hasTimeout, isLive, isCurrent, AppPatientId];
+        query = [NSString stringWithFormat:@"INSERT INTO PatientRecord(SurgeryTypeId, DoctorId, HasTimeout, IsLive, IsCurrent, AppPatientId) VALUES (%@, %@, %@, %@, %@, %@)", surgeryTypeId, doctorId, hasTimeout, isLive, isCurrent, AppPatientId];
     }
     else {
-        retval = [db executeUpdate:@"INSERT INTO PatientRecord(Id, SurgeryTypeId, DoctorId, HasTimeout, IsLive, IsCurrent, AppPatientId) VALUES (?, ?, ?, ?, ?, ?, ?)", Id, surgeryTypeId, doctorId, hasTimeout, isLive, isCurrent, AppPatientId];
+        query = [NSString stringWithFormat:@"INSERT INTO PatientRecord(Id, SurgeryTypeId, DoctorId, HasTimeout, IsLive, IsCurrent, AppPatientId) VALUES (%@, %@, %@, %@, %@, %@, %@)", Id, surgeryTypeId, doctorId, hasTimeout, isLive, isCurrent, AppPatientId];
     }
     
     NSLog(@"SurgeryTypeId: %@, DocId: %@ IsActive: %@ HasTimeout %@ IsLive %@ IsCurrent %@",
@@ -483,7 +479,7 @@ static LocalTalk *singleton;
         results = [db executeQuery:query];
     }
     else {
-        query = [NSString stringWithFormat:@"SELECT a.* FROM %@ a, PatientRecord rec WHERE rec.IsLive = 1", table];
+        query = [NSString stringWithFormat:@"SELECT a.* FROM %@ a, PatientRecord rec WHERE a.AppId = rec.AppPatientId and rec.IsLive = 1", table];
         NSLog(@"%@", query);
         results = [db executeQuery:query];
     }
@@ -494,7 +490,7 @@ static LocalTalk *singleton;
         //NSLog(@"here");
         [arrayOfKeysAndValues addObject:[results resultDictionary]];
     }
-    //NSLog(@"In selectAllFromTable: %@", arrayOfKeysAndValues);
+    NSLog(@"In selectAllFromTable: %@", arrayOfKeysAndValues);
     [db close];
     return arrayOfKeysAndValues;
 }

@@ -34,7 +34,7 @@
     
     //Note: if no picture is taken,
     //can use [NSNull null]
-    
+    [LocalTalk clearIsLiveFlags];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"nextpressed" object:self userInfo:params];
     
     //[[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:5]];
