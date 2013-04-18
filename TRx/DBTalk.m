@@ -14,7 +14,6 @@
 #import "LocalTalk.h"
 #import <UIKit/UIKit.h>
 
-
 @implementation DBTalk
 
 
@@ -60,7 +59,7 @@ static DBTalk *singleton;
 
 
 
-+(void)pushLocalUnsyncedToServer {
+-(void)pushLocalUnsyncedToServer {
     //check if patientId is null
    // if (!patientId) {
    // }
@@ -583,7 +582,7 @@ static DBTalk *singleton;
         [AFJSONRequestOperation addAcceptableContentTypes:[NSSet setWithObject:@"text/html"]];
         AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
             NSLog(@"This was the response: %@", response);
-            [self loadDataintoSQLite:JSON];
+            [self loadDataintoSQLiteWith:JSON];
               [[NSNotificationCenter defaultCenter] postNotificationName:@"loadFromLocal" object:self userInfo:params];
         } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
             NSLog(@"Request Failure Because %@",[error userInfo]);
@@ -600,35 +599,63 @@ static DBTalk *singleton;
     }
 }
 
-/*gets a JSON object that is an array[0]->dictionary { tableName1 : {table data }, tableName2 : {table data} } */
-
-+ (void)loadDataintoSQLite:(id) JSON {
+/***********************************************************************************************************
+ Method: loadDataintoSQLite
+ Objective: fill the local database with whatever is passed to it
+ Returns: void
+ Parameters:
+    (id) JSON: the data to put into the local database, 
+                of the form array[0]->dictionary { tableName1 : {table data }, tableName2 : {table data} }
+***********************************************************************************************************/
++(void)loadDataintoSQLiteWith:(id) JSON{
     /*UPDATE Table1 SET (...) WHERE Column1='SomeValue'
      IF @@ROWCOUNT=0
      INSERT INTO Table1 VALUES (...)*/
     
+    //mischa: not sure if i agree...thinking
     //for each table if the ID exists in that table update the row, otherwise insert the data into that table.
-    NSError *error=nil;
+    NSError *error = nil;
     NSDictionary *parsedData = [NSJSONSerialization JSONObjectWithData:JSON options:kNilOptions error:&error];
     for(NSString *key in parsedData){
         NSLog(@"%@", key);
     }
     
-    for(NSString *table in parsedData){
-        //check if it's Doctor, surgery type, or patient and if it is those have special keys
-        //otherwise, use patient record id
-        //to insert (if it doesn't exist or update if it does
-        if([table isEqualToString:@"Patient"]){
-            
-        } else if([table isEqualToString:@"Doctor"] || [table isEqualToString:@"SurgeryType"]) {
-            
+    BOOL success = 1;
+    //check if it's Doctor, surgery type, or patient and if it is those have special keys
+    //otherwise, use patient record id
+    //to insert (if it doesn't exist or update if it does
+    
+    //TODO: it would be really nice to just have an enum of table names
+    
+    //TODO: inserts vs updates
+    //Try to insert patient
+    if(parsedData[@"Patient"] != nil){
+        //success = [LocalTalk addTableToLocal:@"Patient" withData:parsedData[@"Patient"]];
+        if(!success){
+            //TODO: upon failure, do what? (besides not trying to further add records etc)
         }
-        else {
-            
-        }
-        
-        
     }
+    
+    //Try to insert patient record
+    if(success && parsedData[@"PatientRecod"] != nil){
+        //success = [LocalTalk addTableToLocal:@"PatientRecord" withData:parsedData[@"PatientRecord"]];
+        if(!success){
+            //TODO: upon failure, do what? (besides not trying to further add records etc)
+        }
+    }
+        
+//    for(NSString *tableName in parsedData){
+//        
+//        if([tableName isEqualToString:@"Patient"]){
+//            success = [LocalTalk addTableToLocal:tableName withData:parsedData[tableName]];
+//        }
+//        else if([tableName isEqualToString:@"Doctor"] || [tableName isEqualToString:@"SurgeryType"]) {
+//            
+//        }
+//        else {
+//            
+//        }
+    
 }
 /*+(NSDictionary *)getValuesFromLocal:(NSDictionary *)dic {
  
