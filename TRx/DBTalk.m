@@ -600,6 +600,8 @@ static DBTalk *singleton;
     }
 }
 
+/*gets a JSON object that is an array[0]->dictionary { tableName1 : {table data }, tableName2 : {table data} } */
+
 + (void)loadDataintoSQLite:(id) JSON {
     /*UPDATE Table1 SET (...) WHERE Column1='SomeValue'
      IF @@ROWCOUNT=0
