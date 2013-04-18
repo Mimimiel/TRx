@@ -26,7 +26,7 @@
 +(BOOL)addRecordToLocal:(NSDictionary *)params;
 
 //TODO: addToLocalTable is a temp method
-+(BOOL)addToLocalTable:(NSString *)tableName withData:(NSMutableArray *)tableData;
++(NSMutableArray*)addToLocalTable:(NSString *)tableName withData:(NSMutableArray *)tableData;
 
 
 

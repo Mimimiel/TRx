@@ -103,7 +103,8 @@
  //TODO: write this test
  -----------------------------------------------------------------------*/
 -(void)testAddToLocalTableWithData{
-    BOOL success = FALSE;
+    BOOL success = TRUE;
+    NSMutableArray *insertedIDs;
     NSString* tableName = @"Patient";
     NSDictionary *brandNewPatient = @{@"FirstName"   : @"Testy",
                                       @"MiddleName"  : @"Tester",
@@ -111,19 +112,25 @@
                                       @"Birthday"    : @"1989-10-10"
                                       };
     NSMutableArray *newPatients = [[NSMutableArray alloc] init];
+    NSDictionary *serverPatient =   @{@"Id"           : @"10000",
+                                    @"FirstName"    : @"SonOf",
+                                    @"MiddleName"   : @"Tester",
+                                    @"LastName"     : @"McTesterson",
+                                    @"Birthday"     : @"2013-1-10",
+                                    @"Created"      : @"2013-04-18 01:01:01",
+                                    @"LastModified" : @"2013-04-18 02:02:02",
+                                    @"LastSynced"   : @"2013-04-18 01:01:01",
+                                    };
+    
     [newPatients addObject:brandNewPatient];
+    [newPatients addObject:serverPatient];
     
-//    NSDictionary *serverPatient = @{@"Id"           : @"10000",
-//                                    @"FirstName"    : @"SonOf",
-//                                    @"MiddleName"   : @"Tester",
-//                                    @"LastName"     : @"McTesterson",
-//                                    @"Birthday"     : @"2013-1-10",
-//                                    @"Created"      : @"2013-04-18 01:01:01",
-//                                    @"LastModified" : @"2013-04-18 02:02:02",
-//                                    @"LastSynced"   : @"2013-04-18 01:01:01",
-//                                    };
-    
-    success = [LocalTalk addToLocalTable:tableName withData:newPatients];
+    insertedIDs = [LocalTalk addToLocalTable:tableName withData:newPatients];
+    for(NSNumber* insertedID in insertedIDs){
+        if(!insertedID){
+            success = FALSE;
+        }
+    }
 }
 
 - (void)tearDown
