@@ -25,6 +25,8 @@
  
     [DBTalk checkReachability];
     [AdminInformation getOperationRecordTypeNames];
+    [AdminInformation getSurgeryNames];
+    [AdminInformation getDoctorNames];
     
     BOOL connect = [DBTalk getConnectivity];
     NSLog(@"first connectivity check: %d",connect);

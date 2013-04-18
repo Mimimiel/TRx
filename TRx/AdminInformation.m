@@ -27,10 +27,8 @@ static NSArray *operationsList;
 
 +(NSMutableArray *)getOperationRecordTypeNames
 {
-    NSMutableArray *operationRecordNamesList = [[NSMutableArray alloc] init];
-    
-    operationRecordNamesList = operationsList;
-    BOOL check = [LocalTalk storeMutableArrayFromAdmin:operationRecordNamesList inTable:@"RecordType"];
+    NSMutableArray *operationRecordNamesList = [[NSMutableArray alloc] initWithArray:operationsList copyItems:YES];
+    BOOL check = [LocalTalk addToLocalTable:@"RecordType" withData:operationRecordNamesList];
     if(check){
         return operationRecordNamesList;
     }
@@ -74,13 +72,10 @@ static NSArray *operationsList;
 }
 +(NSMutableArray *)getDoctorNames
 {
-    NSMutableArray *doctorNamesList = [[NSMutableArray alloc] init];
+    NSMutableArray *doctorNamesList = [[NSMutableArray alloc] initWithArray:doctorList copyItems:YES];
     
-    if (doctorList != NULL) {
-        for (NSDictionary *dic in doctorList) {
-            NSString *lname = [dic objectForKey:@"LastName"];
-            [doctorNamesList addObject:lname];
-        }
+    BOOL check = [LocalTalk addToLocalTable:@"Doctor" withData:doctorNamesList];
+    if(check){
         return doctorNamesList;
     }
     else {
@@ -91,17 +86,14 @@ static NSArray *operationsList;
 
 +(NSMutableArray *)getSurgeryNames
 {
-    NSMutableArray *surgeryNamesList = [[NSMutableArray alloc] init];
+    NSMutableArray *surgeryNamesList = [[NSMutableArray alloc] initWithArray:doctorList copyItems:YES];
     
-    if (surgeryList != NULL) {
-        for (NSDictionary *dic in surgeryList) {
-            NSString *name = [dic objectForKey:@"Name"];
-            [surgeryNamesList addObject:name];
-        }
+    BOOL check = [LocalTalk addToLocalTable:@"SurgeryType" withData:surgeryNamesList];
+    if(check){
         return surgeryNamesList;
     }
     else {
-        NSLog(@"Error retrieving surgeryNamesList");
+        NSLog(@"Error retrieving doctorNamesList");
         return NULL;
     }
 }
