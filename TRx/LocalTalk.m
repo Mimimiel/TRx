@@ -199,6 +199,12 @@ static LocalTalk *singleton;
 
 /*-----------------Local Store Mega Method---------------------------*/
 
+/*
+    If it is the history view controller
+        add patient and patient record
+        add other data to 
+ */
+
 
 -(BOOL)localStoreFromViewsToLocal:(NSNotification *)notification {
     
@@ -211,29 +217,32 @@ static LocalTalk *singleton;
     if ([[params objectForKey:@"viewName"] isEqualToString:@"historyViewController"]) {
         
         NSLog(@"attempting to add Patient to Local");
-        success = [LocalTalk addPatientToLocal:params];
+        success = [LocalTalk addNewPatientToLocal:params];
         if (!success) {
             [Utility alertWithMessage:@"Unable to add a patient."];
             return false;
         }
         NSLog(@"attempting to add Record to Local");
-        success = [LocalTalk addRecordToLocal:params];
+        success = [LocalTalk addPatientRecordToLocal:params];
         if (!success) {
             [Utility alertWithMessage:@"Unable to add patient record."];
             return false;
-        }
-        
-        
-        
-    }
-    
+        }      
+    }    
     NSLog(@"Exiting localStoreEverything");
     [[NSNotificationCenter defaultCenter] postNotificationName:@"dataFromViewsStoredIntoLocal" object:self userInfo:nil];
     
     return true;
 }
 
-+(BOOL)addPatientToLocal:(NSDictionary *)params {
+/*  
+    addPatient for historyViewController adding a new patient
+    and for loading data into sqlite from server ?
+ 
+    think about date created and date modified
+ */
+
++(BOOL)addNewPatientToLocal:(NSDictionary *)params {
     NSString *firstName     = [params objectForKey:@"FirstName"];
     NSString *middleName    = [params objectForKey:@"MiddleName"];
     NSString *lastName      = [params objectForKey:@"LastName"];
@@ -249,6 +258,7 @@ static LocalTalk *singleton;
     FMResultSet *result = [db executeQuery:@"Select * FROM Patient WHERE FirstName = ?", firstName];
     if (!result) {
         NSLog(@"failed to retrieve patient info");
+        [db lastErrorMessage];
     }
     [result next];
     NSLog(@"retrieved data: %@", [result stringForColumn:@"FirstName"]);
@@ -259,13 +269,13 @@ static LocalTalk *singleton;
     
     //    BOOL retval = [db executeUpdate:@"INSERT INTO Patient (FirstName, MiddleName, LastName, Birthday) VALUES (\"?\", \"?\", \"?\", \"?\")", firstName, middleName, lastName, birthday];
     [db close];
-    
-    
     return retval;
 }
+/*
+    Think about:  How / When do I add date created and last modified?
+ */
 
-
-+(BOOL)addRecordToLocal:(NSDictionary *)params {
++(BOOL)addPatientRecordToLocal:(NSDictionary *)params {
     NSString *surgeryTypeId = [params objectForKey:@"SurgeryTypeId"];
     NSString *doctorId      = [params objectForKey:@"DoctorId"];
     NSString *isActive      = [params objectForKey:@"IsActive"];
@@ -279,10 +289,9 @@ static LocalTalk *singleton;
           surgeryTypeId, doctorId,    isActive, hasTimeout, isLive, isCurrent);
     
     FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
-    
     [db open];
     
-    NSString *AppPatientId         = [self localGetAppPatientId];
+    NSString *AppPatientId = [self localGetAppPatientId];
     NSLog(@"PatientId: %@", AppPatientId);
     
     BOOL retval = [db executeUpdate:@"INSERT INTO PatientRecord(SurgeryTypeId, DoctorId, HasTimeout, IsLive, IsCurrent, AppPatientId) VALUES (?, ?, ?, ?, ?, ?)", surgeryTypeId, doctorId, hasTimeout, isLive, isCurrent, AppPatientId];
@@ -293,10 +302,12 @@ static LocalTalk *singleton;
 
 
 
-
 /*-------------------End Local Store Mega Method---------------------*/
 
 
+
+
+/*-------------------Begin Local Database Accessor Methods---------------------*/
 
 /*---------------------------------------------------------------------------
  Summary:
@@ -382,8 +393,6 @@ static LocalTalk *singleton;
 }
 
 
-
-
 /*---------------------------------------------------------------------------
  Summary:
  Stores a temporary RecordId in the local database
@@ -393,12 +402,72 @@ static LocalTalk *singleton;
  Returns:
  true on success, false otherwise
  *---------------------------------------------------------------------------*/
-+(BOOL)localStoreTempRecordId {
-    return [self localStorePatientMetaData:@"recordId" value:@"tmpRecordId"];
+
++(NSMutableArray *)selectAllFromTable:(NSString *)table {
+    NSMutableArray *arrayOfKeysAndValues = [[NSMutableArray alloc] init];
+    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
+    FMResultSet *results;
+    NSString *query;
+    [db open];
+    if ([table isEqualToString:@"PatientRecord"]) {
+        query = [NSString stringWithFormat:@"Select * FROM %@ WHERE IsLive = 1", table];
+        NSLog(@"%@", query);
+        results = [db executeQuery:query];
+    }
+    else {
+        query = [NSString stringWithFormat:@"SELECT a.* FROM %@ a, PatientRecord rec WHERE rec.IsLive = 1", table];
+        NSLog(@"%@", query);
+        results = [db executeQuery:query];
+    }
+    if (!results) {
+        NSLog(@"failed to select all from tables: %@", [db lastErrorMessage]);
+    }
+    while ([results next]) {
+        //NSLog(@"here");
+        [arrayOfKeysAndValues addObject:[results resultDictionary]];
+    }
+    //NSLog(@"In selectAllFromTable: %@", arrayOfKeysAndValues);
+    [db close];
+    return arrayOfKeysAndValues;
 }
-+(BOOL)localStoreTempPatientId {
-    return [self localStorePatientMetaData:@"patientId" value:@"tmpPatientId"];
+
++(BOOL)tableUnsynced:(NSString *)table {
+    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
+    FMResultSet *results;
+    [db open];
+    NSLog(@"Checking if %@ is Synced", table);
+    NSString *query = [NSString stringWithFormat:@"SELECT count(AppId) FROM %@ WHERE LastModified > LastSynced", table];
+    results = [db executeQuery:query];
+    if (!results) {
+        NSLog(@"%@",[db lastErrorMessage]);
+        [Utility alertWithMessage:@"tableUnsynced failed"];
+        NSLog(@"tableUnsynced failed for: %@", table);
+        return false;
+    }
+    [results next];
+    int count = [results intForColumnIndex:0];
+    if (count > 0) {
+        return true;
+    }
+    return false;
 }
+
+
+/*-------------------End Local Database Accessor Methods---------------------*/
+
+/*-------------------Begin Local Database Mutator Methods---------------------*/
+
++(BOOL)insertValue:(NSString *)value intoColumn:(NSString *)column inLocalTable:(NSString *)table {
+    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
+    [db open];
+    NSString *query = [NSString stringWithFormat:@"INSERT INTO %@(%@) VALUES %@", table, column, value];
+    BOOL result = [db executeUpdate:query];
+    [db close];
+    return result;
+}
+
+
+/*-------------------End Local Database Mutator Methods---------------------*/
 
 
 
@@ -762,20 +831,6 @@ static LocalTalk *singleton;
     [db close];
 }
 
-+(void)printAudio {
-    NSString *name, *synced, *data;
-    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
-    [db open];
-    
-    FMResultSet *results = [db executeQuery:@"SELECT * FROM Audio"];
-    while ([results next]) {
-        name   = [results stringForColumn:@"Name"];
-        synced = [results stringForColumn:@"Synched"];
-        data   = [results stringForColumn:@"Data"];
-        NSLog(@"Name: %@  Synced: %@ Data: %@", name, synced, data);
-    }
-    [db close];
-}
 
 @end
 

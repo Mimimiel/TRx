@@ -23,14 +23,28 @@ static NSString *imageDir = nil;
 static NSString *dbPath = nil;
 static BOOL connectivity = false;
 static Reachability *internetReachable = nil;
+static DBTalk *singleton;
 
 
 +(void)initialize {
-    host = @"http://www.teamecuadortrx.com/TRxTalk/index.php/";
-    imageDir = @"http://teamecuadortrx.com/TRxTalk/Data/images/";
-    dbPath = [Utility getDatabasePath];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(addRecord) name:@"patientAdded" object:nil];
+    
+    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(addUpdatePatientRecord) name:@"patientAdded" object:nil];
+    
+    static BOOL initialized = false;
+    if (!initialized)
+    {
+        host = @"http://www.teamecuadortrx.com/TRxTalk/index.php/";
+        imageDir = @"http://teamecuadortrx.com/TRxTalk/Data/images/";
+        dbPath = [Utility getDatabasePath];
+        
+        initialized = true;
+        singleton = [[DBTalk alloc] init]; 
+    }
+}
+
++(DBTalk *)getSingleton {
+    return singleton;
 }
 
 +(BOOL)getConnectivity {
@@ -52,52 +66,71 @@ static Reachability *internetReachable = nil;
     if (!patientId) {
     }
     
-    //check if recordId is null
+    BOOL patientUnsynced    = [LocalTalk tableUnsynced:@"Patient"];
+    BOOL recordUnsynced     = [LocalTalk tableUnsynced:@"PatientRecord"];
+    NSString *patientId     = [LocalTalk localGetPatientId];
+    NSString *recordId      = [LocalTalk localGetPatientRecordId];
     
+    if (!patientId || patientUnsynced) {
+        [DBTalk addUpdatePatient];            //needs to call addRecord in callback
+    }
+    else if ((patientId && !recordId) || recordUnsynced) {
+        [DBTalk addUpdatePatientRecord];
+    }
+
+    //check if recordId is null
+    NSLog(@"Exiting DBTalk's pushLocalUnsyncedToServer");
 }
 
 
 
 #pragma mark - Add Methods
 
-+(void)addPatient:(NSString *)firstName
-             middleName:(NSString *)middleName
-               lastName:(NSString *)lastName
-               birthday:(NSString *)birthday {
-    [self addUpdatePatient:firstName middleName:middleName lastName:lastName birthday:birthday patientId:@"NULL"];
-}
 
-/*---------------------------------------------------------------------------
- * description: method adds or updates information in the Patient table
- * note: to add a patient, pass NULL as patientId.
- *       to update patient data, pass patientId string as parameter
- *---------------------------------------------------------------------------*/
-+(void)addUpdatePatient:(NSString *)firstName
-             middleName:(NSString *)middleName
-               lastName:(NSString *)lastName
-               birthday:(NSString *)birthday
-              patientId:(NSString *)patientId {
++(void)addUpdatePatient {
+    NSArray *patientTableValuesArray    = [LocalTalk selectAllFromTable:@"Patient"];
+    NSDictionary *patientTableValues    = [patientTableValuesArray objectAtIndex:0];
+    NSLog(@"%@", patientTableValues);
     
     NSURL *url = [NSURL URLWithString:host];
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
     
-    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
-                            firstName,  @"firstName",
-                            middleName, @"middleName",
-                            lastName,   @"lastName",
-                            birthday,   @"birthday",
-                            patientId,  @"patientId", nil];
-    
-    [httpClient postPath:@"add/patient" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [httpClient postPath:@"add/patient" parameters:patientTableValues success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"AddPatient successful");
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"patientAdded" object:nil];
+        //[[NSNotificationCenter defaultCenter] postNotificationName:@"patientAdded" object:nil];
+        //add patientId to Local
+        NSString *patientId = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
+        [LocalTalk insertValue:patientId intoColumn:@"Id" inLocalTable:@"Patient"];
+        NSLog(@"new patientId: %@", patientId);
+        [DBTalk addUpdatePatientRecord];
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"AddPatient failed");
     }];
     
-    
 }
+
++(void)addUpdatePatientRecord {
+    //if patientRecord is NULL or table is unsynched, sync else return
+    
+    NSArray *recordTableValuesArray     = [LocalTalk selectAllFromTable:@"PatientRecord"];
+    NSDictionary *recordTableValues     = [recordTableValuesArray objectAtIndex:0];
+    NSLog(@"%@", recordTableValues);
+    
+    NSURL *url = [NSURL URLWithString:host];
+    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+    
+    [httpClient postPath:@"add/patientRecord" parameters:recordTableValues success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"AddRecord successful");
+        //[[NSNotificationCenter defaultCenter] postNotificationName:@"patientAdded" object:nil];
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"AddRecord failed");
+    }];
+}
+
+
+
 
 /*---------------------------------------------------------------------------
  * description: method adds record for patient with patientId

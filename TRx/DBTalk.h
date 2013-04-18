@@ -15,12 +15,12 @@
     NSString *host;
     NSString *portraitDir;
     NSString *dbPath;
-    
+    DBTalk *singleton;
     Reachability *internetReachable;
     
 }
 
-
++(DBTalk *)getSingleton;
 
 +(NSArray *)getPatientList;
 +(NSArray *)getSurgeryList;
@@ -44,16 +44,7 @@
                     fileName:(NSString *)fileName
                    directory:(NSString *)directory;
 
-+(void)addPatient:(NSString *)firstName
-             middleName:(NSString *)middleName
-               lastName:(NSString *)lastName
-               birthday:(NSString *)birthday;
 
-+(void)addUpdatePatient:(NSString *)firstName
-                   middleName:(NSString *)middleName
-                     lastName:(NSString *)lastName
-                     birthday:(NSString *)birthday
-                    patientId:(NSString *)patientId;   /* pass NULL if adding. pass Id if updating */
 
 +(BOOL)deletePatient: (NSString *)patientId;
 
@@ -84,5 +75,6 @@
 +(void)checkReachability;
 +(BOOL)getConnectivity;
 +(void)loadDataFromServer:(NSDictionary *)params;
+-(void)pushLocalUnsyncedToServer;
 
 @end
