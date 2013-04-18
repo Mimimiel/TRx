@@ -126,7 +126,7 @@
     BOOL IDStored;
     
     if ([newPatient.patientId isEqual: @"tmpPatientId"]) {
-        patientId = [DBTalk addPatient:newPatient.firstName
+        [DBTalk addPatient:newPatient.firstName
                             middleName:newPatient.middleName
                               lastName:newPatient.lastName
                               birthday:@"20081010"];//newPatient.birthday];

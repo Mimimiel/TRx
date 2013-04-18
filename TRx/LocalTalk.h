@@ -60,12 +60,8 @@
 +(NSMutableDictionary *)getData:(NSDictionary *)tableNames;
 
 
-
-
-/* for testing */
-+(void)printLocal;
-+(void)printAudio;
-/* end for testing */
++(NSArray *)selectAllFromTable:(NSString *)table;
++(BOOL)tableUnsynced:(NSString *)table;
 
 
 @end

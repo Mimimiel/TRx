@@ -17,7 +17,7 @@
     
     
     [center addObserver:[LocalTalk getSingleton] selector:@selector(localStoreFromViewsToLocal:) name:@"nextpressed" object:nil];
-    [center addObserver:[LocalTalk getSingleton] selector:@selector(pushLocalUnsyncedToServer) name:@"dataFromViewsStoredIntoLocal" object:nil];
+    [center addObserver:[DBTalk getSingleton] selector:@selector(pushLocalUnsyncedToServer) name:@"dataFromViewsStoredIntoLocal" object:nil];
    
     
 }
