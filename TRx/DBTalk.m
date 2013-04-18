@@ -14,7 +14,6 @@
 #import "LocalTalk.h"
 #import <UIKit/UIKit.h>
 
-
 @implementation DBTalk
 
 
@@ -87,6 +86,7 @@ static DBTalk *singleton;
 
 
 +(void)addUpdatePatient {
+    NSLog(@"Entering addUpdatePatient");
     NSArray *patientTableValuesArray    = [LocalTalk selectAllFromTable:@"Patient"];
     NSDictionary *patientTableValues    = [patientTableValuesArray objectAtIndex:0];
     NSLog(@"%@", patientTableValues);
@@ -96,11 +96,19 @@ static DBTalk *singleton;
     
     [httpClient postPath:@"add/patient" parameters:patientTableValues success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"AddPatient successful");
-        //[[NSNotificationCenter defaultCenter] postNotificationName:@"patientAdded" object:nil];
-        //add patientId to Local
-        NSString *patientId = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
-        [LocalTalk insertValue:patientId intoColumn:@"Id" inLocalTable:@"Patient"];
-        NSLog(@"new patientId: %@", patientId);
+        
+        
+        NSError *jsonError;
+        NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:responseObject options:kNilOptions error:&jsonError];
+        NSDictionary *dic = jsonArray[0];
+        NSString *retval = [dic objectForKey:@"@returnValue"];
+        if ([retval isEqualToString:@"0"]) {
+            NSString *err = [dic objectForKey:@"error"];
+            [Utility alertWithMessage:err];
+        }
+        else {
+            [LocalTalk insertValue:retval intoColumn:@"Id" inLocalTable:@"Patient"];
+        }
         [DBTalk addUpdatePatientRecord];
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -111,9 +119,16 @@ static DBTalk *singleton;
 
 +(void)addUpdatePatientRecord {
     //if patientRecord is NULL or table is unsynched, sync else return
+    NSLog(@"Entering addUpdatePatientRecord");
     
     NSArray *recordTableValuesArray     = [LocalTalk selectAllFromTable:@"PatientRecord"];
-    NSDictionary *recordTableValues     = [recordTableValuesArray objectAtIndex:0];
+    NSMutableDictionary *recordTableValues     = [recordTableValuesArray objectAtIndex:0];
+    [recordTableValues setValue:@"0" forKey:@"HasTimeout"];
+    
+    NSString *patientId = [LocalTalk localGetPatientId];
+    NSLog(@"Printing patinetId in addUpdatePatientRecord: %@", patientId);
+    
+    [recordTableValues setValue:patientId forKey:@"PatientId"];
     NSLog(@"%@", recordTableValues);
     
     NSURL *url = [NSURL URLWithString:host];
@@ -121,6 +136,19 @@ static DBTalk *singleton;
     
     [httpClient postPath:@"add/patientRecord" parameters:recordTableValues success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"AddRecord successful");
+        
+        NSError *jsonError;
+        NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:responseObject options:kNilOptions error:&jsonError];
+        NSDictionary *dic = jsonArray[0];
+        NSString *retval = [dic objectForKey:@"@returnValue"];
+        if ([retval isEqualToString:@"0"]) {
+            NSString *err = [dic objectForKey:@"error"];
+            [Utility alertWithMessage:err];
+        }
+        else {
+            [LocalTalk insertValue:retval intoColumn:@"Id" inLocalTable:@"PatientRecord"];
+        }
+        NSLog(@"%@", [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding]);
         //[[NSNotificationCenter defaultCenter] postNotificationName:@"patientAdded" object:nil];
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -129,34 +157,6 @@ static DBTalk *singleton;
 }
 
 
-
-
-/*---------------------------------------------------------------------------
- * description: method adds record for patient with patientId
- * note: Patient and Record need to be added for patient to show
- up in getPatientList call
- *---------------------------------------------------------------------------*/
-+(NSString *)addRecord:(NSString *)patientId
-         surgeryTypeId:(NSString *)surgeryTypeId
-              doctorId:(NSString *)doctorId
-              isActive:(NSString *)isActive
-            hasTimeout:(NSString *)hasTimeout {
-    
-    //select data from table //
-    
-    NSString *encodedString = [NSString stringWithFormat:@"%@add/record/NULL/%@/%@/%@/%@/%@", host,
-                               patientId, surgeryTypeId, @"1", isActive, @"0"];
-    
-    NSData *data = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:encodedString]];
-    
-    if (data) {
-        NSError *jsonError;
-        NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&jsonError];
-        NSDictionary *dic = jsonArray[0];
-        return [dic objectForKey:@"@returnValue"];
-    }
-    return NULL;
-}
 
 +(NSString *)addRecordData:(NSString *)recordId
                        key:(NSString *)key
@@ -613,35 +613,63 @@ static DBTalk *singleton;
     }
 }
 
-/*gets a JSON object that is an array[0]->dictionary { tableName1 : {table data }, tableName2 : {table data} } */
-
-+ (void)loadDataintoSQLite:(id) JSON {
+/***********************************************************************************************************
+ Method: loadDataintoSQLite
+ Objective: fill the local database with whatever is passed to it
+ Returns: void
+ Parameters:
+    (id) JSON: the data to put into the local database, 
+                of the form array[0]->dictionary { tableName1 : {table data }, tableName2 : {table data} }
+***********************************************************************************************************/
++(void)loadDataintoSQLiteWith:(id) JSON{
     /*UPDATE Table1 SET (...) WHERE Column1='SomeValue'
      IF @@ROWCOUNT=0
      INSERT INTO Table1 VALUES (...)*/
     
+    //mischa: not sure if i agree...thinking
     //for each table if the ID exists in that table update the row, otherwise insert the data into that table.
-    NSError *error=nil;
+    NSError *error = nil;
     NSDictionary *parsedData = [NSJSONSerialization JSONObjectWithData:JSON options:kNilOptions error:&error];
     for(NSString *key in parsedData){
         NSLog(@"%@", key);
     }
     
-    for(NSString *table in parsedData){
-        //check if it's Doctor, surgery type, or patient and if it is those have special keys
-        //otherwise, use patient record id
-        //to insert (if it doesn't exist or update if it does
-        if([table isEqualToString:@"Patient"]){
-            
-        } else if([table isEqualToString:@"Doctor"] || [table isEqualToString:@"SurgeryType"]) {
-            
+    BOOL success = 1;
+    //check if it's Doctor, surgery type, or patient and if it is those have special keys
+    //otherwise, use patient record id
+    //to insert (if it doesn't exist or update if it does
+    
+    //TODO: it would be really nice to just have an enum of table names
+    
+    //TODO: inserts vs updates
+    //Try to insert patient
+    if(parsedData[@"Patient"] != nil){
+        //success = [LocalTalk addTableToLocal:@"Patient" withData:parsedData[@"Patient"]];
+        if(!success){
+            //TODO: upon failure, do what? (besides not trying to further add records etc)
         }
-        else {
-            
-        }
-        
-        
     }
+    
+    //Try to insert patient record
+    if(success && parsedData[@"PatientRecod"] != nil){
+        //success = [LocalTalk addTableToLocal:@"PatientRecord" withData:parsedData[@"PatientRecord"]];
+        if(!success){
+            //TODO: upon failure, do what? (besides not trying to further add records etc)
+        }
+    }
+        
+//    for(NSString *tableName in parsedData){
+//        
+//        if([tableName isEqualToString:@"Patient"]){
+//            success = [LocalTalk addTableToLocal:tableName withData:parsedData[tableName]];
+//        }
+//        else if([tableName isEqualToString:@"Doctor"] || [tableName isEqualToString:@"SurgeryType"]) {
+//            
+//        }
+//        else {
+//            
+//        }
+    
 }
 /*+(NSDictionary *)getValuesFromLocal:(NSDictionary *)dic {
  

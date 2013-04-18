@@ -124,14 +124,14 @@ static LocalTalk *singleton;
 
 +(BOOL)clearIsLiveFlags {
     //this will go to the database and set all the is live flags to 0
+    
     FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
     [db open];
     /*FIX THIS WILLIE YOURE WORKING HERE*/
     NSString *query = [NSString stringWithFormat:@"UPDATE PatientRecord SET IsLive = 0"];
-    
     BOOL retval = [db executeUpdate:query];
+    
     if (!retval) {
-        NSLog(@"Error updating isLive in PatientRecord's table");
         NSLog(@"%@", [db lastErrorMessage]);
     }
     [db close];
@@ -158,17 +158,17 @@ static LocalTalk *singleton;
         NSLog(@"Set Active is returning: %d", retval);
         return retval;
     } else if (!connectivity){
-            NSString *query = [NSString stringWithFormat:@"UPDATE PatientRecord SET IsLive = 1 WHERE AppId = %@", patientIdentifier];
-            BOOL retval = [db executeUpdate:query];
-            if (!retval) {
-                NSLog(@"Error updating isLive in PatientRecord's table");
-                NSLog(@"%@", [db lastErrorMessage]);
-            }
-            NSLog(@"Set Active is returning: %d", retval);
-            return retval;
-       
+        NSString *query = [NSString stringWithFormat:@"UPDATE PatientRecord SET IsLive = 1 WHERE AppId = %@", patientIdentifier];
+        BOOL retval = [db executeUpdate:query];
+        if (!retval) {
+            NSLog(@"Error updating isLive in PatientRecord's table");
+            NSLog(@"%@", [db lastErrorMessage]);
         }
-       
+        NSLog(@"Set Active is returning: %d", retval);
+        return retval;
+        
+    }
+    
     [db close];
     return 0;
 }
@@ -225,9 +225,9 @@ static LocalTalk *singleton;
 /*-----------------Local Store Mega Method---------------------------*/
 
 /*
-    If it is the history view controller
-        add patient and patient record
-        add other data to 
+ If it is the history view controller
+ add patient and patient record
+ add other data to
  */
 
 
@@ -252,65 +252,47 @@ static LocalTalk *singleton;
         if (!success) {
             [Utility alertWithMessage:@"Unable to add patient record."];
             return false;
-        }      
-    }    
+        }
+    }
     NSLog(@"Exiting localStoreEverything");
     [[NSNotificationCenter defaultCenter] postNotificationName:@"dataFromViewsStoredIntoLocal" object:self userInfo:nil];
     
     return true;
 }
 
-/*  
-    addPatient for historyViewController adding a new patient
-    and for loading data into sqlite from server ?
+/*
+ addPatient for historyViewController adding a new patient
+ and for loading data into sqlite from server ?
  
-    think about date created and date modified
+ think about date created and date modified
  */
-
+//TODO: addNewPatientToLocal: last modified and created neither stored in big nor little database
 +(BOOL)addNewPatientToLocal:(NSDictionary *)params {
     NSString *firstName     = [params objectForKey:@"FirstName"];
     NSString *middleName    = [params objectForKey:@"MiddleName"];
     NSString *lastName      = [params objectForKey:@"LastName"];
     NSString *birthday      = [params objectForKey:@"Birthday"];
-    NSLog(@"FirstName: %@ MiddleName: %@ LastName: %@ Birthday: %@", firstName, middleName, lastName, birthday);
+
     FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
     
     [db open];
     BOOL retval = [db executeUpdate:@"INSERT INTO Patient (FirstName, MiddleName, LastName, Birthday) VALUES (?, ?, ?, ?)", firstName, middleName, lastName, birthday];
-    
-    /*-----------error checking ---------*/
-    
-    FMResultSet *result = [db executeQuery:@"Select * FROM Patient WHERE FirstName = ?", firstName];
-    if (!result) {
-        NSLog(@"failed to retrieve patient info");
-        [db lastErrorMessage];
-    }
-    [result next];
-    NSLog(@"retrieved data: %@", [result stringForColumn:@"FirstName"]);
-    
-    /*-----------error checking ---------*/
 
     [db close];
     return retval;
 }
 /*
-    Think about:  How / When do I add date created and last modified?
+ Think about:  How / When do I add date created and last modified?
  */
-
+//TODO: addNewPatientRecordToLocal: last modified and created neither stored in big nor little database
 +(BOOL)addPatientRecordToLocal:(NSDictionary *)params {
     NSString *surgeryTypeId = [params objectForKey:@"SurgeryTypeId"];
     NSString *doctorId      = [params objectForKey:@"DoctorId"];
-    NSString *isActive      = [params objectForKey:@"IsActive"];
     NSString *hasTimeout    = [params objectForKey:@"HasTimeout"];
     NSString *isCurrent     = [params objectForKey:@"IsCurrent"];
-    NSString *isLive        = [params objectForKey:@"IsLive"];    
+    NSString *isLive        = [params objectForKey:@"IsLive"];
     NSString *Id            = [params objectForKey:@"Id"];
     BOOL retval;
-    
-    
-    
-    NSLog(@"SurgeryTypeId: %@, DocId: %@ IsActive: %@ HasTimeout %@ IsLive %@ IsCurrent %@",
-          surgeryTypeId, doctorId,    isActive, hasTimeout, isLive, isCurrent);
     
     FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
     [db open];
@@ -318,21 +300,71 @@ static LocalTalk *singleton;
     NSString *AppPatientId = [self localGetAppPatientId];
     NSLog(@"PatientId: %@", AppPatientId);
     
+    NSString *query;
+    
     if (!Id) {
-        retval = [db executeUpdate:@"INSERT INTO PatientRecord(SurgeryTypeId, DoctorId, HasTimeout, IsLive, IsCurrent, AppPatientId) VALUES (?, ?, ?, ?, ?, ?)", surgeryTypeId, doctorId, hasTimeout, isLive, isCurrent, AppPatientId];
+        query = [NSString stringWithFormat:@"INSERT INTO PatientRecord(SurgeryTypeId, DoctorId, HasTimeout, IsLive, IsCurrent, AppPatientId) VALUES (%@, %@, %@, %@, %@, %@)", surgeryTypeId, doctorId, hasTimeout, isLive, isCurrent, AppPatientId];
     }
     else {
-        retval = [db executeUpdate:@"INSERT INTO PatientRecord(Id, SurgeryTypeId, DoctorId, HasTimeout, IsLive, IsCurrent, AppPatientId) VALUES (?, ?, ?, ?, ?, ?, ?)", Id, surgeryTypeId, doctorId, hasTimeout, isLive, isCurrent, AppPatientId];
+        query = [NSString stringWithFormat:@"INSERT INTO PatientRecord(Id, SurgeryTypeId, DoctorId, HasTimeout, IsLive, IsCurrent, AppPatientId) VALUES (%@, %@, %@, %@, %@, %@, %@)", Id, surgeryTypeId, doctorId, hasTimeout, isLive, isCurrent, AppPatientId];
     }
-
-    NSLog(@"SurgeryTypeId: %@, DocId: %@ IsActive: %@ HasTimeout %@ IsLive %@ IsCurrent %@",
-            surgeryTypeId, doctorId,    isActive, hasTimeout, isLive, isCurrent);
-
-  
+    
+    retval = [db executeUpdate:query]; 
     [db close];
     return retval;
 }
 
+//TODO: inserts vs updates?
+//TODO: error handling
++(BOOL)addToLocalTable:(NSString *)tableName withData:(NSMutableArray *)tableData {
+    BOOL retval;
+    BOOL success;
+    NSMutableString *sql;
+    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
+    [db open];
+    
+    //TODO: this could be more efficient
+    
+    retval = TRUE;
+    for(NSDictionary* row in tableData){
+        sql = [NSMutableString stringWithFormat:@"INSERT INTO %@ (%@) VALUES ('%@')",
+               tableName,
+               [[row allKeys] componentsJoinedByString:@", "],
+               [[row allValues] componentsJoinedByString:@"', '"]];
+    
+        success = [db executeUpdate:sql];
+        if(!success){
+            retval = FALSE;
+            //unsuccessful, error handling goes here
+        }
+    }
+    
+    //    NSString *firstName     = [params objectForKey:@"FirstName"];
+    //    NSString *middleName    = [params objectForKey:@"MiddleName"];
+    //    NSString *lastName      = [params objectForKey:@"LastName"];
+    //    NSString *birthday      = [params objectForKey:@"Birthday"];
+    //    NSLog(@"FirstName: %@ MiddleName: %@ LastName: %@ Birthday: %@", firstName, middleName, lastName, birthday);
+    //    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
+    //
+    //    [db open];
+    //    BOOL retval = [db executeUpdate:@"INSERT INTO Patient (FirstName, MiddleName, LastName, Birthday) VALUES (?, ?, ?, ?)", firstName, middleName, lastName, birthday];
+    //
+    //    /*-----------error checking ---------*/
+    //
+    //    FMResultSet *result = [db executeQuery:@"Select * FROM Patient WHERE FirstName = ?", firstName];
+    //    if (!result) {
+    //        NSLog(@"failed to retrieve patient info");
+    //        [db lastErrorMessage];
+    //    }
+    //    [result next];
+    //    NSLog(@"retrieved data: %@", [result stringForColumn:@"FirstName"]);
+    //
+    //    /*-----------error checking ---------*/
+    //
+    //    [db close];
+    
+    return retval;
+}
 
 
 /*-------------------End Local Store Mega Method---------------------*/
@@ -428,18 +460,18 @@ static LocalTalk *singleton;
 
 /*---------------------------------------------------------------------------
  Summary:
-    Helper methods for retrieving patientId and recordId from local database
+ Helper methods for retrieving patientId and recordId from local database
  
-    selectAllFromTable  -- Returns all the fields from the table in a dictionary
-    tableUnsynced       -- Returns whether the table is synced or unsynced
+ selectAllFromTable  -- Returns all the fields from the table in a dictionary
+ tableUnsynced       -- Returns whether the table is synced or unsynced
  Details:
-    
+ 
  Returns:
-
+ 
  TODO:  test that selectAllFromTable gets values and doesn't fail on nil
-        test that tableUnsynced returns correct value for tables with one row
-            -test that tableUnsynced returns correct value for tables with multiple rows
-            select count(rowid) where unsynced if > 1
+ test that tableUnsynced returns correct value for tables with one row
+ -test that tableUnsynced returns correct value for tables with multiple rows
+ select count(rowid) where unsynced if > 1
  *---------------------------------------------------------------------------*/
 
 +(NSMutableArray *)selectAllFromTable:(NSString *)table {
@@ -454,7 +486,7 @@ static LocalTalk *singleton;
         results = [db executeQuery:query];
     }
     else {
-        query = [NSString stringWithFormat:@"SELECT a.* FROM %@ a, PatientRecord rec WHERE rec.IsLive = 1", table];
+        query = [NSString stringWithFormat:@"SELECT a.* FROM %@ a, PatientRecord rec WHERE a.AppId = rec.AppPatientId and rec.IsLive = 1", table];
         NSLog(@"%@", query);
         results = [db executeQuery:query];
     }
@@ -465,7 +497,7 @@ static LocalTalk *singleton;
         //NSLog(@"here");
         [arrayOfKeysAndValues addObject:[results resultDictionary]];
     }
-    //NSLog(@"In selectAllFromTable: %@", arrayOfKeysAndValues);
+    NSLog(@"In selectAllFromTable: %@", arrayOfKeysAndValues);
     [db close];
     return arrayOfKeysAndValues;
 }
@@ -655,7 +687,7 @@ static LocalTalk *singleton;
             NSLog(@"%@", imageId);
             [patients addObject:obj];
         }
-         return patients;        
+        return patients;
     }
     
     NSLog(@"Something is really broken so localGetPatientList returned NULL");

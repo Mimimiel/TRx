@@ -25,6 +25,9 @@
 +(BOOL)addPatientToLocal:(NSDictionary *)params;
 +(BOOL)addRecordToLocal:(NSDictionary *)params;
 
+//TODO: addToLocalTable is a temp method
++(BOOL)addToLocalTable:(NSString *)tableName withData:(NSMutableArray *)tableData;
+
 
 
 +(BOOL)localStoreTempPatientId;
