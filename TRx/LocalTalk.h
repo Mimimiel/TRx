@@ -32,18 +32,16 @@
 +(BOOL)localStoreValue:(NSString *)value forQuestionId:(NSString *)questionId;
 +(BOOL)localStorePatientMetaData:(NSString *)key
                            value:(NSString *)value;
-+(BOOL)localStoreAudio:(id)audioData
-              fileName:(NSString *)fileName;
++(BOOL)localStoreAudio:(NSData *)audioData withAppPatientRecordId:(NSString *)appPatientRecordId andRecordTypeId:(NSString *)recordTypeId andfileName:(NSString *)fileName andPath:(NSString *)pathToAudio;
+
 +(BOOL)localStorePortrait:(UIImage *)image;
 
 #pragma mark -- Accessor Methods for Local
 
-+(NSString *)localGetPatientId;
-+(NSString *)localGetPatientRecordId;
 +(NSArray *)selectAllFromTable:(NSString *)table;
 +(BOOL)tableUnsynced:(NSString *)table;
 
-
++(NSString *)localGetOperationRecordTypeId; 
 
 #pragma mark -- Mutator Methods for Local
 
@@ -75,9 +73,8 @@
 +(void)checkConnectionAndLoadFromServer:(NSNotification *)notification;
 +(NSMutableDictionary *)getData:(NSDictionary *)tableNames;
 +(BOOL)setIsLive:(NSString *)patientIdentifier;
-+ (BOOL)checkConnectivity;
-
-
++(BOOL)checkConnectivity;
++(BOOL)storeMutableArrayFromAdmin:(NSMutableArray *)adminArray  inTable:(NSString *)tableName;
 
 
 

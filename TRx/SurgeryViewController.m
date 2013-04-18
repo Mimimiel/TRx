@@ -8,13 +8,27 @@
 
 #import "SurgeryViewController.h"
 #import "localtalk.h"
-
+#import "AdminInformation.h"
 
 @interface SurgeryViewController ()
 
 @end
 
 @implementation SurgeryViewController
+
+
++(SurgeryViewController*)sharedSurgeryViewController{
+    static SurgeryViewController *singleton;
+    static BOOL initialized = false;
+    if (!initialized)
+    {
+        initialized = true;
+        singleton = [[SurgeryViewController alloc] init];
+    }
+    return singleton;
+}
+
+
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -77,6 +91,26 @@
 
 -(void)viewDidAppear:(BOOL)animated{
 //  fileNameText.text = now;
+    /*listeners for history view controller*/
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    
+    [center addObserver:self selector:@selector(updatedDataListener:) name:@"loadFromLocal" object:nil];
+    
+    NSArray *tables = @[@"OperationRecord"];
+    NSDictionary *params = @{@"tableNames" : tables,
+                             @"location" : @"surgeryViewController"};
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"tabloaded" object:self userInfo:params];
+}
+
+-(void)updatedDataListener:(NSNotification *)notification {
+    NSDictionary *params = [notification userInfo];
+    if([[params objectForKey:@"location"] isEqualToString:@"surgeryViewController"]){
+        NSMutableDictionary *data = [LocalTalk getData:params];
+        files = data;
+        NSLog(@"The updated data listener's data in History VC is: %@", data);
+        
+    } else { NSLog(@"not in the right view controller");}
+    
 }
 
 #pragma mark - audio recording button methods 
@@ -128,6 +162,7 @@
 - (IBAction)saveRecord:(id)sender{
     [_audioRecorder stop];
     NSError *error;
+     
     NSData *audioData = [NSData dataWithContentsOfFile:[soundFileURL path] options: 0 error:&error];
     if (error)
     {
@@ -135,8 +170,13 @@
     } else {
         NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
         [formatter setDateFormat:@"yyyy-MM-dd 'at' HH:mm:ss"];
-        NSString *stringFromDate = [formatter stringFromDate:now];
-        BOOL check = [LocalTalk localStoreAudio:audioData fileName: stringFromDate];        
+        NSString *created = [formatter stringFromDate:now]; //append the patientId to the time stamp and add a number
+        NSString *recordTypeId = [AdminInformation getOperationRecordTypeIdByName:@"Audio"]; //write this method
+        NSString *appPatientRecordId = [LocalTalk localGetPatientRecordAppId];
+        NSString *path = NULL;
+        NSString *fileName = [appPatientRecordId stringByAppendingString:created]; //figure this out
+        
+        BOOL check = [LocalTalk localStoreAudio:audioData withAppPatientRecordId:appPatientRecordId andRecordTypeId:recordTypeId andfileName:fileName andPath:path];
         if(!check){
             //the file didn't store so do something here broke do something :( 
         }
@@ -200,17 +240,49 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info{
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     // Return the number of sections.
-    return 2;
+    return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    //return 1;
+    return files.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    static NSString *audioCellID = @"audioID";
+    static NSString *pictureCellID = @"pictureID";
+    
+   // for(NSString *key in files){
+      //  NSString *fileType = [[files objectForKey:key] fileTypeId];
+        
+  /*  if() {
+        SessionCellClass *cell = nil;
+        cell = (SessionCellClass *)[tableView dequeueReusableCellWithIdentifier:sessionCellID];
+        if( !cell ) {
+            //  do something to create a new instance of cell
+            //  either alloc/initWithStyle or load via UINib
+        }
+        //  populate the cell with session model
+        return cell;
+    
+    else {
+        InfoCellClass *cell = nil;
+        cell = (InfoCellClass *)[tableView dequeueReusableCellWithIdentifier:infoCellID];
+        if( !cell ) {
+            //  do something to create a new instance of info cell
+            //  either alloc/initWithStyle or load via UINib
+            // ...
+            
+            //  get the model object:
+            myObject *person = [[self people] objectAtIndex:indexPath.row - 1];
+            
+            //  populate the cell with that model object
+            //  ...
+            return cell;
+        }
+    }*/
    /* static NSString *CellIdentifier = @"patientListCell";
     PatientListViewCell *cell = [tableView
                                  dequeueReusableCellWithIdentifier:CellIdentifier

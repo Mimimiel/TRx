@@ -234,6 +234,7 @@
         NSLog(@"Made it to the clicked cell and everything worked great"); 
     } else if(!connection) {
         NSString *patientRecordAppId = [[patients objectAtIndex:row] patientRecordAppId];
+        NSLog(@"The Patients Name: %@ and the Patients patientRecordAppId: %@", [params objectForKey:@"FirstName"], patientRecordAppId);
         if(patientRecordAppId != NULL){
             [LocalTalk setIsLive:patientRecordAppId];
         } else {

@@ -24,6 +24,8 @@
     [OnOpen WireNotifications];
  
     [DBTalk checkReachability];
+    [AdminInformation getOperationRecordTypeNames];
+    
     BOOL connect = [DBTalk getConnectivity];
     NSLog(@"first connectivity check: %d",connect);
     return YES;

@@ -62,11 +62,11 @@ static LocalTalk *singleton;
 }
 
 /*Method that takes a list of table names and then queries the SQLite database and returns an NSArray of NSDictionaries*/
-//TODO: FIX THIS FUNCTION TO USE APP ID INSTEAD OF PATIENT RECORD ID
 +(NSMutableDictionary *)getData:(NSDictionary *)params {
+    NSLog(@"----------I'm inside getData-------------");
     NSString *selectorValue, *selectorType, *query, *localPatientId, *localPatientRecordId;
     BOOL useSelector = 1;
-    NSMutableDictionary *dictionary;
+    NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
     localPatientId = [self localGetPatientAppId];
     localPatientRecordId = [self localGetPatientRecordAppId];
     NSMutableArray *tableNames = [params objectForKey:@"tableNames"];
@@ -78,6 +78,7 @@ static LocalTalk *singleton;
         //check if it's Doctor, surgery type, or patient and if it is those have special keys
         //otherwise, use patient record id
         //to insert (if it doesn't exist or update if it does
+        NSLog(@"table: %@", table);
         if([table isEqualToString:@"Patient"]){
             selectorValue = localPatientId;
             selectorType = @"AppId";
@@ -90,7 +91,7 @@ static LocalTalk *singleton;
             useSelector = 0;
         } else {
             selectorValue = localPatientRecordId;
-            selectorType = @"AppId";
+            selectorType = @"AppPatientRecordId";
             useSelector = 1;
         }
         
@@ -108,13 +109,15 @@ static LocalTalk *singleton;
             NSLog(@"%@", [db lastErrorMessage]);
             [Utility alertWithMessage:@"For some reason one of your tables didn't return data!"];
         } else {//turn return data into a dictionary and put it into an array.
-            [retval next];
+            while([retval next]){
             NSDictionary *dict = [retval resultDictionary];
             [dictionary setObject:dict forKey:table];
+            }
         }
     }
     [db close];
-    
+     
+    NSLog(@"----------I'm leaving get data------------");
     return dictionary;
     
 }
@@ -195,6 +198,28 @@ static LocalTalk *singleton;
 
 
 
++(BOOL)storeMutableArrayFromAdmin:(NSMutableArray *)adminArray  inTable:(NSString *)tableName{
+    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
+    [db open];
+    /*get the app id associated with the patient record id*/
+    for (NSInteger i = 1; i < adminArray.count; i++){
+        NSString *query = [NSString stringWithFormat:@"INSERT INTO %@ (Id, Name) VALUES (%d,%@)",tableName, i, [adminArray objectAtIndex:i]];
+        NSLog(@"%@", query);
+        FMResultSet *result = [db executeQuery:query];
+        [result next];
+        NSString *appId = [result stringForColumnIndex:0];
+        
+        if (!result) {
+            NSLog(@"Error updating isLive in PatientRecord's table");
+            NSLog(@"%@", [db lastErrorMessage]);
+        }
+
+    }
+    
+    [db close];
+    //NSLog(@"The app Id of the clicked cell is: %@", appId);
+    return 0;
+}
 
 
 /*-----------------Local Store Mega Method---------------------------*/
@@ -539,10 +564,13 @@ static LocalTalk *singleton;
  TODO:
  does not sync with database yet.
  *---------------------------------------------------------------------------*/
-+(BOOL)localStoreAudio:(NSData *)audioData fileName:(NSString *)fileName {
++(BOOL)localStoreAudio:(NSData *)audioData withAppPatientRecordId:(NSString *)appPatientRecordId andRecordTypeId:(NSString *)recordTypeId andfileName:(NSString *)fileName andPath:(NSString *)pathToAudio {
+    
+    BOOL isProfile = 0;
     FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
     [db open];
-    BOOL retval = [db executeUpdate:@"INSERT INTO Audio (Name, Data) VALUES (?, ?)", fileName, audioData];
+    BOOL retval = [db executeUpdate:@"INSERT INTO OperationRecord (AppPatientRecordId, RecordTypeId, Name, Path, IsProfile, Created, LastModified, LastSynced, Data) VALUES (?, ?, ?, ?, ?, ?, ?)", appPatientRecordId, recordTypeId, fileName, pathToAudio, isProfile, audioData];
+    
     if (!retval) {
         NSLog(@"%@", [db lastErrorMessage]);
     }

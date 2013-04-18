@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "OnOpen.h"
 #import "DBTalk.h"
-
+#import "AdminInformation.h"
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;

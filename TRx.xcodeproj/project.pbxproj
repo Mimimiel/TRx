@@ -42,6 +42,7 @@
 		19C3C1D917122BB000BA943E /* LocalTalkWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1327D4CC1708F464005010BC /* LocalTalkWrapper.m */; };
 		19C3C1DA17122BB700BA943E /* SynchData.m in Sources */ = {isa = PBXBuildFile; fileRef = 13FF64F31700EC3400F0A4FE /* SynchData.m */; };
 		19DAF54D16F8CE00008E1BA7 /* LocalDatabase.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 13CF9B2616ECF829006CF20B /* LocalDatabase.sqlite */; };
+		19E9D13D171FD7B400E99A93 /* SurgeryListViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 19E9D13C171FD7B400E99A93 /* SurgeryListViewCell.m */; };
 		C402E4FB170A007500737787 /* LocalTalkWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1327D4CC1708F464005010BC /* LocalTalkWrapper.m */; };
 		C402E4FC170A008D00737787 /* SynchData.m in Sources */ = {isa = PBXBuildFile; fileRef = 13FF64F31700EC3400F0A4FE /* SynchData.m */; };
 		C402E4FF170BC29A00737787 /* DynamicHistoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C402E4FE170BC29900737787 /* DynamicHistoryViewController.m */; };
@@ -192,6 +193,8 @@
 		1975163816EFC6C50008AA1F /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		19C32A2E16EFB3B300CC1318 /* SurgeryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SurgeryViewController.h; sourceTree = "<group>"; };
 		19C32A2F16EFB3B300CC1318 /* SurgeryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SurgeryViewController.m; sourceTree = "<group>"; };
+		19E9D13B171FD7B400E99A93 /* SurgeryListViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SurgeryListViewCell.h; sourceTree = "<group>"; };
+		19E9D13C171FD7B400E99A93 /* SurgeryListViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SurgeryListViewCell.m; sourceTree = "<group>"; };
 		C402E4FD170BC29900737787 /* DynamicHistoryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DynamicHistoryViewController.h; path = ../DynamicHistoryViewController.h; sourceTree = "<group>"; };
 		C402E4FE170BC29900737787 /* DynamicHistoryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DynamicHistoryViewController.m; path = ../DynamicHistoryViewController.m; sourceTree = "<group>"; };
 		C402E50C170F169200737787 /* HQHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HQHelper.h; path = ../HQHelper.h; sourceTree = "<group>"; };
@@ -537,6 +540,8 @@
 			children = (
 				19C32A2E16EFB3B300CC1318 /* SurgeryViewController.h */,
 				19C32A2F16EFB3B300CC1318 /* SurgeryViewController.m */,
+				19E9D13B171FD7B400E99A93 /* SurgeryListViewCell.h */,
+				19E9D13C171FD7B400E99A93 /* SurgeryListViewCell.m */,
 			);
 			name = "Tab 5 - Surgery";
 			sourceTree = "<group>";
@@ -932,6 +937,7 @@
 				C402E5211712131500737787 /* HQView.m in Sources */,
 				136E218A1719EF40007420ED /* OnOpen.m in Sources */,
 				136E2191171A68D9007420ED /* Reachability.m in Sources */,
+				19E9D13D171FD7B400E99A93 /* SurgeryListViewCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -940,12 +946,12 @@
 /* Begin PBXTargetDependency section */
 		13DD79D8171E279500CED51E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 1327D4B01704B0AD005010BC /* UnitTests */;
+			target = C44D6F2416D19AD60036E40B /* TRx */;
 			targetProxy = 13DD79D7171E279500CED51E /* PBXContainerItemProxy */;
 		};
 		13DD79DA171E279A00CED51E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C44D6F2416D19AD60036E40B /* TRx */;
+			target = 1327D4B01704B0AD005010BC /* UnitTests */;
 			targetProxy = 13DD79D9171E279A00CED51E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */

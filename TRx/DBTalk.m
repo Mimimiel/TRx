@@ -60,7 +60,7 @@ static DBTalk *singleton;
 
 
 
-+(void)pushLocalUnsyncedToServer {
+-(void)pushLocalUnsyncedToServer {
     //check if patientId is null
    // if (!patientId) {
    // }
@@ -362,6 +362,20 @@ static DBTalk *singleton;
     return NULL;
 }
 
++(NSArray *)getOperationRecordTypesList {
+    NSString *encodedString = [NSString stringWithFormat:@"%@get/operationRecordTypesList/", host];
+    NSLog(@"%@", encodedString);
+    NSData *data = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:encodedString]];
+    
+    if (data) {
+        NSError *jsonError;
+        NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&jsonError];
+        
+        return jsonArray;
+    }
+    NSLog(@"getDoctorList didn't work: error in PHP");
+    return NULL;
+}
 
 /*---------------------------------------------------------------------------
  * Pass in a patient's recordId. Calls DB to get stored info
@@ -379,7 +393,6 @@ static DBTalk *singleton;
     }
     NSLog(@"getRecordData didn't work: error in PHP");
     return NULL;
-    
 }
 
 
@@ -583,11 +596,11 @@ static DBTalk *singleton;
         [AFJSONRequestOperation addAcceptableContentTypes:[NSSet setWithObject:@"text/html"]];
         AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
             NSLog(@"This was the response: %@", response);
-            [self loadDataintoSQLite:JSON];
-              [[NSNotificationCenter defaultCenter] postNotificationName:@"loadFromLocal" object:self userInfo:params];
+            [this loadDataintoSQLite:JSON];
+              [[NSNotificationCenter defaultCenter] postNotificationName:@"loadFromLocal" object:this userInfo:params];
         } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
             NSLog(@"Request Failure Because %@",[error userInfo]);
-              [[NSNotificationCenter defaultCenter] postNotificationName:@"loadFromLocal" object:self userInfo:params];
+              [[NSNotificationCenter defaultCenter] postNotificationName:@"loadFromLocal" object:this userInfo:params];
         }];
         
         [operation start];
@@ -595,7 +608,7 @@ static DBTalk *singleton;
         /*it's a new patient or something went wrong*/
         //TODO: LOCK DOWN OTHER TABS HERE BEFORE WE PUB
 
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"loadFromLocal" object:self userInfo:params];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"loadFromLocal" object:this userInfo:params];
         NSLog(@"poop: %@", params);
     }
 }

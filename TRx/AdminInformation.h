@@ -11,16 +11,16 @@
 @interface AdminInformation : NSObject
 
 {
-    NSArray *surgeryList;
-    NSMutableArray *surgeryNamesList;
-    NSArray *doctorList;
-    NSMutableArray *doctorNamesList;
+
 }
 
 +(NSMutableArray *)getDoctorNames;
 +(NSMutableArray *)getSurgeryNames;
++(NSMutableArray *)getOperationRecordTypeNames;
 +(NSString *) getSurgeryNameById:(NSString *)complaintId;
 +(NSString *) getSurgeryIdByName:(NSString *)complaintName;
++(NSString *)getOperationRecordTypeNameById:(NSString *)recordId;
++(NSString *)getOperationRecordTypeIdByName:(NSString *)operationRecordTypeName;
 
 
 

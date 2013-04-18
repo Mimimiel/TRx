@@ -17,6 +17,7 @@
     NSDate *now;
     BOOL isPaused;
     IBOutlet UITextField *fileNameText;
+    NSMutableDictionary *files;
 
 }
 @property BOOL newMedia;
@@ -25,8 +26,10 @@
 @property (strong, nonatomic) IBOutlet UIButton *recordButton;
 @property (strong, nonatomic) IBOutlet UIButton *saveRecording;
 @property (strong, nonatomic) IBOutlet UIButton *playButton;
+@property (nonatomic, readwrite) NSNumber *recordCount;
 - (IBAction)recordAudio:(id)sender;
 - (IBAction)playAudio:(id)sender;
 - (IBAction)saveRecord:(id)sender;
 - (IBAction)useCamera:(id)sender;
++(SurgeryViewController*)sharedSurgeryViewController;
 @end

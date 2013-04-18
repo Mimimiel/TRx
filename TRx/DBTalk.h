@@ -25,6 +25,7 @@
 +(NSArray *)getPatientList;
 +(NSArray *)getSurgeryList;
 +(NSArray *)getDoctorList;
++(NSArray *)getOperationRecordTypesList;
 
 +(UIImage *)getPortraitFromServer:(NSString *)fileName;
 +(NSURL *)getThumbFromServer:(NSString *)fileName;

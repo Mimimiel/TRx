@@ -25,6 +25,10 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     
+   
+}
+
+- (void)viewDidAppear:(BOOL)animated {
     /*listeners for history view controller*/
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     
@@ -35,7 +39,6 @@
                              @"location" : @"summaryViewController"};
     [[NSNotificationCenter defaultCenter] postNotificationName:@"tabloaded" object:self userInfo:params];
 }
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
