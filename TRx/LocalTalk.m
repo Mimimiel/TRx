@@ -122,28 +122,15 @@ static LocalTalk *singleton;
 +(BOOL)clearIsLiveFlags {
     //this will go to the database and set all the is live flags to 0
     
-    NSLog(@"CLEARING FLAGS, SUPPOSEDLY (LOCALtALK))");
-    
     FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
     [db open];
     /*FIX THIS WILLIE YOURE WORKING HERE*/
     NSString *query = [NSString stringWithFormat:@"UPDATE PatientRecord SET IsLive = 0"];
-    
     BOOL retval = [db executeUpdate:query];
+    
     if (!retval) {
-        NSLog(@"Error updating isLive in PatientRecord's table");
         NSLog(@"%@", [db lastErrorMessage]);
     }
-    
-    query = @"SELECT * FROM PatientRecord WHERE IsLive = 0";
-    FMResultSet *results = [db executeQuery:query];
-    if (!results) {
-        NSLog(@"%@", [db lastErrorMessage]);
-    }
-    while ([results next]) {
-        NSLog(@"results in clearing flags: %@", [results stringForColumnIndex:0]);
-    }
-    
     [db close];
     return retval;
 }
@@ -260,23 +247,11 @@ static LocalTalk *singleton;
     NSString *middleName    = [params objectForKey:@"MiddleName"];
     NSString *lastName      = [params objectForKey:@"LastName"];
     NSString *birthday      = [params objectForKey:@"Birthday"];
-    NSLog(@"FirstName: %@ MiddleName: %@ LastName: %@ Birthday: %@", firstName, middleName, lastName, birthday);
+
     FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
     
     [db open];
     BOOL retval = [db executeUpdate:@"INSERT INTO Patient (FirstName, MiddleName, LastName, Birthday) VALUES (?, ?, ?, ?)", firstName, middleName, lastName, birthday];
-    
-    /*-----------error checking ---------*/
-    
-    FMResultSet *result = [db executeQuery:@"Select * FROM Patient WHERE FirstName = ?", firstName];
-    if (!result) {
-        NSLog(@"failed to retrieve patient info");
-        [db lastErrorMessage];
-    }
-    [result next];
-    NSLog(@"retrieved data: %@", [result stringForColumn:@"FirstName"]);
-    
-    /*-----------error checking ---------*/
 
     [db close];
     return retval;
@@ -288,17 +263,11 @@ static LocalTalk *singleton;
 +(BOOL)addPatientRecordToLocal:(NSDictionary *)params {
     NSString *surgeryTypeId = [params objectForKey:@"SurgeryTypeId"];
     NSString *doctorId      = [params objectForKey:@"DoctorId"];
-    NSString *isActive      = [params objectForKey:@"IsActive"];
     NSString *hasTimeout    = [params objectForKey:@"HasTimeout"];
     NSString *isCurrent     = [params objectForKey:@"IsCurrent"];
     NSString *isLive        = [params objectForKey:@"IsLive"];    
     NSString *Id            = [params objectForKey:@"Id"];
     BOOL retval;
-    
-    
-    
-    NSLog(@"SurgeryTypeId: %@, DocId: %@ IsActive: %@ HasTimeout %@ IsLive %@ IsCurrent %@",
-          surgeryTypeId, doctorId,    isActive, hasTimeout, isLive, isCurrent);
     
     FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
     [db open];
@@ -315,12 +284,7 @@ static LocalTalk *singleton;
         query = [NSString stringWithFormat:@"INSERT INTO PatientRecord(Id, SurgeryTypeId, DoctorId, HasTimeout, IsLive, IsCurrent, AppPatientId) VALUES (%@, %@, %@, %@, %@, %@, %@)", Id, surgeryTypeId, doctorId, hasTimeout, isLive, isCurrent, AppPatientId];
     }
     
-    retval = [db executeUpdate:query];
-
-//    NSLog(@"SurgeryTypeId: %@, DocId: %@ IsActive: %@ HasTimeout %@ IsLive %@ IsCurrent %@",
-//            surgeryTypeId, doctorId,    isActive, hasTimeout, isLive, isCurrent);
-
-  
+    retval = [db executeUpdate:query];  
     [db close];
     return retval;
 }
