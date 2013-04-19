@@ -61,13 +61,15 @@
               lastName:(NSString *)lastName
               birthday:(NSString *)birthday;
 
++(BOOL) insertRecordId:(NSString *)recordId;
+
 
 +(NSMutableArray *)localGetPatientList;
 +(NSString *)localGetPatient:(NSString *)key;
 +(UIImage *)localGetPortrait;
 +(id)localGetAudio:(NSString *)fileName;
 
-+(NSString *)localGetPatientRecordAppId;
+
 
 
 +(BOOL)loadPortraitImageIntoLocal:(NSString *)patientId;

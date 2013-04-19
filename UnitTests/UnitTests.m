@@ -110,7 +110,7 @@
  database
  //TODO: write this test
  -----------------------------------------------------------------------*/
--(void)testAddToLocalTableWithData{
+/*-(void)testAddToLocalTableWithData{
     BOOL success = TRUE;
     NSMutableArray *insertedIDs;
     NSString* tableName = @"Patient";
@@ -139,7 +139,7 @@
             success = FALSE;
         }
     }
-}
+}*/
 
 - (void)tearDown
 {

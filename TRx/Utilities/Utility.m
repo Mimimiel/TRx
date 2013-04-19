@@ -9,9 +9,9 @@ static NSString *databasePath;
 {
     
     //NSString *databasePath;
-    if (!databasePath) {
+    //if (!databasePath) {
         databasePath = [(AppDelegate *)[[UIApplication sharedApplication] delegate] databasePath];
-    }
+    //}
     
     return databasePath; 
 }
