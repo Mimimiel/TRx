@@ -50,7 +50,10 @@
 
 
 +(BOOL)insertValue:(NSString *)value intoColumn:(NSString *)column inLocalTable:(NSString *)table;
-
++(BOOL)insertPatientId:(NSString *)patientId
+          forFirstName:(NSString *)firstName
+              lastName:(NSString *)lastName
+              birthday:(NSString *)birthday;
 
 
 +(NSMutableArray *)localGetPatientList;
@@ -58,8 +61,6 @@
 +(UIImage *)localGetPortrait;
 +(id)localGetAudio:(NSString *)fileName;
 
-+(NSString *)localGetPatientId;
-+(NSString *)localGetPatientRecordId;
 +(NSString *)localGetPatientRecordAppId;
 
 

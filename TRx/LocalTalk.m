@@ -529,16 +529,53 @@ static LocalTalk *singleton;
 /*-------------------End Local Database Accessor Methods---------------------*/
 
 /*-------------------Begin Local Database Mutator Methods---------------------*/
+//TODO: Will not work for PatientRecord ?? Need another query
 
 +(BOOL)insertValue:(NSString *)value intoColumn:(NSString *)column inLocalTable:(NSString *)table {
     FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
     [db open];
-    NSString *query = [NSString stringWithFormat:@"INSERT INTO %@(%@) VALUES %@", table, column, value];
+    NSString *query = [NSString stringWithFormat:@"INSERT INTO %@ a, PatientRecord rec (a.%@) VALUES %@ WHERE a.AppId = rec.AppId and IsLive = 1", table, column, value];
+    NSLog(@"InsertValue query: %@", query);
+    
+    
     BOOL result = [db executeUpdate:query];
     [db close];
     return result;
 }
+//TODO This is the method that fails
 
+
++(BOOL)insertPatientId:(NSString *)patientId
+          forFirstName:(NSString *)firstName
+              lastName:(NSString *)lastName
+              birthday:(NSString *)birthday {
+    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
+    [db open];
+    NSString *testquery = [NSString stringWithFormat:@"SELECT * FROM Patient WHERE FirstName = \"%@\" and LastName = \"%@\" and Birthday = \"%@\"", firstName, lastName, birthday];
+    NSLog(@"printing testquery: %@", testquery);
+    NSLog(@"ATTEMPTING TO INSERT PATIENT ID: %@", patientId);
+    FMResultSet *results = [db executeQuery:testquery];
+    if (!results) {
+        NSLog(@"db error!! : %@", [db lastErrorMessage]);
+    }
+    while ([results next]) {
+        NSLog(@"%@", [results stringForColumnIndex:0]);
+    }
+    
+    
+    /*This is WHERE it has been failing. This query tries to update the patientId for the just-inserted patient */
+    
+    
+    NSString *query = [NSString stringWithFormat:@"UPDATE Patient SET Id = \"%@\" WHERE FirstName = \"%@\" and LastName = \"%@\" and Birthday = \"%@\"", patientId, firstName, lastName, birthday];
+    
+    NSLog(@"QUERY: %@", query);
+    
+    BOOL result = [db executeUpdate:query];
+    
+    NSLog(@"Result of inserting patientId: %@  %d query: %@", patientId, result, query);
+    [db close];
+    return result;
+}
 
 /*-------------------End Local Database Mutator Methods---------------------*/
 

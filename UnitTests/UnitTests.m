@@ -7,6 +7,8 @@
 //
 
 #import "UnitTests.h"
+#import "FMDatabase.h"
+#import "Utility.h"
 
 
 @implementation UnitTests
@@ -23,7 +25,7 @@
                              @"FirstName"   : @"Jimmy",
                              @"MiddleName"  : @"Crack",
                              @"LastName"    : @"Corn",
-                             @"Birthday"    : @"18180808",
+                             @"Birthday"    : @"1818-08-08",
                              @"Data"        : @"FakeData",
                              @"SurgeryTypeId":@"1",
                              @"DoctorId"    : @"1",
@@ -34,7 +36,13 @@
     
     //Note: if no picture is taken,
     //can use [NSNull null]
+    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
+    [db open];
+    [db executeUpdate:@"DELETE FROM Patient"];
+    [db close];
     [LocalTalk clearIsLiveFlags];
+    
+    
     [[NSNotificationCenter defaultCenter] postNotificationName:@"nextpressed" object:self userInfo:params];
     
     //[[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:5]];

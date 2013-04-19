@@ -60,9 +60,6 @@ static DBTalk *singleton;
 
 
 -(void)pushLocalUnsyncedToServer {
-    //check if patientId is null
-   // if (!patientId) {
-   // }
     
     BOOL patientUnsynced    = [LocalTalk tableUnsynced:@"Patient"];
     BOOL recordUnsynced     = [LocalTalk tableUnsynced:@"PatientRecord"];
@@ -84,14 +81,22 @@ static DBTalk *singleton;
 
 #pragma mark - Add Methods
 
-
+//TODO I cannot for the life of me figure out why this is breaking
+//Patients are successfully added to the database, and their patientId
+//is returned so that I can store it in LocalDatabase. All goes well until
+//I try to store into the LocalDatabase. Then I get errors.
+//
+//I have tested the method on SQLiteManager, and it works
+//When running in the app, it fails
+//
 +(void)addUpdatePatient {
     NSLog(@"Entering addUpdatePatient");
     NSArray *patientTableValuesArray    = [LocalTalk selectAllFromTable:@"Patient"];
     NSDictionary *patientTableValues    = [patientTableValuesArray objectAtIndex:0];
     NSLog(@"%@", patientTableValues);
     
-    NSURL *url = [NSURL URLWithString:host];
+    
+    NSURL *url =  [[NSURL alloc] initWithString:host];
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
     
     [httpClient postPath:@"add/patient" parameters:patientTableValues success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -99,20 +104,26 @@ static DBTalk *singleton;
         
         
         NSError *jsonError;
-        NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:responseObject options:kNilOptions error:&jsonError];
-        NSDictionary *dic = jsonArray[0];
+        NSDictionary *jsonDic = [NSJSONSerialization JSONObjectWithData:responseObject options:kNilOptions error:&jsonError];
+        NSDictionary *dic = jsonDic;
         NSString *retval = [dic objectForKey:@"@returnValue"];
         if ([retval isEqualToString:@"0"]) {
             NSString *err = [dic objectForKey:@"error"];
             [Utility alertWithMessage:err];
+            NSLog(@"error getting addPatient retval: %@", err);
         }
         else {
-            [LocalTalk insertValue:retval intoColumn:@"Id" inLocalTable:@"Patient"];
+            BOOL success = [LocalTalk insertPatientId:retval forFirstName:[dic objectForKey:@"FirstName"]
+                                             lastName:[dic objectForKey:@"LastName"] birthday:[dic objectForKey:@"Birthday"]];
+            if (!success) {
+                NSLog(@"Error adding patientId: %@", retval);
+            }
         }
         [DBTalk addUpdatePatientRecord];
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"AddPatient failed");
+        NSLog(@"AddPatient error: %@", error);
     }];
     
 }
@@ -126,10 +137,14 @@ static DBTalk *singleton;
     [recordTableValues setValue:@"0" forKey:@"HasTimeout"];
     
     NSString *patientId = [LocalTalk localGetPatientId];
+    if (!patientId) {
+        [Utility alertWithMessage:@"Error adding PatientRecord: No PatientId in Local database"];
+        NSLog(@"Error adding PatientRecord: No PatientId in Local database");
+    }
     NSLog(@"Printing patinetId in addUpdatePatientRecord: %@", patientId);
     
     [recordTableValues setValue:patientId forKey:@"PatientId"];
-    NSLog(@"%@", recordTableValues);
+    //NSLog(@"%@", recordTableValues);
     
     NSURL *url = [NSURL URLWithString:host];
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];

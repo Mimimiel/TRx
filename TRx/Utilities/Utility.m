@@ -3,11 +3,15 @@
 
 @implementation Utility
 
+static NSString *databasePath;
+
 +(NSString *) getDatabasePath
 {
     
-    NSString *databasePath;
-    databasePath = [(AppDelegate *)[[UIApplication sharedApplication] delegate] databasePath];
+    //NSString *databasePath;
+    if (!databasePath) {
+        databasePath = [(AppDelegate *)[[UIApplication sharedApplication] delegate] databasePath];
+    }
     
     return databasePath; 
 }
