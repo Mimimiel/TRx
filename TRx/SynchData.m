@@ -254,17 +254,17 @@
 +(Patient *)initPatientFromLocal {
     NSString *patientId, *recordId, *fName, *mName, *lName, *bDay, *chiefComplaint, *PatientRecordAppId;
     
-    patientId = [LocalTalk localGetPatientId];
-    if (!patientId) {
-        NSLog(@"Failure to retrieve patientId from Local in synchPatientData");
-        return false;
-    }
-    
-    recordId = [LocalTalk localGetPatientRecordId];
-    if (!recordId) {
-        NSLog(@"Failure to retrieve recordId from Local in synchPatientData");
-        return false;
-    }
+//    patientId = [LocalTalk localGetPatientId];
+//    if (!patientId) {
+//        NSLog(@"Failure to retrieve patientId from Local in synchPatientData");
+//        return false;
+//    }
+//    
+//    recordId = [LocalTalk localGetPatientRecordId];
+//    if (!recordId) {
+//        NSLog(@"Failure to retrieve recordId from Local in synchPatientData");
+//        return false;
+//    }
     
     PatientRecordAppId = [LocalTalk localGetPatientRecordAppId];
     
