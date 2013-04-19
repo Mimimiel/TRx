@@ -28,7 +28,7 @@ static NSArray *operationsList;
 +(NSMutableArray *)getOperationRecordTypeNames
 {
     NSMutableArray *operationRecordNamesList = [[NSMutableArray alloc] initWithArray:operationsList copyItems:YES];
-    BOOL check = [LocalTalk addToLocalTable:@"RecordType" withData:operationRecordNamesList];
+    NSArray *check = [LocalTalk setSQLiteTable:@"RecordType" withData:operationRecordNamesList];
     if(check){
         return operationRecordNamesList;
     }
@@ -74,7 +74,7 @@ static NSArray *operationsList;
 {
     NSMutableArray *doctorNamesList = [[NSMutableArray alloc] initWithArray:doctorList copyItems:YES];
     
-    BOOL check = [LocalTalk addToLocalTable:@"Doctor" withData:doctorNamesList];
+    NSArray *check = [LocalTalk setSQLiteTable:@"Doctor" withData:doctorNamesList];
     if(check){
         return doctorNamesList;
     }
@@ -88,7 +88,7 @@ static NSArray *operationsList;
 {
     NSMutableArray *surgeryNamesList = [[NSMutableArray alloc] initWithArray:doctorList copyItems:YES];
     
-    BOOL check = [LocalTalk addToLocalTable:@"SurgeryType" withData:surgeryNamesList];
+    NSArray *check = [LocalTalk setSQLiteTable:@"SurgeryType" withData:surgeryNamesList];
     if(check){
         return surgeryNamesList;
     }

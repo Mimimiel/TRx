@@ -112,12 +112,12 @@ static FMDatabase *db;
             [Utility alertWithMessage:@"For some reason one of your tables didn't return data!"];
         } else {//turn return data into a dictionary and put it into an array.
             while([retval next]){
-            NSDictionary *dict = [retval resultDictionary];
-            [dictionary setObject:dict forKey:table];
+                NSDictionary *dict = [retval resultDictionary];
+                [dictionary setObject:dict forKey:table];
             }
         }
     }
-     
+    
     NSLog(@"----------I'm leaving get data------------");
     return dictionary;
     
@@ -183,7 +183,7 @@ static FMDatabase *db;
         NSLog(@"Error updating isLive in PatientRecord's table");
         NSLog(@"%@", [db lastErrorMessage]);
     }
-
+    
     NSLog(@"The app Id of the clicked cell is: %@", appId);
     return appId;
     
@@ -193,7 +193,7 @@ static FMDatabase *db;
 
 
 +(BOOL)storeMutableArrayFromAdmin:(NSMutableArray *)adminArray  inTable:(NSString *)tableName{
-
+    
     /*get the app id associated with the patient record id*/
     for (NSInteger i = 1; i < adminArray.count; i++){
         NSString *query = [NSString stringWithFormat:@"INSERT INTO %@ (Id, Name) VALUES (%d,%@)",tableName, i, [adminArray objectAtIndex:i]];
@@ -206,7 +206,7 @@ static FMDatabase *db;
             NSLog(@"Error updating isLive in PatientRecord's table");
             NSLog(@"%@", [db lastErrorMessage]);
         }
-
+        
     }
     
     //NSLog(@"The app Id of the clicked cell is: %@", appId);
@@ -264,9 +264,9 @@ static FMDatabase *db;
     NSString *middleName    = [params objectForKey:@"MiddleName"];
     NSString *lastName      = [params objectForKey:@"LastName"];
     NSString *birthday      = [params objectForKey:@"Birthday"];
-
+    
     BOOL retval = [db executeUpdate:@"INSERT INTO Patient (FirstName, MiddleName, LastName, Birthday) VALUES (?, ?, ?, ?)", firstName, middleName, lastName, birthday];
-
+    
     return retval;
 }
 /*
@@ -282,7 +282,6 @@ static FMDatabase *db;
     NSString *Id            = [params objectForKey:@"Id"];
     BOOL retval;
     
-    
     NSString *AppPatientId = [self localGetAppPatientId];
     NSLog(@"PatientId: %@", AppPatientId);
     
@@ -295,61 +294,72 @@ static FMDatabase *db;
         query = [NSString stringWithFormat:@"INSERT INTO PatientRecord(Id, SurgeryTypeId, DoctorId, HasTimeout, IsLive, IsCurrent, AppPatientId) VALUES (%@, %@, %@, %@, %@, %@, %@)", Id, surgeryTypeId, doctorId, hasTimeout, isLive, isCurrent, AppPatientId];
     }
     
-    retval = [db executeUpdate:query]; 
+    retval = [db executeUpdate:query];
     return retval;
 }
 
 /*-----------------------------------------------------------------------
- Method: addToLocalTable withData
- Returns: 
+ Method: setSQLiteTable withData
+ Returns:
     NSMutableArray where each index holds the primary key for each row
-    If individual insert successful, primary key > 0
+    If individual insert/update successful, primary key > 0
     If unsuccessful, primary key = 0
- 
-    //TRUE if all inserts successful
-    //FALSE if any insert failed
  Parameters:
-    tableName: name of the table you want to insert
-    tableData: data you want to insert
-        each index in the array is a row to insert into the table
+    tableName: name of the table you want to insert or update
+    tableData: data you want to insert/update
+        each index in the array is a row to insert/update into the table
         each row can look like whatever (i.e. don't have to be identical)
- Summary: insert rows into some table in the local database
- //TODO: inserts vs updates? i.e. should this also handle updates
+ Summary: insert or update rows into any table in the local database
  //TODO: error handling
- //TODO: this may only be a temporary method?
  -----------------------------------------------------------------------*/
-+(NSMutableArray*) addToLocalTable:(NSString *)tableName withData:(NSMutableArray *)tableData {
++(NSMutableArray*)setSQLiteTable:(NSString *)tableName withData:(NSMutableArray *)tableData {
     BOOL success;
-    //BOOL retval = TRUE;
-    NSMutableArray* insertedIDs = [[NSMutableArray alloc] init];
-    NSInteger insertedID;
+    NSMutableArray* returnIDs = [[NSMutableArray alloc] init];
+    NSMutableArray* updateSQL = [[NSMutableArray alloc] init];
+    NSInteger affectedID;
+    NSMutableString* appID;
     NSMutableString *sql;
     
-    //TODO: this could be more efficient
-    //TODO: think about appropriate return values (see RETURNS above)
     for(NSDictionary* row in tableData){
-        sql = [NSMutableString stringWithFormat:@"INSERT INTO %@ (%@) VALUES ('%@')",
-               tableName,
-               [[row allKeys] componentsJoinedByString:@", "],
-               [[row allValues] componentsJoinedByString:@"', '"]];
-    
-        success = [db executeUpdate:sql];
-        if(!success){
-            insertedID = 0;
-            //retval = FALSE;
-            //unsuccessful, error handling goes here
+        affectedID = 0;
+        [updateSQL removeAllObjects];
+        appID = row[@"AppId"];
+        if(appID != nil && ![appID isEqualToString:@""] && ![appID isEqualToString:@"0"]){
+            //UPDATE
+            for(NSString* key in row){
+                if(![key isEqualToString:@"AppId"]){
+                    sql = [NSMutableString stringWithFormat: @"%@ = '%@'", key, row[key]];
+                    [updateSQL addObject:sql];
+                }
+            }
+            
+            sql = [NSMutableString stringWithFormat:@"UPDATE %@ SET %@ WHERE AppId = '%@'",
+                   tableName,
+                   [updateSQL componentsJoinedByString:@" AND "],
+                   appID];
+                
+            success = [db executeUpdate:sql];
+            if(success){
+                affectedID = [appID integerValue];
+            }
         }
         else{
-            //successful
-            //any further handling?
-            insertedID = [db lastInsertRowId];
+            //INSERT
+            sql = [NSMutableString stringWithFormat:@"INSERT INTO %@ (%@) VALUES ('%@')",
+                   tableName,
+                   [[row allKeys] componentsJoinedByString:@", "],
+                   [[row allValues] componentsJoinedByString:@"', '"]];
+            
+            success = [db executeUpdate:sql];
+            if(success){
+                affectedID = [db lastInsertRowId];
+            }
         }
         
-        [insertedIDs addObject:[NSNumber numberWithInteger:insertedID]];
+        [returnIDs addObject:[NSNumber numberWithInteger:affectedID]];
     }
-    return insertedIDs;
+    return returnIDs;
 }
-
 
 /*-------------------End Local Store Mega Method---------------------*/
 
@@ -407,9 +417,9 @@ static FMDatabase *db;
 }
 
 +(NSString *)localGetId:(NSString *)query {
-
+    
     db.logsErrors = TRUE;
-
+    
     FMResultSet *result = [db executeQuery:query];
     if([db hadError]){
         NSLog(@"Err %d: %@", [db lastErrorCode], [db lastErrorMessage]);
@@ -435,7 +445,7 @@ static FMDatabase *db;
     //    NSLog(@"retrieved data: %@", [result stringForColumn:@"FirstName"]);
     
     /*-----------error checking ---------*/
-
+    
     return str;
 }
 
@@ -458,10 +468,10 @@ static FMDatabase *db;
 
 +(NSMutableArray *)selectAllFromTable:(NSString *)table {
     NSMutableArray *arrayOfKeysAndValues = [[NSMutableArray alloc] init];
-
+    
     FMResultSet *results;
     NSString *query;
-
+    
     if ([table isEqualToString:@"PatientRecord"]) {
         query = [NSString stringWithFormat:@"Select * FROM %@ WHERE IsLive = 1", table];
         NSLog(@"%@", query);
@@ -484,7 +494,7 @@ static FMDatabase *db;
 }
 
 +(BOOL)tableUnsynced:(NSString *)table {
-
+    
     FMResultSet *results;
     NSLog(@"Checking if %@ is Synced", table);
     NSString *query = [NSString stringWithFormat:@"SELECT count(AppId) FROM %@ WHERE LastModified > LastSynced", table];
@@ -500,7 +510,7 @@ static FMDatabase *db;
     if (count > 0) {
         return true;
     }
-
+    
     return false;
 }
 
@@ -511,7 +521,7 @@ static FMDatabase *db;
 //TODO: Will not work for PatientRecord ?? Need another query
 
 +(BOOL)insertValue:(NSString *)value intoColumn:(NSString *)column inLocalTable:(NSString *)table {
-
+    
     NSString *query = [NSString stringWithFormat:@"INSERT INTO %@ a, PatientRecord rec (a.%@) VALUES %@ WHERE a.AppId = rec.AppId and IsLive = 1", table, column, value];
     NSLog(@"InsertValue query: %@", query);
     
@@ -534,21 +544,21 @@ static FMDatabase *db;
     NSLog(@"QUERY: %@", query);
     
     BOOL result = [db executeUpdate:query];
-
-//    NSString *testquery = [NSString stringWithFormat:@"SELECT * FROM Patient WHERE FirstName = \"%@\" and LastName = \"%@\" and Birthday = \"%@\"", firstName, lastName, birthday];
-//    NSLog(@"printing testquery: %@", testquery);
-//    NSLog(@"ATTEMPTING TO INSERT PATIENT ID: %@", patientId);
-//    FMResultSet *results = [db executeQuery:testquery];
-//    if (!results) {
-//        NSLog(@"db error!! : %@", [db lastErrorMessage]);
-//    }
-//    while ([results next]) {
-//        NSLog(@"COUNT OF ROWS (SHOULD BE 1): %@,", [results stringForColumn:@"Id"]);
-//    }
+    
+    //    NSString *testquery = [NSString stringWithFormat:@"SELECT * FROM Patient WHERE FirstName = \"%@\" and LastName = \"%@\" and Birthday = \"%@\"", firstName, lastName, birthday];
+    //    NSLog(@"printing testquery: %@", testquery);
+    //    NSLog(@"ATTEMPTING TO INSERT PATIENT ID: %@", patientId);
+    //    FMResultSet *results = [db executeQuery:testquery];
+    //    if (!results) {
+    //        NSLog(@"db error!! : %@", [db lastErrorMessage]);
+    //    }
+    //    while ([results next]) {
+    //        NSLog(@"COUNT OF ROWS (SHOULD BE 1): %@,", [results stringForColumn:@"Id"]);
+    //    }
     
     
     //NSLog(@"Result of inserting patientId: %@  %d query: %@", patientId, result, query);
-
+    
     return result;
 }
 //FIXME: INSERT_RECORD_ID this doesn't work
@@ -578,7 +588,7 @@ static FMDatabase *db;
  true on success, false otherwise
  *---------------------------------------------------------------------------*/
 +(BOOL)localStoreValue:(NSString *)value forQuestionId:(NSString *)questionId {
-
+    
     return [db executeUpdate:@"INSERT INTO Patient (QuestionId, Value, Synched) VALUES (?, ?, 0)", questionId, value];
 }
 
@@ -742,7 +752,7 @@ static FMDatabase *db;
 +(UIImage *)localGetPortrait {
     // NSString *query = [NSString stringWithFormat:@"SELECT imageBlob FROM Images WHERE imageType = \"portrait\""];
     NSString *query = [NSString stringWithFormat:@"Select * from Images"];
-
+    
     FMResultSet *results = [db executeQuery:query];
     if (!results) {
         NSLog(@"Error retrieving image\n");
