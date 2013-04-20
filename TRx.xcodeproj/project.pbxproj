@@ -16,6 +16,7 @@
 		1327D4BD1704B0AD005010BC /* UnitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1327D4BC1704B0AD005010BC /* UnitTests.m */; };
 		1327D4C71704BA1A005010BC /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1327D4C61704BA1A005010BC /* SystemConfiguration.framework */; };
 		1327D4C91704BA2C005010BC /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1327D4C81704BA2C005010BC /* MobileCoreServices.framework */; };
+		1331538217211DB800F4C804 /* FMDatabaseQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 1331538117211DB800F4C804 /* FMDatabaseQueue.m */; };
 		136E218A1719EF40007420ED /* OnOpen.m in Sources */ = {isa = PBXBuildFile; fileRef = 136E21891719EF40007420ED /* OnOpen.m */; };
 		136E2191171A68D9007420ED /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 136E2190171A68D9007420ED /* Reachability.m */; };
 		13C069FB170B384D00044896 /* TestLocalTalk.m in Sources */ = {isa = PBXBuildFile; fileRef = 13C069FA170B384D00044896 /* TestLocalTalk.m */; };
@@ -145,6 +146,8 @@
 		1327D4C81704BA2C005010BC /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		1327D4CB1708F464005010BC /* LocalTalkWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalTalkWrapper.h; sourceTree = "<group>"; };
 		1327D4CC1708F464005010BC /* LocalTalkWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocalTalkWrapper.m; sourceTree = "<group>"; };
+		1331538017211DB800F4C804 /* FMDatabaseQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FMDatabaseQueue.h; path = TRx/Utilities/FMDatabaseQueue.h; sourceTree = SOURCE_ROOT; };
+		1331538117211DB800F4C804 /* FMDatabaseQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = FMDatabaseQueue.m; path = TRx/Utilities/FMDatabaseQueue.m; sourceTree = SOURCE_ROOT; };
 		136E21881719EF40007420ED /* OnOpen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OnOpen.h; sourceTree = "<group>"; };
 		136E21891719EF40007420ED /* OnOpen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OnOpen.m; sourceTree = "<group>"; };
 		136E218F171A68D8007420ED /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
@@ -344,6 +347,8 @@
 				13F3523816EE66C3009321E7 /* FMDatabase.h */,
 				13F3523916EE66C3009321E7 /* FMDatabase.m */,
 				13F3523A16EE66C3009321E7 /* FMDatabasePool.h */,
+				1331538017211DB800F4C804 /* FMDatabaseQueue.h */,
+				1331538117211DB800F4C804 /* FMDatabaseQueue.m */,
 				13F3523B16EE66C3009321E7 /* FMDatabasePool.m */,
 				13F3523C16EE66C3009321E7 /* FMResultSet.h */,
 				13F3523D16EE66C3009321E7 /* FMResultSet.m */,
@@ -938,6 +943,7 @@
 				136E218A1719EF40007420ED /* OnOpen.m in Sources */,
 				136E2191171A68D9007420ED /* Reachability.m in Sources */,
 				19E9D13D171FD7B400E99A93 /* SurgeryListViewCell.m in Sources */,
+				1331538217211DB800F4C804 /* FMDatabaseQueue.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

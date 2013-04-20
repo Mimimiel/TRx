@@ -25,8 +25,7 @@
 +(BOOL)addPatientToLocal:(NSDictionary *)params;
 +(BOOL)addRecordToLocal:(NSDictionary *)params;
 
-//TODO: addToLocalTable is a temp method
-+(NSMutableArray*)addToLocalTable:(NSString *)tableName withData:(NSMutableArray *)tableData;
++(NSMutableArray*)setSQLiteTable:(NSString *)tableName withData:(NSMutableArray *)tableData;
 
 
 
@@ -44,13 +43,24 @@
 +(NSArray *)selectAllFromTable:(NSString *)table;
 +(BOOL)tableUnsynced:(NSString *)table;
 
-+(NSString *)localGetOperationRecordTypeId; 
++(NSString *)localGetOperationRecordTypeId;
+
++(NSString *)localGetPatientRecordAppId;
++(NSString *)localGetPatientRecordId;
++(NSString *)localGetPatientAppId;
++(NSString *)localGetAppPatientId;
++(NSString *)localGetPatientId;
 
 #pragma mark -- Mutator Methods for Local
 
 
 +(BOOL)insertValue:(NSString *)value intoColumn:(NSString *)column inLocalTable:(NSString *)table;
++(BOOL)insertPatientId:(NSString *)patientId
+          forFirstName:(NSString *)firstName
+              lastName:(NSString *)lastName
+              birthday:(NSString *)birthday;
 
++(BOOL) insertRecordId:(NSString *)recordId;
 
 
 +(NSMutableArray *)localGetPatientList;
@@ -58,9 +68,7 @@
 +(UIImage *)localGetPortrait;
 +(id)localGetAudio:(NSString *)fileName;
 
-+(NSString *)localGetPatientId;
-+(NSString *)localGetPatientRecordId;
-+(NSString *)localGetPatientRecordAppId;
+
 
 
 +(BOOL)loadPortraitImageIntoLocal:(NSString *)patientId;

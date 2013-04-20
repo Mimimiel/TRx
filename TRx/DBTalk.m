@@ -60,9 +60,6 @@ static DBTalk *singleton;
 
 
 -(void)pushLocalUnsyncedToServer {
-    //check if patientId is null
-   // if (!patientId) {
-   // }
     
     BOOL patientUnsynced    = [LocalTalk tableUnsynced:@"Patient"];
     BOOL recordUnsynced     = [LocalTalk tableUnsynced:@"PatientRecord"];
@@ -84,40 +81,104 @@ static DBTalk *singleton;
 
 #pragma mark - Add Methods
 
-
+//TODO I cannot for the life of me figure out why this is breaking
+//Patients are successfully added to the database, and their patientId
+//is returned so that I can store it in LocalDatabase. All goes well until
+//I try to store into the LocalDatabase. Then I get errors.
+//
+//I have tested the method on SQLiteManager, and it works
+//When running in the app, it fails
+//
 +(void)addUpdatePatient {
     NSLog(@"Entering addUpdatePatient");
     NSArray *patientTableValuesArray    = [LocalTalk selectAllFromTable:@"Patient"];
     NSDictionary *patientTableValues    = [patientTableValuesArray objectAtIndex:0];
     NSLog(@"%@", patientTableValues);
     
-    NSURL *url = [NSURL URLWithString:host];
-    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@add/patient", host]];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+    request.HTTPMethod = @"POST";
     
-    [httpClient postPath:@"add/patient" parameters:patientTableValues success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"AddPatient successful");
-        
-        
-        NSError *jsonError;
-        NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:responseObject options:kNilOptions error:&jsonError];
-        NSDictionary *dic = jsonArray[0];
-        NSString *retval = [dic objectForKey:@"@returnValue"];
-        if ([retval isEqualToString:@"0"]) {
-            NSString *err = [dic objectForKey:@"error"];
-            [Utility alertWithMessage:err];
-        }
-        else {
-            [LocalTalk insertValue:retval intoColumn:@"Id" inLocalTable:@"Patient"];
-        }
-        [DBTalk addUpdatePatientRecord];
-        
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"AddPatient failed");
-    }];
+    NSString *firstName     = [patientTableValues objectForKey:@"FirstName"];
+    NSString *middleName    = [patientTableValues objectForKey:@"MiddleName"];
+    NSString *lastName      = [patientTableValues objectForKey:@"LastName"];
+    NSString *patientId     = [patientTableValues objectForKey:@"Id"];
+    NSString *birthday      = [patientTableValues objectForKey:@"Birthday"];
+    
+    
+    NSString *params = [NSString stringWithFormat:
+                        @"FirstName=%@&LastName=%@&MiddleName=%@&Birthday=%@&Id=%@", firstName, lastName, middleName, birthday, patientId];
+    NSLog(@"params: %@", params);
+    //encode params later
+    NSData *data = [params dataUsingEncoding:NSUTF8StringEncoding];
+    [request addValue:@"8bit" forHTTPHeaderField:@"Content-Transfer-Encoding"];
+    [request addValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    [request addValue:[NSString stringWithFormat:@"%i", [data length]] forHTTPHeaderField:@"Content-Length"];
+    [request setHTTPBody:data];
+    //[[NSURLConnection alloc] initWithRequest:request delegate:self];
+    NSError *err = nil;
+    NSURLResponse *response = nil;
+    
+    //This really should be thrown off into its own thread
+    NSData *responseData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&err];
+    if (!responseData) {
+        NSLog(@"Adding patient failed");
+    }
+    if (err) {
+        NSLog(@"Error in request: %@", err);
+    }
+    NSError *jsonError;
+    NSDictionary *jsonDic = [NSJSONSerialization JSONObjectWithData:responseData options:kNilOptions error:&jsonError];
+    if (jsonError) {
+        NSLog(@"JsonError: %@", jsonError);
+    }
+    NSString *retval = [jsonDic objectForKey:@"@returnValue"];
+    NSLog(@"retval: %@", retval);
+    if ([retval isEqual:@"0"]) {
+        NSString *dbErr = [jsonDic objectForKey:@"@error"];
+        NSLog(@"Error from DB: %@", dbErr);
+    }
+    
+    [LocalTalk insertPatientId:retval forFirstName:[jsonDic objectForKey:@"FirstName"]
+                                                  lastName:[jsonDic objectForKey:@"LastName"] birthday:[jsonDic objectForKey:@"Birthday"]];
+    [DBTalk addUpdatePatientRecord];
+//
+//    
+//    NSURL *url =  [[NSURL alloc] initWithString:host];
+//    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+//    
+//    [httpClient postPath:@"add/patient" parameters:patientTableValues success:^(AFHTTPRequestOperation *operation, id responseObject) {
+//        NSLog(@"AddPatient successful");
+//        
+//        
+//        NSError *jsonError;
+//        NSDictionary *jsonDic = [NSJSONSerialization JSONObjectWithData:responseObject options:kNilOptions error:&jsonError];
+//        NSDictionary *dic = jsonDic;
+//        NSString *retval = [dic objectForKey:@"@returnValue"];
+//        if ([retval isEqualToString:@"0"]) {
+//            NSString *err = [dic objectForKey:@"error"];
+//            [Utility alertWithMessage:err];
+//            NSLog(@"error getting addPatient retval: %@", err);
+//        }
+//        else {
+//            BOOL success = [LocalTalk insertPatientId:retval forFirstName:[dic objectForKey:@"FirstName"]
+//                                             lastName:[dic objectForKey:@"LastName"] birthday:[dic objectForKey:@"Birthday"]];
+//            if (!success) {
+//                NSLog(@"Error adding patientId: %@", retval);
+//            }
+//        }
+//        [DBTalk addUpdatePatientRecord];
+//        
+//    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//        NSLog(@"AddPatient failed");
+//        NSLog(@"AddPatient error: %@", error);
+//    }];
+    NSLog(@"Exiting addUpdatePatient");
     
 }
 
 +(void)addUpdatePatientRecord {
+    
     //if patientRecord is NULL or table is unsynched, sync else return
     NSLog(@"Entering addUpdatePatientRecord");
     
@@ -126,10 +187,14 @@ static DBTalk *singleton;
     [recordTableValues setValue:@"0" forKey:@"HasTimeout"];
     
     NSString *patientId = [LocalTalk localGetPatientId];
+    if (!patientId) {
+        [Utility alertWithMessage:@"Error adding PatientRecord: No PatientId in Local database"];
+        NSLog(@"Error adding PatientRecord: No PatientId in Local database");
+    }
     NSLog(@"Printing patinetId in addUpdatePatientRecord: %@", patientId);
     
     [recordTableValues setValue:patientId forKey:@"PatientId"];
-    NSLog(@"%@", recordTableValues);
+    //NSLog(@"%@", recordTableValues);
     
     NSURL *url = [NSURL URLWithString:host];
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
@@ -146,7 +211,10 @@ static DBTalk *singleton;
             [Utility alertWithMessage:err];
         }
         else {
-            [LocalTalk insertValue:retval intoColumn:@"Id" inLocalTable:@"PatientRecord"];
+            BOOL inserted = [LocalTalk insertRecordId:retval];
+            if (!inserted) {
+                NSLog(@"RecordId not inserted into Local. RecordId: %@", retval);
+            }
         }
         NSLog(@"%@", [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding]);
         //[[NSNotificationCenter defaultCenter] postNotificationName:@"patientAdded" object:nil];
@@ -466,6 +534,49 @@ static DBTalk *singleton;
     
     return true;
 }
+
++(void)addUpdateOperationRecord {
+    //select * from operationRecord & get a dictionary of params
+    
+    //fill up params and call operationRecord with POST
+    
+}
+
+//NOTE custom Names are only for internal use. They get stored
+//in the server but do not get used in the file structure.
+
++(void)uploadFileToServer:(id)file
+               customName:(NSString *)customName
+                 fileType:(NSString *)fileType
+               forPatient:(NSString *)patientId {
+    
+    if ([fileType isEqualToString:@"image"]) {
+        UIImage *image = [[UIImage alloc] initWithData:file];
+        [DBTalk uploadImageToServer:image fileName:customName forPatient:patientId];
+    }
+    else if ([fileType isEqualToString:@"audio"]) {
+        
+    }
+    else {
+        NSLog(@"No method for file of that type");
+        [Utility alertWithMessage:@"No method for file of that type"];
+    }
+}
+
++(void)uploadImageToServer:(UIImage *)image
+                  fileName:(NSString *)customName
+                forPatient:(NSString *)patientId {
+    
+    //getPicturePath -- the Number of picture it is for that patient
+    //upload picture
+    //add picture info to database
+    
+    
+}
+
+
+
+
 
 /*---------------------------------------------------------------------------
  * Updates a picture path in the database. Need to pass in a pictureId

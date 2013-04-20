@@ -9,6 +9,7 @@
 #import "LocalTalk.h"
 #import "DBTalk.h"
 #import "FMDatabase.h"
+#import "FMDatabaseQueue.h"
 #import "Utility.h"
 #import "SynchData.h"
 #import "AdminInformation.h"
@@ -17,6 +18,7 @@
 
 
 static LocalTalk *singleton;
+static FMDatabase *db;
 +(void)initialize{
     
     static BOOL initialized = false;
@@ -24,7 +26,8 @@ static LocalTalk *singleton;
     {
         initialized = true;
         singleton = [[LocalTalk alloc] init];
-        
+        db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
+        [db open];
         
     }
 }
@@ -73,8 +76,7 @@ static LocalTalk *singleton;
     localPatientRecordId = [self localGetPatientRecordAppId];
     NSMutableArray *tableNames = [params objectForKey:@"tableNames"];
     //check for current patient, if none, return nil
-    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
-    [db open];
+    
     
     for(NSString *table in tableNames){
         //check if it's Doctor, surgery type, or patient and if it is those have special keys
@@ -128,8 +130,7 @@ static LocalTalk *singleton;
 +(BOOL)clearIsLiveFlags {
     //this will go to the database and set all the is live flags to 0
     
-    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
-    [db open];
+    
     /*FIX THIS WILLIE YOURE WORKING HERE*/
     NSString *query = [NSString stringWithFormat:@"UPDATE PatientRecord SET IsLive = 0"];
     BOOL retval = [db executeUpdate:query];
@@ -137,7 +138,6 @@ static LocalTalk *singleton;
     if (!retval) {
         NSLog(@"%@", [db lastErrorMessage]);
     }
-    [db close];
     return retval;
 }
 
@@ -147,8 +147,7 @@ static LocalTalk *singleton;
     //if connection set live based on id
     //if no connection set live basedon appid
     //if no connection and no app id display alert
-    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
-    [db open];
+    
     BOOL connectivity = [self checkConnectivity];
     if(connectivity){
         //NSString *appId = [self getAppIdFromPatientRecordId:patientRecordId];
@@ -172,14 +171,11 @@ static LocalTalk *singleton;
         
     }
     
-    [db close];
     return 0;
 }
 
 +(NSString *)getAppIdFromPatientRecordId:(NSString *)patientRecordId {
     
-    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
-    [db open];
     /*get the app id associated with the patient record id*/
     NSString *query = [NSString stringWithFormat:@"SELECT AppId FROM PatientRecord WHERE Id = %@", patientRecordId];
     
@@ -192,7 +188,6 @@ static LocalTalk *singleton;
         NSLog(@"%@", [db lastErrorMessage]);
     }
     
-    [db close];
     NSLog(@"The app Id of the clicked cell is: %@", appId);
     return appId;
     
@@ -202,8 +197,7 @@ static LocalTalk *singleton;
 
 
 +(BOOL)storeMutableArrayFromAdmin:(NSMutableArray *)adminArray  inTable:(NSString *)tableName{
-    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
-    [db open];
+    
     /*get the app id associated with the patient record id*/
     for (NSInteger i = 1; i < adminArray.count; i++){
         NSString *query = [NSString stringWithFormat:@"INSERT INTO %@ (Id, Name) VALUES (%d,%@)",tableName, i, [adminArray objectAtIndex:i]];
@@ -219,7 +213,6 @@ static LocalTalk *singleton;
         
     }
     
-    [db close];
     //NSLog(@"The app Id of the clicked cell is: %@", appId);
     return 0;
 }
@@ -278,7 +271,6 @@ static LocalTalk *singleton;
     
     FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
     
-    [db open];
     BOOL retval = [db executeUpdate:@"INSERT INTO Patient (FirstName, MiddleName, LastName, Birthday) VALUES (?, ?, ?, ?)", firstName, middleName, lastName, birthday];
     
     [db close];
@@ -296,9 +288,6 @@ static LocalTalk *singleton;
     NSString *isLive        = [params objectForKey:@"IsLive"];
     NSString *Id            = [params objectForKey:@"Id"];
     BOOL retval;
-    
-    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
-    [db open];
     
     NSString *AppPatientId = [self localGetAppPatientId];
     NSLog(@"PatientId: %@", AppPatientId);
@@ -334,19 +323,15 @@ static LocalTalk *singleton;
  Summary: insert rows into some table in the local database
  //TODO: inserts vs updates? i.e. should this also handle updates
  //TODO: error handling
- //TODO: this may only be a temporary method?
  -----------------------------------------------------------------------*/
-+(NSMutableArray*) addToLocalTable:(NSString *)tableName withData:(NSMutableArray *)tableData {
++(NSMutableArray*)setSQLiteTable:(NSString *)tableName withData:(NSMutableArray *)tableData {
     BOOL success;
-    //BOOL retval = TRUE;
-    NSMutableArray* insertedIDs = [[NSMutableArray alloc] init];
-    NSInteger insertedID;
+    NSMutableArray* returnIDs = [[NSMutableArray alloc] init];
+    NSMutableArray* updateSQL = [[NSMutableArray alloc] init];
+    NSInteger affectedID;
+    NSMutableString* appID;
     NSMutableString *sql;
-    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
-    [db open];
     
-    //TODO: this could be more efficient
-    //TODO: think about appropriate return values (see RETURNS above)
     for(NSDictionary* row in tableData){
         sql = [NSMutableString stringWithFormat:@"INSERT INTO %@ (%@) VALUES ('%@')",
                tableName,
@@ -360,17 +345,22 @@ static LocalTalk *singleton;
             //unsuccessful, error handling goes here
         }
         else{
-            //successful
-            //any further handling?
-            insertedID = [db lastInsertRowId];
+            //INSERT
+            sql = [NSMutableString stringWithFormat:@"INSERT INTO %@ (%@) VALUES ('%@')",
+                   tableName,
+                   [[row allKeys] componentsJoinedByString:@", "],
+                   [[row allValues] componentsJoinedByString:@"', '"]];
+            
+            success = [db executeUpdate:sql];
+            if(success){
+                affectedID = [db lastInsertRowId];
+            }
         }
         
-        [insertedIDs addObject:[NSNumber numberWithInteger:insertedID]];
+        [returnIDs addObject:[NSNumber numberWithInteger:affectedID]];
     }
-    
-    return insertedIDs;
+    return returnIDs;
 }
-
 
 /*-------------------End Local Store Mega Method---------------------*/
 
@@ -428,9 +418,8 @@ static LocalTalk *singleton;
 }
 
 +(NSString *)localGetId:(NSString *)query {
-    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
+    
     db.logsErrors = TRUE;
-    [db open];
     
     FMResultSet *result = [db executeQuery:query];
     if([db hadError]){
@@ -458,7 +447,6 @@ static LocalTalk *singleton;
     
     /*-----------error checking ---------*/
     
-    [db close];
     return str;
 }
 
@@ -481,10 +469,10 @@ static LocalTalk *singleton;
 
 +(NSMutableArray *)selectAllFromTable:(NSString *)table {
     NSMutableArray *arrayOfKeysAndValues = [[NSMutableArray alloc] init];
-    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
+    
     FMResultSet *results;
     NSString *query;
-    [db open];
+    
     if ([table isEqualToString:@"PatientRecord"]) {
         query = [NSString stringWithFormat:@"Select * FROM %@ WHERE IsLive = 1", table];
         NSLog(@"%@", query);
@@ -503,14 +491,12 @@ static LocalTalk *singleton;
         [arrayOfKeysAndValues addObject:[results resultDictionary]];
     }
     NSLog(@"In selectAllFromTable: %@", arrayOfKeysAndValues);
-    [db close];
     return arrayOfKeysAndValues;
 }
 
 +(BOOL)tableUnsynced:(NSString *)table {
-    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
+    
     FMResultSet *results;
-    [db open];
     NSLog(@"Checking if %@ is Synced", table);
     NSString *query = [NSString stringWithFormat:@"SELECT count(AppId) FROM %@ WHERE LastModified > LastSynced", table];
     results = [db executeQuery:query];
@@ -525,6 +511,7 @@ static LocalTalk *singleton;
     if (count > 0) {
         return true;
     }
+    
     return false;
 }
 
@@ -532,14 +519,60 @@ static LocalTalk *singleton;
 /*-------------------End Local Database Accessor Methods---------------------*/
 
 /*-------------------Begin Local Database Mutator Methods---------------------*/
+//TODO: Will not work for PatientRecord ?? Need another query
 
 +(BOOL)insertValue:(NSString *)value intoColumn:(NSString *)column inLocalTable:(NSString *)table {
-    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
-    [db open];
-    NSString *query = [NSString stringWithFormat:@"INSERT INTO %@(%@) VALUES %@", table, column, value];
+    
+    NSString *query = [NSString stringWithFormat:@"INSERT INTO %@ a, PatientRecord rec (a.%@) VALUES %@ WHERE a.AppId = rec.AppId and IsLive = 1", table, column, value];
+    NSLog(@"InsertValue query: %@", query);
+    
+    
     BOOL result = [db executeUpdate:query];
-    [db close];
     return result;
+}
+
+//FIXME: This is the method that fails
+
+
++(BOOL)insertPatientId:(NSString *)patientId
+          forFirstName:(NSString *)firstName
+              lastName:(NSString *)lastName
+              birthday:(NSString *)birthday {
+    
+    [db closeOpenResultSets];
+    NSString *query = [NSString stringWithFormat:@"UPDATE Patient SET Id = \"%@\" WHERE FirstName = \"%@\" and LastName = \"%@\" and Birthday = \"%@\"", patientId, firstName, lastName, birthday];
+    
+    NSLog(@"QUERY: %@", query);
+    
+    BOOL result = [db executeUpdate:query];
+    
+    //    NSString *testquery = [NSString stringWithFormat:@"SELECT * FROM Patient WHERE FirstName = \"%@\" and LastName = \"%@\" and Birthday = \"%@\"", firstName, lastName, birthday];
+    //    NSLog(@"printing testquery: %@", testquery);
+    //    NSLog(@"ATTEMPTING TO INSERT PATIENT ID: %@", patientId);
+    //    FMResultSet *results = [db executeQuery:testquery];
+    //    if (!results) {
+    //        NSLog(@"db error!! : %@", [db lastErrorMessage]);
+    //    }
+    //    while ([results next]) {
+    //        NSLog(@"COUNT OF ROWS (SHOULD BE 1): %@,", [results stringForColumn:@"Id"]);
+    //    }
+    
+    
+    //NSLog(@"Result of inserting patientId: %@  %d query: %@", patientId, result, query);
+    
+    return result;
+}
+//FIXME: INSERT_RECORD_ID this doesn't work
+
++(BOOL) insertRecordId:(NSString *)recordId {
+    NSString *patientId = [LocalTalk localGetPatientId];
+    //could search for isLive
+    NSString *query = [NSString stringWithFormat:@"UPDATE PatientRecord SET Id = \"%@\" WHERE AppPatientId = \"%@\"", recordId, patientId];
+    
+    NSLog(@"QUERY: %@", query);
+    
+    return [db executeUpdate:query];
+    
 }
 
 
@@ -556,14 +589,8 @@ static LocalTalk *singleton;
  true on success, false otherwise
  *---------------------------------------------------------------------------*/
 +(BOOL)localStoreValue:(NSString *)value forQuestionId:(NSString *)questionId {
-    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
     
-    [db open];
-    BOOL retval = [db executeUpdate:@"INSERT INTO Patient (QuestionId, Value, Synched) VALUES (?, ?, 0)", questionId, value];
-    [db close];
-    
-    return retval;
-    
+    return [db executeUpdate:@"INSERT INTO Patient (QuestionId, Value, Synched) VALUES (?, ?, 0)", questionId, value];
 }
 
 /*---------------------------------------------------------------------------
@@ -582,10 +609,7 @@ static LocalTalk *singleton;
         return false;
     }
     
-    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
-    [db open];
     BOOL retval = [db executeUpdate:@"INSERT OR REPLACE INTO Images (imageType, imageBlob) VALUES (?,?)", @"portrait", imageData];
-    [db close];
     
     return retval;
 }
@@ -604,14 +628,11 @@ static LocalTalk *singleton;
 +(BOOL)localStoreAudio:(NSData *)audioData withAppPatientRecordId:(NSString *)appPatientRecordId andRecordTypeId:(NSString *)recordTypeId andfileName:(NSString *)fileName andPath:(NSString *)pathToAudio {
     
     BOOL isProfile = 0;
-    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
-    [db open];
     BOOL retval = [db executeUpdate:@"INSERT INTO OperationRecord (AppPatientRecordId, RecordTypeId, Name, Path, IsProfile, Created, LastModified, LastSynced, Data) VALUES (?, ?, ?, ?, ?, ?, ?)", appPatientRecordId, recordTypeId, fileName, pathToAudio, isProfile, audioData];
     
     if (!retval) {
         NSLog(@"%@", [db lastErrorMessage]);
     }
-    [db close];
     return retval;
 }
 
@@ -722,8 +743,6 @@ static LocalTalk *singleton;
 
 +(NSMutableArray *)localGetPatientListFromSQLite {
     NSMutableArray *retval = [[NSMutableArray alloc] init];
-    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
-    [db open];
     NSString *query = [NSString stringWithFormat: @"SELECT a.Id, a.FirstName, a.MiddleName, a.LastName, a.Birthday, b.AppId as PatientRecordAppId, b.Id as RecordId, b.SurgeryTypeId, b.DoctorId, b.IsLive, b.IsCurrent, c.Name FROM patient as a JOIN patientRecord as b ON b.apppatientid = a.appid JOIN surgeryType as c on b.SurgeryTypeId = c.id"];
     
     FMResultSet *result = [db executeQuery:query];
@@ -737,7 +756,6 @@ static LocalTalk *singleton;
         [retval addObject:dict];
     }
     
-    [db close];
     return retval;
 }
 
@@ -754,8 +772,7 @@ static LocalTalk *singleton;
 +(UIImage *)localGetPortrait {
     // NSString *query = [NSString stringWithFormat:@"SELECT imageBlob FROM Images WHERE imageType = \"portrait\""];
     NSString *query = [NSString stringWithFormat:@"Select * from Images"];
-    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
-    [db open];
+    
     FMResultSet *results = [db executeQuery:query];
     if (!results) {
         NSLog(@"Error retrieving image\n");
@@ -770,16 +787,11 @@ static LocalTalk *singleton;
         NSLog(@"In localGetPortrait: image is NULL");
         return nil;
     }
-    
-    [db close];
-    
     return image;
 }
 
 +(NSData*)localGetAudio:(NSString *)fileName {
     
-    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
-    [db open];
     FMResultSet *results = [db executeQuery:@"SELECT Data FROM Audio WHERE Name = ?", fileName];
     
     if (!results) {
@@ -789,9 +801,6 @@ static LocalTalk *singleton;
     }
     [results next];
     NSData *data = [results dataForColumnIndex:0];
-    
-    [db close];
-    
     return data;
 }
 
@@ -806,13 +815,10 @@ static LocalTalk *singleton;
  * no retval
  *---------------------------------------------------------------------------*/
 +(void)localClearPatientData {
-    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
-    [db open];
     [db executeUpdate:@"DELETE FROM Images"];
     [db executeUpdate:@"DELETE FROM Patient"];
     [db executeUpdate:@"DELETE FROM PatientMetaData"];
     [db executeUpdate:@"DELETE FROM Audio"];
-    [db close];
 }
 
 
@@ -852,8 +858,6 @@ static LocalTalk *singleton;
     NSArray *dataArr = [DBTalk getRecordData:recordId];
     
     if (dataArr != NULL) {
-        FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
-        [db open];
         NSLog(@"%@", dataArr);
         for (NSDictionary *dic in dataArr) {
             NSString *questionId = [dic objectForKey:@"Key"];
@@ -865,7 +869,6 @@ static LocalTalk *singleton;
                 
             }
         }
-        [db close];
         return true;
     }
     else {
@@ -891,10 +894,7 @@ static LocalTalk *singleton;
     }
     BOOL retval = [LocalTalk localStorePortrait:image];
     if (retval) {
-        FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
-        [db open];
         retval = [db executeUpdate:@"INSERT INTO Images (Synched) VALUES (1)"];
-        [db close];
     }
     return retval;
 }
@@ -916,8 +916,6 @@ static LocalTalk *singleton;
  *---------------------------------------------------------------------------*/
 +(void)printLocal {
     NSString *key, *value;
-    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
-    [db open];
     
     FMResultSet *results = [db executeQuery:@"SELECT * FROM Patient"];
     while ([results next]) {
@@ -925,8 +923,6 @@ static LocalTalk *singleton;
         value = [results stringForColumn:@"Value"];
         NSLog(@"Key: %@  Value: %@", key, value);
     }
-    
-    [db close];
 }
 
 
