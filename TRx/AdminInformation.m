@@ -22,20 +22,14 @@ static NSArray *operationsList;
     doctorList = [DBTalk getDoctorList];
     operationsList = [DBTalk getOperationRecordTypesList];
 }
-
-//TODO: ADD ALL OF THESE RECORD FILES INTO THE LOCAL DATABASE AT THE START OF THE APP.
+//TODO:ERROR CHECKING
 
 +(NSMutableArray *)getOperationRecordTypeNames
 {
     NSMutableArray *operationRecordNamesList = [[NSMutableArray alloc] initWithArray:operationsList copyItems:YES];
-    BOOL check = [LocalTalk addToLocalTable:@"RecordType" withData:operationRecordNamesList];
-    if(check){
-        return operationRecordNamesList;
-    }
-    else {
-        NSLog(@"Error retrieving doctorNamesList");
-        return NULL;
-    }
+    [LocalTalk addToLocalTable:@"RecordType" withData:operationRecordNamesList];
+    return operationRecordNamesList;
+
 }
 
 +(NSString *)getOperationRecordTypeNameById:(NSString *)recordId {
@@ -64,8 +58,9 @@ static NSArray *operationsList;
         }
     }
     else {
+        
         NSLog(@"Error retrieving surgeryNamesList");
-        return NULL;
+        return [LocalTalk getOperationRecordTypeIdByNameFromSQLite:operationRecordTypeName];
     }
     return NULL;
     
@@ -73,29 +68,17 @@ static NSArray *operationsList;
 +(NSMutableArray *)getDoctorNames
 {
     NSMutableArray *doctorNamesList = [[NSMutableArray alloc] initWithArray:doctorList copyItems:YES];
+    [LocalTalk addToLocalTable:@"Doctor" withData:doctorNamesList];
+    return doctorNamesList;
     
-    BOOL check = [LocalTalk addToLocalTable:@"Doctor" withData:doctorNamesList];
-    if(check){
-        return doctorNamesList;
-    }
-    else {
-        NSLog(@"Error retrieving doctorNamesList");
-        return NULL;
-    }
 }
 
 +(NSMutableArray *)getSurgeryNames
 {
     NSMutableArray *surgeryNamesList = [[NSMutableArray alloc] initWithArray:doctorList copyItems:YES];
-    
-    BOOL check = [LocalTalk addToLocalTable:@"SurgeryType" withData:surgeryNamesList];
-    if(check){
-        return surgeryNamesList;
-    }
-    else {
-        NSLog(@"Error retrieving doctorNamesList");
-        return NULL;
-    }
+    [LocalTalk addToLocalTable:@"SurgeryType" withData:surgeryNamesList];
+    return surgeryNamesList;
+ 
 }
 
 +(NSString *)getSurgeryNameById:(NSString *)complaintId {

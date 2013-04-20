@@ -65,6 +65,8 @@ static LocalTalk *singleton;
 +(NSMutableDictionary *)getData:(NSDictionary *)params {
     NSLog(@"----------I'm inside getData-------------");
     NSString *selectorValue, *selectorType, *query, *localPatientId, *localPatientRecordId;
+    NSDictionary *dict;
+    NSMutableArray *tmpArray = [[NSMutableArray alloc] init];
     BOOL useSelector = 1;
     NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
     localPatientId = [self localGetPatientAppId];
@@ -110,13 +112,14 @@ static LocalTalk *singleton;
             [Utility alertWithMessage:@"For some reason one of your tables didn't return data!"];
         } else {//turn return data into a dictionary and put it into an array.
             while([retval next]){
-            NSDictionary *dict = [retval resultDictionary];
-            [dictionary setObject:dict forKey:table];
+                dict = [retval resultDictionary];
+                [tmpArray addObject:dict];
             }
+            [dictionary setObject:tmpArray forKey:table];
         }
     }
     [db close];
-     
+    
     NSLog(@"----------I'm leaving get data------------");
     return dictionary;
     
@@ -213,7 +216,7 @@ static LocalTalk *singleton;
             NSLog(@"Error updating isLive in PatientRecord's table");
             NSLog(@"%@", [db lastErrorMessage]);
         }
-
+        
     }
     
     [db close];
@@ -272,12 +275,12 @@ static LocalTalk *singleton;
     NSString *middleName    = [params objectForKey:@"MiddleName"];
     NSString *lastName      = [params objectForKey:@"LastName"];
     NSString *birthday      = [params objectForKey:@"Birthday"];
-
+    
     FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
     
     [db open];
     BOOL retval = [db executeUpdate:@"INSERT INTO Patient (FirstName, MiddleName, LastName, Birthday) VALUES (?, ?, ?, ?)", firstName, middleName, lastName, birthday];
-
+    
     [db close];
     return retval;
 }
@@ -309,25 +312,25 @@ static LocalTalk *singleton;
         query = [NSString stringWithFormat:@"INSERT INTO PatientRecord(Id, SurgeryTypeId, DoctorId, HasTimeout, IsLive, IsCurrent, AppPatientId) VALUES (%@, %@, %@, %@, %@, %@, %@)", Id, surgeryTypeId, doctorId, hasTimeout, isLive, isCurrent, AppPatientId];
     }
     
-    retval = [db executeUpdate:query]; 
+    retval = [db executeUpdate:query];
     [db close];
     return retval;
 }
 
 /*-----------------------------------------------------------------------
  Method: addToLocalTable withData
- Returns: 
-    NSMutableArray where each index holds the primary key for each row
-    If individual insert successful, primary key > 0
-    If unsuccessful, primary key = 0
+ Returns:
+ NSMutableArray where each index holds the primary key for each row
+ If individual insert successful, primary key > 0
+ If unsuccessful, primary key = 0
  
-    //TRUE if all inserts successful
-    //FALSE if any insert failed
+ //TRUE if all inserts successful
+ //FALSE if any insert failed
  Parameters:
-    tableName: name of the table you want to insert
-    tableData: data you want to insert
-        each index in the array is a row to insert into the table
-        each row can look like whatever (i.e. don't have to be identical)
+ tableName: name of the table you want to insert
+ tableData: data you want to insert
+ each index in the array is a row to insert into the table
+ each row can look like whatever (i.e. don't have to be identical)
  Summary: insert rows into some table in the local database
  //TODO: inserts vs updates? i.e. should this also handle updates
  //TODO: error handling
@@ -349,7 +352,7 @@ static LocalTalk *singleton;
                tableName,
                [[row allKeys] componentsJoinedByString:@", "],
                [[row allValues] componentsJoinedByString:@"', '"]];
-    
+        
         success = [db executeUpdate:sql];
         if(!success){
             insertedID = 0;
@@ -613,6 +616,25 @@ static LocalTalk *singleton;
 }
 
 #pragma mark - Local Get Methods
++(NSString *)getOperationRecordTypeIdByNameFromSQLite:operationRecordTypeName{
+    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
+    [db open];
+    NSString *query = [NSString stringWithFormat: @"SELECT Id FROM RecordType WHERE Name = '%@'", operationRecordTypeName];
+    NSLog(@"%@", query);
+    FMResultSet *result = [db executeQuery:query];
+    [result next];
+    
+    if (!result) {
+        NSLog(@"The query in localGetPatientListFromSQLite didn't return anything good :(");
+        NSLog(@"%@", [db lastErrorMessage]);
+        return nil;
+    }
+    NSString *retval = [result stringForColumnIndex:0];
+    
+    
+    [db close];
+    return retval;
+}
 
 /*---------------------------------------------------------------------------
  Summary:

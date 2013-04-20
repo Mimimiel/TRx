@@ -52,7 +52,7 @@
     if([[params objectForKey:@"location"] isEqualToString:@"summaryViewController"]){
         NSMutableDictionary *data = [LocalTalk getData:params];
         NSLog(@"The updated data listener's data in Summary VC is: %@", data);
-    } else { NSLog(@"not in the right view controller");}
+    } else { NSLog(@"not in the right view controller"); }
     
 }
 

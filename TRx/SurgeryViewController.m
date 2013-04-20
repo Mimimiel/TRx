@@ -107,7 +107,7 @@
     if([[params objectForKey:@"location"] isEqualToString:@"surgeryViewController"]){
         NSMutableDictionary *data = [LocalTalk getData:params];
         files = data;
-        NSLog(@"The updated data listener's data in History VC is: %@", data);
+        NSLog(@"The updated data listener's data in Surgery VC is: %@", data);
         
     } else { NSLog(@"not in the right view controller");}
     
@@ -162,24 +162,33 @@
 - (IBAction)saveRecord:(id)sender{
     [_audioRecorder stop];
     NSError *error;
-     
     NSData *audioData = [NSData dataWithContentsOfFile:[soundFileURL path] options: 0 error:&error];
     if (error)
     {
         NSLog(@"error: %@", [error localizedDescription]);
     } else {
+        NSMutableArray *insertArray = [[NSMutableArray alloc]init];
         NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
         [formatter setDateFormat:@"yyyy-MM-dd 'at' HH:mm:ss"];
         NSString *created = [formatter stringFromDate:now]; //append the patientId to the time stamp and add a number
         NSString *recordTypeId = [AdminInformation getOperationRecordTypeIdByName:@"Audio"]; //write this method
         NSString *appPatientRecordId = [LocalTalk localGetPatientRecordAppId];
-        NSString *path = NULL;
+       // NSString *path = [NSNull null];
         NSString *fileName = [appPatientRecordId stringByAppendingString:created]; //figure this out
-        
-        BOOL check = [LocalTalk localStoreAudio:audioData withAppPatientRecordId:appPatientRecordId andRecordTypeId:recordTypeId andfileName:fileName andPath:path];
-        if(!check){
-            //the file didn't store so do something here broke do something :( 
+        NSDictionary *dictionary = @{@"AppPatientRecordId" : appPatientRecordId,
+                                     @"RecordTypeId"       : recordTypeId,
+                                     @"Name"               : fileName,
+                                     @"Path"               : [NSNull null],
+                                     @"Data"               : audioData,
+                                     @"IsProfile"          : @"0" };
+        [insertArray addObject:dictionary];
+        NSMutableArray *retval = [LocalTalk addToLocalTable:@"OperationRecord" withData:insertArray];
+        for(NSString *key in retval){
+            if(key == 0){
+                NSLog(@"Mischa's shit did not work sorry bro");
+            }
         }
+        
     }
     _playButton.enabled = YES; 
 }

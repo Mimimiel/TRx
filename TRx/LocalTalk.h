@@ -78,7 +78,7 @@
 +(BOOL)setIsLive:(NSString *)patientIdentifier;
 +(BOOL)checkConnectivity;
 +(BOOL)storeMutableArrayFromAdmin:(NSMutableArray *)adminArray  inTable:(NSString *)tableName;
-
++(NSString *)getOperationRecordTypeIdByNameFromSQLite:operationRecordTypeName;
 
 
 @end
