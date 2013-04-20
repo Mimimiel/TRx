@@ -182,7 +182,7 @@
                                      @"Data"               : audioData,
                                      @"IsProfile"          : @"0" };
         [insertArray addObject:dictionary];
-        NSMutableArray *retval = [LocalTalk addToLocalTable:@"OperationRecord" withData:insertArray];
+        NSMutableArray *retval = [LocalTalk setSQLiteTable:@"OperationRecord" withData:insertArray];
         for(NSString *key in retval){
             if(key == 0){
                 NSLog(@"Mischa's shit did not work sorry bro");
