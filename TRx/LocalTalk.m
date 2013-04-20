@@ -120,7 +120,7 @@ static FMDatabase *db;
             [dictionary setObject:tmpArray forKey:table];
         }
     }
-    [db close];
+   // [db close];
     
     NSLog(@"----------I'm leaving get data------------");
     return dictionary;
@@ -273,7 +273,7 @@ static FMDatabase *db;
     
     BOOL retval = [db executeUpdate:@"INSERT INTO Patient (FirstName, MiddleName, LastName, Birthday) VALUES (?, ?, ?, ?)", firstName, middleName, lastName, birthday];
     
-    [db close];
+   // [db close];
     return retval;
 }
 /*
@@ -302,7 +302,7 @@ static FMDatabase *db;
     }
     
     retval = [db executeUpdate:query];
-    [db close];
+   // [db close];
     return retval;
 }
 
@@ -660,7 +660,7 @@ static FMDatabase *db;
     NSString *retval = [result stringForColumnIndex:0];
     
     
-    [db close];
+    //[db close];
     return retval;
 }
 
