@@ -307,18 +307,14 @@ static FMDatabase *db;
 }
 
 /*-----------------------------------------------------------------------
- Method: addToLocalTable withData
+ Method: setSQLiteTable withData
  Returns:
- NSMutableArray where each index holds the primary key for each row
- If individual insert successful, primary key > 0
- If unsuccessful, primary key = 0
- 
- //TRUE if all inserts successful
- //FALSE if any insert failed
- Parameters:
- tableName: name of the table you want to insert
- tableData: data you want to insert
- each index in the array is a row to insert into the table
+    NSMutableArray where each index holds the primary key for each row
+    tableName: name of the table you want to insert or update
+    tableData: data you want to insert/update
+        each index in the array is a row to insert/update into the table
+        each row can look like whatever (i.e. don't have to be identical)
+ Summary: insert or update rows into any table in the local database
  each row can look like whatever (i.e. don't have to be identical)
  Summary: insert rows into some table in the local database
  //TODO: inserts vs updates? i.e. should this also handle updates
@@ -333,16 +329,27 @@ static FMDatabase *db;
     NSMutableString *sql;
     
     for(NSDictionary* row in tableData){
-        sql = [NSMutableString stringWithFormat:@"INSERT INTO %@ (%@) VALUES ('%@')",
-               tableName,
-               [[row allKeys] componentsJoinedByString:@", "],
-               [[row allValues] componentsJoinedByString:@"', '"]];
-        
-        success = [db executeUpdate:sql];
-        if(!success){
-            insertedID = 0;
-            //retval = FALSE;
-            //unsuccessful, error handling goes here
+        affectedID = 0;
+        [updateSQL removeAllObjects];
+        appID = row[@"AppId"];
+        if(appID != nil && ![appID isEqualToString:@""] && ![appID isEqualToString:@"0"]){
+            //UPDATE
+            for(NSString* key in row){
+                if(![key isEqualToString:@"AppId"]){
+                    sql = [NSMutableString stringWithFormat: @"%@ = '%@'", key, row[key]];
+                    [updateSQL addObject:sql];
+                }
+            }
+            
+            sql = [NSMutableString stringWithFormat:@"UPDATE %@ SET %@ WHERE AppId = '%@'",
+                   tableName,
+                   [updateSQL componentsJoinedByString:@" AND "],
+                   appID];
+                
+            success = [db executeUpdate:sql];
+            if(success){
+                affectedID = [appID integerValue];
+            }
         }
         else{
             //INSERT

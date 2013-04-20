@@ -23,11 +23,12 @@ static NSArray *operationsList;
     operationsList = [DBTalk getOperationRecordTypesList];
 }
 //TODO:ERROR CHECKING
+//these methods are called in app delegate 
 
 +(NSMutableArray *)getOperationRecordTypeNames
 {
     NSMutableArray *operationRecordNamesList = [[NSMutableArray alloc] initWithArray:operationsList copyItems:YES];
-    [LocalTalk addToLocalTable:@"RecordType" withData:operationRecordNamesList];
+    [LocalTalk setSQLiteTable:@"RecordType" withData:operationRecordNamesList];
     return operationRecordNamesList;
 
 }
@@ -68,15 +69,23 @@ static NSArray *operationsList;
 +(NSMutableArray *)getDoctorNames
 {
     NSMutableArray *doctorNamesList = [[NSMutableArray alloc] initWithArray:doctorList copyItems:YES];
-    [LocalTalk addToLocalTable:@"Doctor" withData:doctorNamesList];
+    [LocalTalk setSQLiteTable:@"Doctor" withData:doctorNamesList];
     return doctorNamesList;
     
+    NSArray *check = [LocalTalk setSQLiteTable:@"Doctor" withData:doctorNamesList];
+    if(check){
+        return doctorNamesList;
+    }
+    else {
+        NSLog(@"Error retrieving doctorNamesList");
+        return NULL;
+    }
 }
 
 +(NSMutableArray *)getSurgeryNames
 {
     NSMutableArray *surgeryNamesList = [[NSMutableArray alloc] initWithArray:doctorList copyItems:YES];
-    [LocalTalk addToLocalTable:@"SurgeryType" withData:surgeryNamesList];
+    [LocalTalk setSQLiteTable:@"SurgeryType" withData:surgeryNamesList];
     return surgeryNamesList;
  
 }
