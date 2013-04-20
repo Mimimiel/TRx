@@ -68,6 +68,8 @@ static FMDatabase *db;
 +(NSMutableDictionary *)getData:(NSDictionary *)params {
     NSLog(@"----------I'm inside getData-------------");
     NSString *selectorValue, *selectorType, *query, *localPatientId, *localPatientRecordId;
+    NSDictionary *dict;
+    NSMutableArray *tmpArray = [[NSMutableArray alloc] init];
     BOOL useSelector = 1;
     NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
     localPatientId = [self localGetPatientAppId];
@@ -112,11 +114,13 @@ static FMDatabase *db;
             [Utility alertWithMessage:@"For some reason one of your tables didn't return data!"];
         } else {//turn return data into a dictionary and put it into an array.
             while([retval next]){
-                NSDictionary *dict = [retval resultDictionary];
-                [dictionary setObject:dict forKey:table];
+                dict = [retval resultDictionary];
+                [tmpArray addObject:dict];
             }
+            [dictionary setObject:tmpArray forKey:table];
         }
     }
+   // [db close];
     
     NSLog(@"----------I'm leaving get data------------");
     return dictionary;
@@ -265,8 +269,11 @@ static FMDatabase *db;
     NSString *lastName      = [params objectForKey:@"LastName"];
     NSString *birthday      = [params objectForKey:@"Birthday"];
     
+    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
+    
     BOOL retval = [db executeUpdate:@"INSERT INTO Patient (FirstName, MiddleName, LastName, Birthday) VALUES (?, ?, ?, ?)", firstName, middleName, lastName, birthday];
     
+   // [db close];
     return retval;
 }
 /*
@@ -295,6 +302,7 @@ static FMDatabase *db;
     }
     
     retval = [db executeUpdate:query];
+   // [db close];
     return retval;
 }
 
@@ -302,14 +310,14 @@ static FMDatabase *db;
  Method: setSQLiteTable withData
  Returns:
     NSMutableArray where each index holds the primary key for each row
-    If individual insert/update successful, primary key > 0
-    If unsuccessful, primary key = 0
- Parameters:
     tableName: name of the table you want to insert or update
     tableData: data you want to insert/update
         each index in the array is a row to insert/update into the table
         each row can look like whatever (i.e. don't have to be identical)
  Summary: insert or update rows into any table in the local database
+ each row can look like whatever (i.e. don't have to be identical)
+ Summary: insert rows into some table in the local database
+ //TODO: inserts vs updates? i.e. should this also handle updates
  //TODO: error handling
  -----------------------------------------------------------------------*/
 +(NSMutableArray*)setSQLiteTable:(NSString *)tableName withData:(NSMutableArray *)tableData {
@@ -666,6 +674,25 @@ static FMDatabase *db;
 }
 
 #pragma mark - Local Get Methods
++(NSString *)getOperationRecordTypeIdByNameFromSQLite:operationRecordTypeName{
+    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
+    [db open];
+    NSString *query = [NSString stringWithFormat: @"SELECT Id FROM RecordType WHERE Name = '%@'", operationRecordTypeName];
+    NSLog(@"%@", query);
+    FMResultSet *result = [db executeQuery:query];
+    [result next];
+    
+    if (!result) {
+        NSLog(@"The query in localGetPatientListFromSQLite didn't return anything good :(");
+        NSLog(@"%@", [db lastErrorMessage]);
+        return nil;
+    }
+    NSString *retval = [result stringForColumnIndex:0];
+    
+    
+    //[db close];
+    return retval;
+}
 
 /*---------------------------------------------------------------------------
  Summary:

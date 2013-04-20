@@ -22,20 +22,15 @@ static NSArray *operationsList;
     doctorList = [DBTalk getDoctorList];
     operationsList = [DBTalk getOperationRecordTypesList];
 }
-
-//TODO: ADD ALL OF THESE RECORD FILES INTO THE LOCAL DATABASE AT THE START OF THE APP.
+//TODO:ERROR CHECKING
+//these methods are called in app delegate 
 
 +(NSMutableArray *)getOperationRecordTypeNames
 {
     NSMutableArray *operationRecordNamesList = [[NSMutableArray alloc] initWithArray:operationsList copyItems:YES];
-    NSArray *check = [LocalTalk setSQLiteTable:@"RecordType" withData:operationRecordNamesList];
-    if(check){
-        return operationRecordNamesList;
-    }
-    else {
-        NSLog(@"Error retrieving doctorNamesList");
-        return NULL;
-    }
+    [LocalTalk setSQLiteTable:@"RecordType" withData:operationRecordNamesList];
+    return operationRecordNamesList;
+
 }
 
 +(NSString *)getOperationRecordTypeNameById:(NSString *)recordId {
@@ -64,8 +59,9 @@ static NSArray *operationsList;
         }
     }
     else {
+        
         NSLog(@"Error retrieving surgeryNamesList");
-        return NULL;
+        return [LocalTalk getOperationRecordTypeIdByNameFromSQLite:operationRecordTypeName];
     }
     return NULL;
     
@@ -73,6 +69,8 @@ static NSArray *operationsList;
 +(NSMutableArray *)getDoctorNames
 {
     NSMutableArray *doctorNamesList = [[NSMutableArray alloc] initWithArray:doctorList copyItems:YES];
+    [LocalTalk setSQLiteTable:@"Doctor" withData:doctorNamesList];
+    return doctorNamesList;
     
     NSArray *check = [LocalTalk setSQLiteTable:@"Doctor" withData:doctorNamesList];
     if(check){
