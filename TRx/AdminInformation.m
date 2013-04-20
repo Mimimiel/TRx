@@ -84,16 +84,10 @@ static NSArray *operationsList;
 
 +(NSMutableArray *)getSurgeryNames
 {
-    NSMutableArray *surgeryNamesList = [[NSMutableArray alloc] initWithArray:surgeryList copyItems:YES];
-    
-    NSArray *check = [LocalTalk setSQLiteTable:@"SurgeryType" withData:surgeryNamesList];
-    if(check){
-        return surgeryNamesList;
-    }
-    else {
-        NSLog(@"Error retrieving doctorNamesList");
-        return NULL;
-    }
+    NSMutableArray *surgeryNamesList = [[NSMutableArray alloc] initWithArray:doctorList copyItems:YES];
+    [LocalTalk setSQLiteTable:@"SurgeryType" withData:surgeryNamesList];
+    return surgeryNamesList;
+ 
 }
 
 +(NSString *)getSurgeryNameById:(NSString *)complaintId {

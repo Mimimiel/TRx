@@ -329,6 +329,7 @@ static FMDatabase *db;
     NSMutableString *sql;
     BOOL defaultFlag = FALSE;
     NSArray* defaults = @[@"Doctor", @"SurgeryType", @"RecordType"];
+    FMResultSet *exists;
     
     //Slightly different logic for default/admin type tables
     if([defaults containsObject:tableName]){
@@ -337,6 +338,7 @@ static FMDatabase *db;
     
     for(NSDictionary* row in tableData){
         affectedID = 0;
+        success = FALSE;
         [updateSQL removeAllObjects];
         appID = row[@"AppId"];
         
@@ -351,7 +353,7 @@ static FMDatabase *db;
             
             sql = [NSMutableString stringWithFormat:@"UPDATE %@ SET %@ WHERE AppId = '%@'",
                    tableName,
-                   [updateSQL componentsJoinedByString:@" AND "],
+                   [updateSQL componentsJoinedByString:@", "],
                    appID];
                 
             success = [db executeUpdate:sql];
@@ -362,21 +364,26 @@ static FMDatabase *db;
         else{
             if(defaultFlag){
                 //go ahead and try to UPDATE default table, it's alright if it fails
-                for(NSString* key in row){
-                    if(![key isEqualToString:@"Id"]){
-                        sql = [NSMutableString stringWithFormat: @"%@ = '%@'", key, row[key]];
-                        [updateSQL addObject:sql];
+                sql = [NSMutableString stringWithFormat:@"SELECT EXISTS(SELECT 1 FROM %@ WHERE Id = '%@' LIMIT 1);", tableName, row[@"Id"]];
+                exists = [db executeQuery:sql];
+                [exists next];
+                if([[exists stringForColumnIndex:0] isEqualToString:@"1"]){
+                    for(NSString* key in row){
+                        if(![key isEqualToString:@"Id"]){
+                            sql = [NSMutableString stringWithFormat: @"%@ = '%@'", key, row[key]];
+                            [updateSQL addObject:sql];
+                        }
                     }
-                }
-                
-                sql = [NSMutableString stringWithFormat:@"UPDATE %@ SET %@ WHERE Id = '%@'",
-                       tableName,
-                       [updateSQL componentsJoinedByString:@" AND "],
-                       row[@"Id"]];
-                
-                success = [db executeUpdate:sql];
-                if(success){
-                    affectedID = [row[@"Id"] integerValue];
+                    
+                    sql = [NSMutableString stringWithFormat:@"UPDATE %@ SET %@ WHERE Id = '%@'",
+                           tableName,
+                           [updateSQL componentsJoinedByString:@", "],
+                           row[@"Id"]];
+                    
+                    success = [db executeUpdate:sql];
+                    if(success){
+                        affectedID = [row[@"Id"] integerValue];
+                    }
                 }
             }
             
@@ -395,6 +402,13 @@ static FMDatabase *db;
         }
         
         [returnIDs addObject:[NSNumber numberWithInteger:affectedID]];
+    }
+    
+    if([tableName isEqualToString:@"Doctor"]){
+        sql = [NSMutableString stringWithFormat: @"SELECT * FROM Doctor WHERE FirstName = 'David'"];
+        FMResultSet *retval = [db executeQuery:sql];
+        [retval next];
+        NSLog([NSString stringWithFormat:@"%@", [retval stringForColumn:@"FirstName"]]);
     }
     return returnIDs;
 }

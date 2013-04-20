@@ -35,10 +35,13 @@
     
     //Note: if no picture is taken,
     //can use [NSNull null]
-    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
-    [db open];
-    [db executeUpdate:@"DELETE FROM Patient"];
-    [db close];
+    
+    //TODO: mischa, uncomment this
+//    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
+//    [db open];
+//    [db executeUpdate:@"DELETE FROM Patient"];
+//    [db close];
+    
     [LocalTalk clearIsLiveFlags];
     
     
@@ -154,13 +157,39 @@
             success = FALSE;
         }
     }
+    
+    if(success){
+        NSLog(@"Test Method: testAddToLocalTableWithData: was successful.");
+    }
+    else{
+        NSLog(@"Test Method: testAddToLocalTableWithData: was not successful.");
+    }
+    
+    //INSERT/UPDATE two doctors
+    [data removeAllObjects];
+    newPatient = @{@"FirstName"   : @"Testy",
+                   @"MiddleName"  : @"Tester",
+                   @"LastName"    : @"McTesterson",
+                   @"Id"          : @"90",
+                   @"IsCurrent"   : @"1"
+                   };
+    
+    serverPatient = @{@"Id"           : @"1",
+                      @"FirstName"    : @"SonOf",
+                      @"MiddleName"   : @"Tester",
+                      @"LastName"     : @"McTesterson",
+                      @"IsCurrent"    : @"1"
+                      };
+    
+    [data addObject:newPatient];
+    [data addObject:serverPatient];
+    affectedIDs = [LocalTalk setSQLiteTable:@"Doctor" withData:data];
+    for(NSNumber* ID in affectedIDs){
+        if(!ID){
+            success = FALSE;
+        }
+    }
 
-if(success){
-    NSLog(@"Test Method: testAddToLocalTableWithData: was successful.");
-}
-else{
-    NSLog(@"Test Method: testAddToLocalTableWithData: was successful.");
-}
 }
 
 - (void)tearDown
