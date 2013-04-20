@@ -319,13 +319,21 @@ static FMDatabase *db;
     NSInteger affectedID;
     NSMutableString* appID;
     NSMutableString *sql;
+    BOOL defaultFlag = FALSE;
+    NSArray* defaults = @[@"Doctor", @"SurgeryType", @"RecordType"];
+    
+    //Slightly different logic for default/admin type tables
+    if([defaults containsObject:tableName]){
+        defaultFlag = TRUE;
+    }
     
     for(NSDictionary* row in tableData){
         affectedID = 0;
         [updateSQL removeAllObjects];
         appID = row[@"AppId"];
+        
         if(appID != nil && ![appID isEqualToString:@""] && ![appID isEqualToString:@"0"]){
-            //UPDATE
+            //UPDATE non-default table
             for(NSString* key in row){
                 if(![key isEqualToString:@"AppId"]){
                     sql = [NSMutableString stringWithFormat: @"%@ = '%@'", key, row[key]];
@@ -344,15 +352,37 @@ static FMDatabase *db;
             }
         }
         else{
-            //INSERT
-            sql = [NSMutableString stringWithFormat:@"INSERT INTO %@ (%@) VALUES ('%@')",
-                   tableName,
-                   [[row allKeys] componentsJoinedByString:@", "],
-                   [[row allValues] componentsJoinedByString:@"', '"]];
+            if(defaultFlag){
+                //go ahead and try to UPDATE default table, it's alright if it fails
+                for(NSString* key in row){
+                    if(![key isEqualToString:@"Id"]){
+                        sql = [NSMutableString stringWithFormat: @"%@ = '%@'", key, row[key]];
+                        [updateSQL addObject:sql];
+                    }
+                }
+                
+                sql = [NSMutableString stringWithFormat:@"UPDATE %@ SET %@ WHERE Id = '%@'",
+                       tableName,
+                       [updateSQL componentsJoinedByString:@" AND "],
+                       row[@"Id"]];
+                
+                success = [db executeUpdate:sql];
+                if(success){
+                    affectedID = [row[@"Id"] integerValue];
+                }
+            }
             
-            success = [db executeUpdate:sql];
-            if(success){
-                affectedID = [db lastInsertRowId];
+            if(!success){
+                //INSERT
+                sql = [NSMutableString stringWithFormat:@"INSERT INTO %@ (%@) VALUES ('%@')",
+                       tableName,
+                       [[row allKeys] componentsJoinedByString:@", "],
+                       [[row allValues] componentsJoinedByString:@"', '"]];
+            
+                success = [db executeUpdate:sql];
+                if(success){
+                    affectedID = [db lastInsertRowId];
+                }
             }
         }
         
@@ -800,7 +830,6 @@ static FMDatabase *db;
     [db executeUpdate:@"DELETE FROM PatientMetaData"];
     [db executeUpdate:@"DELETE FROM Audio"];
 }
-
 
 #pragma mark - Load Data from Server into Local
 

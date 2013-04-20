@@ -10,7 +10,6 @@
 #import "FMDatabase.h"
 #import "Utility.h"
 
-
 @implementation UnitTests
 
 - (void)setUp
