@@ -43,7 +43,6 @@ typedef enum{
     
     NSMutableArray *response;
     NSMutableArray *checkBoxes;
-    //NSMutableArray *selectionTextFields;
     NSMutableArray *questionUnion;
     
     HQView *connectedView;
