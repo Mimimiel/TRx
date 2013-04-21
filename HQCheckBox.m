@@ -10,22 +10,25 @@
 
 @implementation HQCheckBox
 
-@synthesize toggleCount;
+@synthesize toggleCount, optionLabel, arrayIndex;
 
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {
         toggleCount = 0;
+        arrayIndex = 0;
         
         self.frame = CGRectMake(0, 0, 20, 20);
-        self = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-        [self addTarget:self action:@selector(checkPressed)forControlEvents:UIControlEventTouchUpInside];  
+        [self setBackgroundColor:[UIColor whiteColor]];
+        
     }
     return self;
 }
 
-
+-(void) setArrayIndex:(NSInteger)a{
+    arrayIndex = a;
+}
 
 -(void) checkPressed{
     if(toggleCount == 0){
@@ -39,12 +42,12 @@
 }
 
 /*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
-{
-    // Drawing code
-}
-*/
+ // Only override drawRect: if you perform custom drawing.
+ // An empty implementation adversely affects performance during animation.
+ - (void)drawRect:(CGRect)rect
+ {
+ // Drawing code
+ }
+ */
 
 @end

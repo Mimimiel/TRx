@@ -9,7 +9,6 @@
 #define MIN_HEIGHT 10.0f
 #define CONST_WIDTH 425.0f
 
-
 #import "HQLabel.h"
 
 @implementation HQLabel
@@ -36,7 +35,7 @@
 }
 
 -(void)calculateSize{
-
+    
     CGSize constraint;
     
     if(constrainedWidth == 0){
@@ -85,12 +84,12 @@
 }
 
 /*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
-{
-    // Drawing code
-}
-*/
+ // Only override drawRect: if you perform custom drawing.
+ // An empty implementation adversely affects performance during animation.
+ - (void)drawRect:(CGRect)rect
+ {
+ // Drawing code
+ }
+ */
 
 @end

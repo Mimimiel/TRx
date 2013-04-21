@@ -75,6 +75,7 @@
 		C469AA9A16E90A0100E75E7A /* Patient.m in Sources */ = {isa = PBXBuildFile; fileRef = C469AA9916E90A0100E75E7A /* Patient.m */; };
 		C469AA9D16E9469F00E75E7A /* AdminInformation.m in Sources */ = {isa = PBXBuildFile; fileRef = C469AA9C16E9469F00E75E7A /* AdminInformation.m */; };
 		C474A24E16E709C1006F2B0B /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C474A24D16E709C1006F2B0B /* MainStoryboard.storyboard */; };
+		C493A32D172395E90009E346 /* HQYesNo.m in Sources */ = {isa = PBXBuildFile; fileRef = C493A32C172395E90009E346 /* HQYesNo.m */; };
 		C499B56A16EC21E400F40046 /* HistoryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C499B56916EC21E400F40046 /* HistoryViewController.m */; };
 		C499B56D16EC23DE00F40046 /* OrdersViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C499B56C16EC23DE00F40046 /* OrdersViewController.m */; };
 		C499B57316EC247600F40046 /* PACUViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C499B57216EC247600F40046 /* PACUViewController.m */; };
@@ -246,6 +247,8 @@
 		C469AA9B16E9469F00E75E7A /* AdminInformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AdminInformation.h; sourceTree = "<group>"; };
 		C469AA9C16E9469F00E75E7A /* AdminInformation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AdminInformation.m; sourceTree = "<group>"; };
 		C474A24D16E709C1006F2B0B /* MainStoryboard.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = MainStoryboard.storyboard; sourceTree = "<group>"; };
+		C493A32B172395E80009E346 /* HQYesNo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HQYesNo.h; sourceTree = "<group>"; };
+		C493A32C172395E90009E346 /* HQYesNo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HQYesNo.m; sourceTree = "<group>"; };
 		C499B56816EC21E400F40046 /* HistoryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HistoryViewController.h; sourceTree = "<group>"; };
 		C499B56916EC21E400F40046 /* HistoryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HistoryViewController.m; sourceTree = "<group>"; };
 		C499B56B16EC23DE00F40046 /* OrdersViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OrdersViewController.h; sourceTree = "<group>"; };
@@ -443,6 +446,8 @@
 				C402E519170F41E400737787 /* HQTextField.m */,
 				C402E51F1712131500737787 /* HQView.h */,
 				C402E5201712131500737787 /* HQView.m */,
+				C493A32B172395E80009E346 /* HQYesNo.h */,
+				C493A32C172395E90009E346 /* HQYesNo.m */,
 			);
 			name = HistoryQuestionClasses;
 			sourceTree = "<group>";
@@ -950,6 +955,7 @@
 				19E9D13D171FD7B400E99A93 /* SurgeryListViewCell.m in Sources */,
 				1331538217211DB800F4C804 /* FMDatabaseQueue.m in Sources */,
 				19C6945317234D18006CBC30 /* Base64.m in Sources */,
+				C493A32D172395E90009E346 /* HQYesNo.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

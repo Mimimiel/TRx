@@ -9,10 +9,10 @@
 #import <UIKit/UIKit.h>
 
 @interface HQLabel : UILabel{
-
+    
     float minHeight;
     float constrainedWidth;
-
+    
 }
 
 @property(nonatomic) float minHeight;
