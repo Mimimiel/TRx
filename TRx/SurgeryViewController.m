@@ -7,8 +7,10 @@
 //
 
 #import "SurgeryViewController.h"
+#import "SurgeryListViewCell.h"
 #import "localtalk.h"
 #import "AdminInformation.h"
+#import "Base64.h"
 
 @interface SurgeryViewController ()
 
@@ -48,10 +50,14 @@
     dirPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     docsDir = dirPaths[0];
     
-    now = [NSDate dateWithTimeIntervalSinceNow:0];
-    NSString *calendarDate = [now description];
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateFormat:@"-yyyy-MM-dd_'at'_HH-mm-ss"];
+    now = [NSDate date];
+    NSString *created = [formatter stringFromDate:now];
+    NSString *appPatientRecordId = [LocalTalk localGetPatientRecordAppId];
+    fileName = [appPatientRecordId stringByAppendingString:created]; //figure this out
     
-    NSString *audioFilePath = [NSString stringWithFormat:@"%@/%@.caf", docsDir, calendarDate];
+    NSString *audioFilePath = [NSString stringWithFormat:@"%@/%@.caf", docsDir, fileName];
     
     soundFileURL = [NSURL fileURLWithPath:audioFilePath];
     
@@ -83,15 +89,8 @@
     
 
 }
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-	// Do any additional setup after loading the view.
-}
 
--(void)viewDidAppear:(BOOL)animated{
-//  fileNameText.text = now;
-    /*listeners for history view controller*/
+-(void)viewWillAppear:(BOOL)animated {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     
     [center addObserver:self selector:@selector(updatedDataListener:) name:@"loadFromLocal" object:nil];
@@ -100,16 +99,37 @@
     NSDictionary *params = @{@"tableNames" : tables,
                              @"location" : @"surgeryViewController"};
     [[NSNotificationCenter defaultCenter] postNotificationName:@"tabloaded" object:self userInfo:params];
+
 }
 
+-(void)viewDidAppear:(BOOL)animated{
+//  fileNameText.text = now;
+    /*listeners for history view controller*/
+   }
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    [filesTable setDataSource:self];
+    _playButton.enabled = NO;
+    
+	// Do any additional setup after loading the view.
+}
 -(void)updatedDataListener:(NSNotification *)notification {
     NSDictionary *params = [notification userInfo];
     if([[params objectForKey:@"location"] isEqualToString:@"surgeryViewController"]){
         NSMutableDictionary *data = [LocalTalk getData:params];
         files = data;
-        NSLog(@"The updated data listener's data in Surgery VC is: %@", data);
+        for(NSString *key in files){
+            if([key isEqualToString:@"OperationRecord"]){
+                audioCellsArray = [files objectForKey:key];
+            }
+        }
+        //NSLog(@"The updated data listener's data in Surgery VC is: %@", data);
+    
         
     } else { NSLog(@"not in the right view controller");}
+    [filesTable reloadData];
     
 }
 
@@ -163,23 +183,25 @@
     [_audioRecorder stop];
     NSError *error;
     NSData *audioData = [NSData dataWithContentsOfFile:[soundFileURL path] options: 0 error:&error];
+    NSString *audioDataAsText = [Base64 encode:audioData];
     if (error)
     {
         NSLog(@"error: %@", [error localizedDescription]);
     } else {
-        NSMutableArray *insertArray = [[NSMutableArray alloc]init];
-        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-        [formatter setDateFormat:@"yyyy-MM-dd 'at' HH:mm:ss"];
-        NSString *created = [formatter stringFromDate:now]; //append the patientId to the time stamp and add a number
+       NSMutableArray *insertArray = [[NSMutableArray alloc]init];
+      /*  NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        [formatter setDateFormat:@"yyyy-MM-dd_'at'_HH-mm-ss"];
+        now = [NSDate date];
+        NSString *created = [formatter stringFromDate:now]; //append the patientId to the time stamp and add a number */
         NSString *recordTypeId = [AdminInformation getOperationRecordTypeIdByName:@"Audio"]; //write this method
         NSString *appPatientRecordId = [LocalTalk localGetPatientRecordAppId];
        // NSString *path = [NSNull null];
-        NSString *fileName = [appPatientRecordId stringByAppendingString:created]; //figure this out
+      //  NSString *fileName = [appPatientRecordId stringByAppendingString:created]; //figure this out
         NSDictionary *dictionary = @{@"AppPatientRecordId" : appPatientRecordId,
                                      @"RecordTypeId"       : recordTypeId,
                                      @"Name"               : fileName,
                                      @"Path"               : [NSNull null],
-                                     @"Data"               : audioData,
+                                     @"Data"               : audioDataAsText,
                                      @"IsProfile"          : @"0" };
         [insertArray addObject:dictionary];
         NSMutableArray *retval = [LocalTalk setSQLiteTable:@"OperationRecord" withData:insertArray];
@@ -227,6 +249,7 @@
     }
 }
 
+
 #pragma mark - UIImagePickerControllerDelegate
 /*
 -(void)imagePickerController:(UIImagePickerController *)picker
@@ -244,6 +267,24 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info{
     
 }*/
 
+- (IBAction)useSelectedFile:(id)sender {
+    [_audioPlayerForButton stop];
+    _audioPlayerForButton = nil;
+    UIButton *tmp = (UIButton*)sender;
+    int tag = tmp.tag;
+    NSLog(@"%d", tag);
+    NSDictionary *audioFileInformation = [audioCellsArray objectAtIndex:tag];
+    NSString *selectedAudioFileAsString = [audioFileInformation objectForKey:@"Data"];
+    NSData *selectedAudioFile = [Base64 decode:selectedAudioFileAsString];
+    NSError *error;
+    
+    _audioPlayerForButton = [[AVAudioPlayer alloc] initWithData:selectedAudioFile error:&error];
+    if (error)
+        NSLog(@"Error: %@",
+              [error localizedDescription]);
+    else
+        [_audioPlayerForButton play];
+}
 
 #pragma mark - table view data source
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -255,13 +296,36 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info{
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    return files.count;
+    return audioCellsArray.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *audioCellID = @"audioID";
-    static NSString *pictureCellID = @"pictureID";
+    static NSString *audioCellID = @"audioCellId";
+    //static NSString *pictureCellID = @"pictureID";
+    
+    SurgeryListViewCell *cell = [tableView dequeueReusableCellWithIdentifier:audioCellID forIndexPath:indexPath];
+    int row = [indexPath row];
+    NSDictionary *audioFileInformation = [audioCellsArray objectAtIndex:row];
+    NSString *fileNameFromDb = [audioFileInformation objectForKey:@"Name"];
+    cell.fileName.text = fileNameFromDb;
+    cell.playButton.tag = [indexPath row];
+    NSLog(@"%d", cell.playButton.tag);
+  
+    // Further changes such as text color whatever ...
+    
+   // 
+  /*  NSString *fn = [[patients objectAtIndex:row] firstName];
+    NSString *mn = [[patients objectAtIndex:row] middleName];
+    NSString *ln = [[patients objectAtIndex:row] lastName];
+    NSString *name = [NSString stringWithFormat: @"%@ %@ %@", fn, mn, ln];
+    cell.patientName.text = name;
+    cell.chiefComplaint.text = (NSString*)[[patients objectAtIndex:row] chiefComplaint];
+    cell.patientPicture.image = [[patients objectAtIndex:row] photoID];*/
+    //cell.patientPicture.image = [UIImage imageNamed:_carImages[row]];
+    
+    return cell;
+
     
    // for(NSString *key in files){
       //  NSString *fileType = [[files objectForKey:key] fileTypeId];

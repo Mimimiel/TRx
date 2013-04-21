@@ -11,9 +11,12 @@
 
 @interface PACUViewController ()
 
+
+
 @end
 
-@implementation PACUViewController
+@implementation PACUViewController {
+}
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -28,8 +31,12 @@
 {
     [super viewDidLoad];
 	patientThumbnail = [LocalTalk localGetPortrait];
+    
+        
+    
     //[LocalTalk localGe]
 }
+
 
 - (void)didReceiveMemoryWarning
 {

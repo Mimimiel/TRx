@@ -18,11 +18,14 @@
     BOOL isPaused;
     IBOutlet UITextField *fileNameText;
     NSMutableDictionary *files;
+    NSMutableArray *audioCellsArray;
+    NSString *fileName;
 
 }
 @property BOOL newMedia;
 @property (strong, nonatomic) AVAudioRecorder *audioRecorder;
 @property (strong, nonatomic) AVAudioPlayer *audioPlayer;
+@property (strong, nonatomic) AVAudioPlayer *audioPlayerForButton;
 @property (strong, nonatomic) IBOutlet UIButton *recordButton;
 @property (strong, nonatomic) IBOutlet UIButton *saveRecording;
 @property (strong, nonatomic) IBOutlet UIButton *playButton;
@@ -31,5 +34,7 @@
 - (IBAction)playAudio:(id)sender;
 - (IBAction)saveRecord:(id)sender;
 - (IBAction)useCamera:(id)sender;
+- (IBAction)useSelectedFile:(id)sender;
+
 +(SurgeryViewController*)sharedSurgeryViewController;
 @end

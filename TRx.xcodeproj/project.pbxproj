@@ -42,6 +42,7 @@
 		19C32A3016EFB3B300CC1318 /* SurgeryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 19C32A2F16EFB3B300CC1318 /* SurgeryViewController.m */; };
 		19C3C1D917122BB000BA943E /* LocalTalkWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1327D4CC1708F464005010BC /* LocalTalkWrapper.m */; };
 		19C3C1DA17122BB700BA943E /* SynchData.m in Sources */ = {isa = PBXBuildFile; fileRef = 13FF64F31700EC3400F0A4FE /* SynchData.m */; };
+		19C6945317234D18006CBC30 /* Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = 19C6945217234D18006CBC30 /* Base64.m */; };
 		19DAF54D16F8CE00008E1BA7 /* LocalDatabase.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 13CF9B2616ECF829006CF20B /* LocalDatabase.sqlite */; };
 		19E9D13D171FD7B400E99A93 /* SurgeryListViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 19E9D13C171FD7B400E99A93 /* SurgeryListViewCell.m */; };
 		C402E4FB170A007500737787 /* LocalTalkWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1327D4CC1708F464005010BC /* LocalTalkWrapper.m */; };
@@ -196,6 +197,8 @@
 		1975163816EFC6C50008AA1F /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		19C32A2E16EFB3B300CC1318 /* SurgeryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SurgeryViewController.h; sourceTree = "<group>"; };
 		19C32A2F16EFB3B300CC1318 /* SurgeryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SurgeryViewController.m; sourceTree = "<group>"; };
+		19C6945117234D18006CBC30 /* Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base64.h; sourceTree = "<group>"; };
+		19C6945217234D18006CBC30 /* Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Base64.m; sourceTree = "<group>"; };
 		19E9D13B171FD7B400E99A93 /* SurgeryListViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SurgeryListViewCell.h; sourceTree = "<group>"; };
 		19E9D13C171FD7B400E99A93 /* SurgeryListViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SurgeryListViewCell.m; sourceTree = "<group>"; };
 		C402E4FD170BC29900737787 /* DynamicHistoryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DynamicHistoryViewController.h; path = ../DynamicHistoryViewController.h; sourceTree = "<group>"; };
@@ -384,6 +387,8 @@
 		13F3520916ED8B85009321E7 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				19C6945117234D18006CBC30 /* Base64.h */,
+				19C6945217234D18006CBC30 /* Base64.m */,
 				13F3521416ED99B1009321E7 /* libsqlite3.dylib */,
 				1327D4CA1708F23A005010BC /* FMDB */,
 				13F3526E16EEEF21009321E7 /* AFNetworking */,
@@ -944,6 +949,7 @@
 				136E2191171A68D9007420ED /* Reachability.m in Sources */,
 				19E9D13D171FD7B400E99A93 /* SurgeryListViewCell.m in Sources */,
 				1331538217211DB800F4C804 /* FMDatabaseQueue.m in Sources */,
+				19C6945317234D18006CBC30 /* Base64.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

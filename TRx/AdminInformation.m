@@ -84,7 +84,7 @@ static NSArray *operationsList;
 
 +(NSMutableArray *)getSurgeryNames
 {
-    NSMutableArray *surgeryNamesList = [[NSMutableArray alloc] initWithArray:doctorList copyItems:YES];
+    NSMutableArray *surgeryNamesList = [[NSMutableArray alloc] initWithArray:surgeryList copyItems:YES];
     [LocalTalk setSQLiteTable:@"SurgeryType" withData:surgeryNamesList];
     return surgeryNamesList;
  

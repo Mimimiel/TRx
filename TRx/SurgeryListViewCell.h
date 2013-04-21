@@ -9,10 +9,13 @@
 #import <UIKit/UIKit.h>
 
 @interface SurgeryListViewCell : UITableViewCell{
+    @public
     
 }
 @property (strong, nonatomic) IBOutlet UILabel *fileName;
 @property (strong, nonatomic) IBOutlet UIImageView *fileIcon;
 @property (strong, nonatomic) IBOutlet UILabel *audioFileLength;
+@property (strong, nonatomic) IBOutlet UIButton *playButton;
+
 
 @end

@@ -14,5 +14,5 @@
 @property (strong, nonatomic) IBOutlet UILabel *patientName;
 @property (strong, nonatomic) IBOutlet UIImageView *patientPicture;
 @property (strong, nonatomic) IBOutlet UILabel *chiefComplaint;
-@property (weak, nonatomic) NSString *patientRecordId;
+@property (strong, nonatomic) NSString *patientRecordId;
 @end
