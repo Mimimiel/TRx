@@ -213,6 +213,18 @@
      NSString *mn = [[patients objectAtIndex:row] middleName];
      NSString *ln = [[patients objectAtIndex:row] lastName];
      NSURL *url = [[patients objectAtIndex:row] photoURL];*/
+    NSString *patientRecordId, *patientRecordAppId;
+    if(![[patients objectAtIndex:row] currentRecordId]){
+        patientRecordId = @"0";
+    } else {
+        patientRecordId = [[patients objectAtIndex:row] currentRecordId];
+    }
+    
+    if(![[patients objectAtIndex:row] patientRecordAppId]){
+        patientRecordAppId = @"0";
+    } else {
+        patientRecordAppId = [[patients objectAtIndex:row] patientRecordAppId];
+    }
     
     NSDictionary *params = @{@"viewName"    : @"summaryViewController",
                              @"FirstName"   :  [[patients objectAtIndex:row] firstName],
@@ -222,6 +234,8 @@
                             // @"Data"        : [[patients objectAtIndex:row] photoID],
                              @"PhotoURL"    : [[patients objectAtIndex:row] photoURL],
                              @"SurgeryTypeId":[[patients objectAtIndex:row] chiefComplaint],
+                             @"PatientRecordId" : patientRecordId,
+                             @"PatientRecordAppId" : patientRecordAppId,
                              @"DoctorId"    : @"1",
                              @"HasTimeout"  : @"0",
                              @"IsLive"      : @"1",

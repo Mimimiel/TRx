@@ -7,8 +7,15 @@
 //
 
 #import "Question.h"
+#import "LocalTalk.h"
+#import "FMDatabase.h"
+#import "FMDatabaseQueue.h"
 
 @implementation Question
+static FMDatabase *db;
++ (void)initialize {
+    db = [LocalTalk getDb];
+}
 
 /*---------------------------------------------------------------------------
  * Takes a questionId and returns appropriate English Label or NULL
@@ -38,8 +45,6 @@
 +(NSString *)getLabel:(NSString *)questionId
            columnName:(NSString *)columnName {
     
-    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
-    [db open];
     NSString *query = [[NSString alloc] initWithFormat:
                        @"SELECT %@ FROM Questions WHERE QuestionId = \"%@\"", columnName, questionId];
     
@@ -51,7 +56,6 @@
     }
     [results next];
     NSString *retval = [results stringForColumnIndex:0];
-    [db close];
     return retval;
 }
 
@@ -64,8 +68,7 @@
 
 +(NSString *)getValueForQuestionId:(NSString *)questionId {
     
-    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
-    [db open];
+
     NSString *query = [NSString stringWithFormat:@"SELECT Value FROM Patient WHERE QuestionId = \"%@\"", questionId];
     
     FMResultSet *results = [db executeQuery:query];
@@ -76,7 +79,7 @@
     }
     [results next];
     NSString *retval = [results stringForColumnIndex:0];
-    [db close];
+    
     return retval;
 }
 

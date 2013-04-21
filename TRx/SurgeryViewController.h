@@ -20,6 +20,7 @@
     NSMutableDictionary *files;
     NSMutableArray *audioCellsArray;
     NSString *fileName;
+    UIButton *tmp;
 
 }
 @property BOOL newMedia;
