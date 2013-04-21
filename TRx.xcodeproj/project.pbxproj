@@ -39,6 +39,9 @@
 		13F3528A16EEEF21009321E7 /* UIImageView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 13F3528116EEEF21009321E7 /* UIImageView+AFNetworking.m */; };
 		19087ED016E95363007FE40B /* PatientListViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 196CCD8A16E90ED600B82048 /* PatientListViewCell.m */; };
 		1975163916EFC6C50008AA1F /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1975163816EFC6C50008AA1F /* AVFoundation.framework */; };
+		198C0FC61723B82700A4082E /* MyMovie.mov in Resources */ = {isa = PBXBuildFile; fileRef = 198C0FC51723B82700A4082E /* MyMovie.mov */; };
+		198C0FCA1723B91700A4082E /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 198C0FC71723B8D800A4082E /* MediaPlayer.framework */; };
+		198C0FCB1723B93400A4082E /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C44D6F2C16D19AD60036E40B /* CoreGraphics.framework */; };
 		19C32A3016EFB3B300CC1318 /* SurgeryViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 19C32A2F16EFB3B300CC1318 /* SurgeryViewController.m */; };
 		19C3C1D917122BB000BA943E /* LocalTalkWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = 1327D4CC1708F464005010BC /* LocalTalkWrapper.m */; };
 		19C3C1DA17122BB700BA943E /* SynchData.m in Sources */ = {isa = PBXBuildFile; fileRef = 13FF64F31700EC3400F0A4FE /* SynchData.m */; };
@@ -59,7 +62,6 @@
 		C446619F16EEE2FF008CE130 /* HistoryBackgroundLandscape22x.png in Resources */ = {isa = PBXBuildFile; fileRef = C446619D16EEE2FF008CE130 /* HistoryBackgroundLandscape22x.png */; };
 		C44D6F2916D19AD60036E40B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C44D6F2816D19AD60036E40B /* UIKit.framework */; };
 		C44D6F2B16D19AD60036E40B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C44D6F2A16D19AD60036E40B /* Foundation.framework */; };
-		C44D6F2D16D19AD60036E40B /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C44D6F2C16D19AD60036E40B /* CoreGraphics.framework */; };
 		C44D6F3316D19AD60036E40B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = C44D6F3116D19AD60036E40B /* InfoPlist.strings */; };
 		C44D6F3516D19AD60036E40B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C44D6F3416D19AD60036E40B /* main.m */; };
 		C44D6F3916D19AD60036E40B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = C44D6F3816D19AD60036E40B /* AppDelegate.m */; };
@@ -196,6 +198,8 @@
 		196CCD8916E90ED600B82048 /* PatientListViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PatientListViewCell.h; sourceTree = "<group>"; };
 		196CCD8A16E90ED600B82048 /* PatientListViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PatientListViewCell.m; sourceTree = "<group>"; };
 		1975163816EFC6C50008AA1F /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		198C0FC51723B82700A4082E /* MyMovie.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = MyMovie.mov; sourceTree = "<group>"; };
+		198C0FC71723B8D800A4082E /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
 		19C32A2E16EFB3B300CC1318 /* SurgeryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SurgeryViewController.h; sourceTree = "<group>"; };
 		19C32A2F16EFB3B300CC1318 /* SurgeryViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SurgeryViewController.m; sourceTree = "<group>"; };
 		19C6945117234D18006CBC30 /* Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base64.h; sourceTree = "<group>"; };
@@ -310,13 +314,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1975163916EFC6C50008AA1F /* AVFoundation.framework in Frameworks */,
+				198C0FCB1723B93400A4082E /* CoreGraphics.framework in Frameworks */,
+				198C0FCA1723B91700A4082E /* MediaPlayer.framework in Frameworks */,
 				1327D4C91704BA2C005010BC /* MobileCoreServices.framework in Frameworks */,
 				1327D4C71704BA1A005010BC /* SystemConfiguration.framework in Frameworks */,
-				1975163916EFC6C50008AA1F /* AVFoundation.framework in Frameworks */,
 				13F3521516ED99B1009321E7 /* libsqlite3.dylib in Frameworks */,
 				C44D6F2916D19AD60036E40B /* UIKit.framework in Frameworks */,
 				C44D6F2B16D19AD60036E40B /* Foundation.framework in Frameworks */,
-				C44D6F2D16D19AD60036E40B /* CoreGraphics.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -431,6 +436,15 @@
 			path = AFNetworking;
 			sourceTree = "<group>";
 		};
+		198C0FC41723B7DD00A4082E /* Videos */ = {
+			isa = PBXGroup;
+			children = (
+				198C0FC51723B82700A4082E /* MyMovie.mov */,
+			);
+			name = Videos;
+			path = TRx;
+			sourceTree = "<group>";
+		};
 		C402E51B170F41ED00737787 /* HistoryQuestionClasses */ = {
 			isa = PBXGroup;
 			children = (
@@ -456,6 +470,7 @@
 			isa = PBXGroup;
 			children = (
 				C44D6F2E16D19AD60036E40B /* TRx */,
+				198C0FC41723B7DD00A4082E /* Videos */,
 				C44D6F2F16D19AD60036E40B /* Supporting Files */,
 				C469AA7716E905AC00E75E7A /* Images */,
 				1327D4B51704B0AD005010BC /* UnitTests */,
@@ -476,6 +491,7 @@
 		C44D6F2716D19AD60036E40B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				198C0FC71723B8D800A4082E /* MediaPlayer.framework */,
 				1327D4C81704BA2C005010BC /* MobileCoreServices.framework */,
 				1327D4C61704BA1A005010BC /* SystemConfiguration.framework */,
 				C44D6F2816D19AD60036E40B /* UIKit.framework */,
@@ -869,6 +885,7 @@
 				C49DC05116EFDB8D00810B60 /* 0238@2x.png in Resources */,
 				C49DC05216EFDB8D00810B60 /* 0299.png in Resources */,
 				C49DC05316EFDB8D00810B60 /* 0299@2x.png in Resources */,
+				198C0FC61723B82700A4082E /* MyMovie.mov in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
