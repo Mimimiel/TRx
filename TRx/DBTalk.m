@@ -91,7 +91,7 @@ static DBTalk *singleton;
 //
 +(void)addUpdatePatient {
     NSLog(@"Entering addUpdatePatient");
-    NSArray *patientTableValuesArray    = [LocalTalk selectAllFromTable:@"Patient"];
+    NSMutableArray *patientTableValuesArray    = [LocalTalk selectAllFromTable:@"Patient"];
     NSDictionary *patientTableValues    = [patientTableValuesArray objectAtIndex:0];
     NSLog(@"%@", patientTableValues);
     

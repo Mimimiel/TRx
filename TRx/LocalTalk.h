@@ -40,7 +40,7 @@
 
 #pragma mark -- Accessor Methods for Local
 
-+(NSArray *)selectAllFromTable:(NSString *)table;
++(NSMutableArray *)selectAllFromTable:(NSString *)table;
 +(BOOL)tableUnsynced:(NSString *)table;
 
 +(NSString *)localGetOperationRecordTypeId;
