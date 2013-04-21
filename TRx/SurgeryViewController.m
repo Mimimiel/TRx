@@ -18,7 +18,7 @@
 
 @implementation SurgeryViewController
 
-
+/*Create a singleton of the SurgeryViewController */ 
 +(SurgeryViewController*)sharedSurgeryViewController{
     static SurgeryViewController *singleton;
     static BOOL initialized = false;
@@ -31,7 +31,6 @@
 }
 
 
-
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -40,6 +39,110 @@
     }
     return self;
 }
+
+#pragma mark - viewwill/did and data listener methods
+/*In the view will appear we wire up the updatedDataListenerMethod to listen to loadFromLocal and we post 
+ that the tab is loading so to go get our data from the relevant (listed) tables */ 
+-(void)viewWillAppear:(BOOL)animated {
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    
+    [center addObserver:self selector:@selector(updatedDataListener:) name:@"loadFromLocal" object:nil];
+    
+    NSArray *tables = @[@"OperationRecord"];
+    NSDictionary *params = @{@"tableNames" : tables,
+                             @"location" : @"surgeryViewController"};
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"tabloaded" object:self userInfo:params];
+    
+}
+/*view did appear method.. */
+-(void)viewDidAppear:(BOOL)animated{
+    
+}
+
+/*view did load method, take care of a couple of delegate assignments and some button usage*/
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    [filesTable setDataSource:self];
+    _playButton.enabled = NO;
+    fileNameText.delegate = self;
+   // [self playVideo];
+    // Do any additional setup after loading the view.
+}
+
+/*The listener for when new data is available and should be pulled down*/ 
+-(void)updatedDataListener:(NSNotification *)notification {
+    NSDictionary *params = [notification userInfo];
+    if([[params objectForKey:@"location"] isEqualToString:@"surgeryViewController"]){
+        NSMutableDictionary *data = [LocalTalk getData:params];
+        files = data;
+        for(NSString *key in files){
+            if([key isEqualToString:@"OperationRecord"]){
+                audioCellsArray = [files objectForKey:key];
+            }
+        }
+    } else { NSLog(@"not in the right view controller");}
+    [filesTable reloadData];
+}
+
+#pragma mark - UITextField delegate methods 
+
+/*Delegate method for the UITextField for file names */ 
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+    [fileNameText resignFirstResponder];
+}
+
+#pragma mark - video display methods 
+
+- (void) playVideo
+{
+    NSString *url = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"MyMovie.mov"];
+    
+    playerViewController = [[MPMoviePlayerViewController alloc] initWithContentURL:[NSURL fileURLWithPath:url]];
+    
+    [[NSNotificationCenter defaultCenter]
+     addObserver:self
+     selector:@selector(movieFinishedCallback:)
+     name:MPMoviePlayerPlaybackDidFinishNotification
+     object:[playerViewController moviePlayer]];
+    
+    
+    [videoView addSubview:playerViewController.view];
+    
+    //play movie
+    
+    MPMoviePlayerController *player = [playerViewController moviePlayer];
+    player.controlStyle = MPMovieControlStyleEmbedded;
+    player.fullscreen = NO;
+    
+    [player play];
+}
+
+// The call back
+- (void) movieFinishedCallback:(NSNotification*) aNotification {
+   
+    MPMoviePlayerController *player = [aNotification object];
+    [[NSNotificationCenter defaultCenter]
+     removeObserver:self
+     name:MPMoviePlayerPlaybackDidFinishNotification
+     object:player];
+    
+    //player.initialPlaybackTime = -1;
+    //[player pause];
+    [player stop];
+    
+    [player.view removeFromSuperview];
+    
+    // call autorelease the analyzer says call too many times
+    // call release the analyzer says incorrect decrement
+}
+
+
+
+
+#pragma mark - audio recording methods
+
+/*called when a new recording is being made, does all the initialization for file names etc */ 
 - (void)newRecording {
     
     _playButton.enabled = NO;
@@ -50,14 +153,15 @@
     dirPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     docsDir = dirPaths[0];
     
-    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    [formatter setDateFormat:@"-yyyy-MM-dd_'at'_HH-mm-ss"];
-    now = [NSDate date];
-    NSString *created = [formatter stringFromDate:now];
-    NSString *appPatientRecordId = [LocalTalk localGetPatientRecordAppId];
-    fileName = [appPatientRecordId stringByAppendingString:created]; //figure this out
-    
-    NSString *audioFilePath = [NSString stringWithFormat:@"%@/%@.caf", docsDir, fileName];
+    if([fileNameText.text isEqualToString:@""]){
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        [formatter setDateFormat:@"-yyyy-MM-dd_'at'_HH-mm-ss"];
+        now = [NSDate date];
+        NSString *created = [formatter stringFromDate:now];
+        NSString *appPatientRecordId = [LocalTalk localGetPatientRecordAppId];
+        fileNameText.text = [appPatientRecordId stringByAppendingString:created]; //figure this out
+    }
+    NSString *audioFilePath = [NSString stringWithFormat:@"%@/%@.caf", docsDir, fileNameText.text];
     
     soundFileURL = [NSURL fileURLWithPath:audioFilePath];
     
@@ -86,54 +190,12 @@
     } else {
         [_audioRecorder prepareToRecord];
     }
-    
-    
 }
 
--(void)viewWillAppear:(BOOL)animated {
-    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
-    
-    [center addObserver:self selector:@selector(updatedDataListener:) name:@"loadFromLocal" object:nil];
-    
-    NSArray *tables = @[@"OperationRecord"];
-    NSDictionary *params = @{@"tableNames" : tables,
-                             @"location" : @"surgeryViewController"};
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"tabloaded" object:self userInfo:params];
-    
-}
-
--(void)viewDidAppear:(BOOL)animated{
-    //  fileNameText.text = now;
-    /*listeners for history view controller*/
-}
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    [filesTable setDataSource:self];
-    _playButton.enabled = NO;
-    
-	// Do any additional setup after loading the view.
-}
--(void)updatedDataListener:(NSNotification *)notification {
-    NSDictionary *params = [notification userInfo];
-    if([[params objectForKey:@"location"] isEqualToString:@"surgeryViewController"]){
-        NSMutableDictionary *data = [LocalTalk getData:params];
-        files = data;
-        for(NSString *key in files){
-            if([key isEqualToString:@"OperationRecord"]){
-                audioCellsArray = [files objectForKey:key];
-            }
-        }
-        //NSLog(@"The updated data listener's data in Surgery VC is: %@", data);
-        
-        
-    } else { NSLog(@"not in the right view controller");}
-    [filesTable reloadData];
-    
-}
-
-#pragma mark - audio recording button methods
+/*IBAction for when the record audio button is pressed, allows for the audio to 
+ be paused mid recording 
+ //TODO: change the buttons appearance when clicked 
+ */
 - (IBAction)recordAudio:(id)sender {
     
     /*if not recording */
@@ -158,6 +220,7 @@
     }
 }
 
+//Play audio you just recorded with this button 
 - (IBAction)playAudio:(id)sender {
     if (!_audioRecorder.recording)
     {
@@ -179,6 +242,8 @@
     }
 }
 
+//save audio that you have just recorded with this button
+//this inserts the file straight into sqlite with the setSQLite table method
 - (IBAction)saveRecord:(id)sender{
     [_audioRecorder stop];
     NSError *error;
@@ -194,7 +259,7 @@
         //NSString *path = [NSNull null];
         NSDictionary *dictionary = @{@"AppPatientRecordId" : appPatientRecordId,
                                      @"RecordTypeId"       : recordTypeId,
-                                     @"Name"               : fileName,
+                                     @"Name"               : fileNameText.text,
                                      @"Path"               : [NSNull null],
                                      @"Data"               : audioDataAsText,
                                      @"IsProfile"          : @"0" };
@@ -208,39 +273,14 @@
         
     }
     _playButton.enabled = YES;
+    [fileNameText insertText:@""];
 }
 
-- (IBAction)useSelectedFile:(id)sender {
-    tmp = (UIButton*)sender;
-   
-    if ([_audioPlayerForButton isPlaying]){
-        [_audioPlayerForButton pause];
-        [tmp setTitle:@"Play" forState:UIControlStateNormal];
-        [tmp setBackgroundColor:[UIColor greenColor]];
-    } else {
-        [_audioPlayerForButton stop];
-        //  _audioPlayerForButton = nil;
-        int tag = tmp.tag;
-        NSLog(@"%d", tag);
-        NSDictionary *audioFileInformation = [audioCellsArray objectAtIndex:tag];
-        NSString *selectedAudioFileAsString = [audioFileInformation objectForKey:@"Data"];
-        NSData *selectedAudioFile = [Base64 decode:selectedAudioFileAsString];
-        NSError *error;
-        _audioPlayerForButton = [[AVAudioPlayer alloc] initWithData:selectedAudioFile error:&error];
-        _audioPlayerForButton.delegate = self;
-        if (error)
-            NSLog(@"Error: %@",
-                  [error localizedDescription]);
-        else { [_audioPlayerForButton play];
-            [tmp setTitle:@"Pause" forState:UIControlStateNormal];
-            [tmp setBackgroundColor:[UIColor redColor]];
-        }
-    }
-}
 #pragma mark - audio recording delegate methods
+
 -(void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag{
     if(player == _audioPlayer) {
-    _recordButton.enabled = YES;
+        _recordButton.enabled = YES;
     }
     else if (player == _audioPlayerForButton){
         [tmp setTitle:@"Play" forState:UIControlStateNormal];
@@ -260,13 +300,14 @@
     NSLog(@"Encode Error occurred");
 }
 
-#pragma mark - user camera method
+
+
+#pragma mark - camera methods
 - (void) useCamera:(id)sender{
     if ([UIImagePickerController isSourceTypeAvailable:
          UIImagePickerControllerSourceTypeCamera])
     {
-        UIImagePickerController *imagePicker =
-        [[UIImagePickerController alloc] init];
+        UIImagePickerController *imagePicker = [[UIImagePickerController alloc] init];
         imagePicker.delegate = self;
         imagePicker.sourceType = UIImagePickerControllerSourceTypeCamera;
         //imagePicker.mediaTypes = @[(NSString *) kUTTypeImage];
@@ -277,7 +318,7 @@
 }
 
 
-#pragma mark - UIImagePickerControllerDelegate
+#pragma mark - camera delegate methods
 /*
  -(void)imagePickerController:(UIImagePickerController *)picker
  didFinishPickingMediaWithInfo:(NSDictionary *)info{
@@ -296,7 +337,8 @@
 
 
 
-#pragma mark - table view data source
+#pragma mark - table view data source methods 
+
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     // Return the number of sections.
@@ -342,68 +384,9 @@
     _audioPlayerForButton = [[AVAudioPlayer alloc] initWithData:selectedAudioFile error:&error];
     NSString *length = [self getDurationLabelString:_audioPlayerForButton];
     cell.audioFileLength.text = length;
-    // Further changes such as text color whatever ...
-    
-    //
-    /*  NSString *fn = [[patients objectAtIndex:row] firstName];
-     NSString *mn = [[patients objectAtIndex:row] middleName];
-     NSString *ln = [[patients objectAtIndex:row] lastName];
-     NSString *name = [NSString stringWithFormat: @"%@ %@ %@", fn, mn, ln];
-     cell.patientName.text = name;
-     cell.chiefComplaint.text = (NSString*)[[patients objectAtIndex:row] chiefComplaint];
-     cell.patientPicture.image = [[patients objectAtIndex:row] photoID];*/
-    //cell.patientPicture.image = [UIImage imageNamed:_carImages[row]];
-    
+        
     return cell;
     
-    
-    // for(NSString *key in files){
-    //  NSString *fileType = [[files objectForKey:key] fileTypeId];
-    
-    /*  if() {
-     SessionCellClass *cell = nil;
-     cell = (SessionCellClass *)[tableView dequeueReusableCellWithIdentifier:sessionCellID];
-     if( !cell ) {
-     //  do something to create a new instance of cell
-     //  either alloc/initWithStyle or load via UINib
-     }
-     //  populate the cell with session model
-     return cell;
-     
-     else {
-     InfoCellClass *cell = nil;
-     cell = (InfoCellClass *)[tableView dequeueReusableCellWithIdentifier:infoCellID];
-     if( !cell ) {
-     //  do something to create a new instance of info cell
-     //  either alloc/initWithStyle or load via UINib
-     // ...
-     
-     //  get the model object:
-     myObject *person = [[self people] objectAtIndex:indexPath.row - 1];
-     
-     //  populate the cell with that model object
-     //  ...
-     return cell;
-     }
-     }*/
-    /* static NSString *CellIdentifier = @"patientListCell";
-     PatientListViewCell *cell = [tableView
-     dequeueReusableCellWithIdentifier:CellIdentifier
-     forIndexPath:indexPath];
-     
-     // Configure the cell...
-     
-     int row = [indexPath row];
-     NSString *fn = [[patients objectAtIndex:row] firstName];
-     NSString *mn = [[patients objectAtIndex:row] middleName];
-     NSString *ln = [[patients objectAtIndex:row] lastName];
-     NSString *name = [NSString stringWithFormat: @"%@ %@ %@", fn, mn, ln];
-     cell.patientName.text = name;
-     cell.chiefComplaint.text = (NSString*)[[patients objectAtIndex:row] chiefComplaint];
-     cell.patientPicture.image = [[patients objectAtIndex:row] photoID];
-     //cell.patientPicture.image = [UIImage imageNamed:_carImages[row]];
-     
-     return cell;*/
 }
 
 /*
@@ -458,7 +441,36 @@
      */
 }
 
+/*this method is activated when you click the play button on any
+ of the files in the table cells */
 
+- (IBAction)useSelectedFile:(id)sender {
+    tmp = (UIButton*)sender;
+    
+    if ([_audioPlayerForButton isPlaying]){
+        [_audioPlayerForButton pause];
+        [tmp setTitle:@"Play" forState:UIControlStateNormal];
+        [tmp setBackgroundColor:[UIColor greenColor]];
+    } else {
+        [_audioPlayerForButton stop];
+        //  _audioPlayerForButton = nil;
+        int tag = tmp.tag;
+        NSLog(@"%d", tag);
+        NSDictionary *audioFileInformation = [audioCellsArray objectAtIndex:tag];
+        NSString *selectedAudioFileAsString = [audioFileInformation objectForKey:@"Data"];
+        NSData *selectedAudioFile = [Base64 decode:selectedAudioFileAsString];
+        NSError *error;
+        _audioPlayerForButton = [[AVAudioPlayer alloc] initWithData:selectedAudioFile error:&error];
+        _audioPlayerForButton.delegate = self;
+        if (error)
+            NSLog(@"Error: %@",
+                  [error localizedDescription]);
+        else { [_audioPlayerForButton play];
+            [tmp setTitle:@"Pause" forState:UIControlStateNormal];
+            [tmp setBackgroundColor:[UIColor redColor]];
+        }
+    }
+}
 
 
 

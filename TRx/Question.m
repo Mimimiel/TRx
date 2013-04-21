@@ -19,6 +19,37 @@ static FMDatabase *db;
 }
 
 /*---------------------------------------------------------------------------
+ * Packs Information into a dictionary for a listener to store into LocalTalk
+ * Use: put this in the next button
+ * This doesn't synch yet, but this is the form it will take.
+ *---------------------------------------------------------------------------*/
+
+//TODO actually make this work with the app
+// --get unconfused about the different localGetApp Ids
+//      --difference between PatientRecords' AppId and appPatientId?
+
++(void)storeQuestionAnswer:(NSString *)answer questionId:(NSString *)questionId{
+    
+    NSString *view = @"questionView";
+    NSString *appId = [LocalTalk localGetAppPatientId];
+    NSString *appPatientRecordId = [LocalTalk localGetPatientRecordAppId];
+    
+    NSDictionary *params = @{@"AppId":              appId,
+                             @"AppPatientRecordId": appPatientRecordId,
+                             @"viewName":           view,
+                             @"Value":              answer,
+                             @"QuestionId":         questionId};
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"nextpressed" object:self userInfo:params];
+    
+}
+
+
+
+
+
+
+/*---------------------------------------------------------------------------
  * Takes a questionId and returns appropriate English Label or NULL
  *---------------------------------------------------------------------------*/
 +(NSString *)getEnglishLabel:(NSString *)questionId {
@@ -69,8 +100,8 @@ static FMDatabase *db;
 
 +(NSString *)getValueForQuestionId:(NSString *)questionId {
     
-
-    NSString *query = [NSString stringWithFormat:@"SELECT Value FROM Patient WHERE Id = \"%@\"", questionId];
+    NSString *appId = [LocalTalk localGetPatientAppId];
+    NSString *query = [NSString stringWithFormat:@"SELECT Value FROM History WHERE Id = \"%@\"", questionId];
     
     FMResultSet *results = [db executeQuery:query];
     
@@ -83,6 +114,8 @@ static FMDatabase *db;
     
     return retval;
 }
+
+
 
 
 @end

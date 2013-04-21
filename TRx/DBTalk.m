@@ -72,6 +72,11 @@ static DBTalk *singleton;
     else if ((patientId && !recordId) || recordUnsynced) {
         [DBTalk addUpdatePatientRecord];
     }
+    
+    //check if each record is unsynced
+    //if unsynced, 
+    
+    
 
     //check if recordId is null
     NSLog(@"Exiting DBTalk's pushLocalUnsyncedToServer");
@@ -683,8 +688,17 @@ static DBTalk *singleton;
     return NULL;
 }
 
-
+/*-----------------------------------------------------------------------
+Method: loadDataFromServer withData
+Returns:
+Summary: insert or update rows into any table in the local database
+ each row can look like whatever (i.e. don't have to be identical)
+ Summary: insert rows into some table in the local database
+ //TODO: inserts vs updates? i.e. should this also handle updates
+ //TODO: error handling
+ -----------------------------------------------------------------------*/
 + (void)loadDataFromServer:(NSDictionary *)params {
+    
     __block typeof(self) this = self;
     NSURL *url = [NSURL URLWithString:host];
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
@@ -720,7 +734,6 @@ static DBTalk *singleton;
         //TODO: LOCK DOWN OTHER TABS HERE BEFORE WE PUB
 
         [[NSNotificationCenter defaultCenter] postNotificationName:@"loadFromLocal" object:this userInfo:params];
-        NSLog(@"poop: %@", params);
     }
 }
 

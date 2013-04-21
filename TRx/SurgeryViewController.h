@@ -9,8 +9,9 @@
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
 #import <AudioToolbox/AudioToolbox.h>
+#import <MediaPlayer/MediaPlayer.h>
 
-@interface SurgeryViewController : UIViewController <UIImagePickerControllerDelegate, UITableViewDelegate, UITableViewDataSource>
+@interface SurgeryViewController : UIViewController <UIImagePickerControllerDelegate, UITableViewDelegate, UITableViewDataSource, UITextFieldDelegate>
 {
     IBOutlet UITableView *filesTable;
     NSURL *soundFileURL;
@@ -19,8 +20,9 @@
     IBOutlet UITextField *fileNameText;
     NSMutableDictionary *files;
     NSMutableArray *audioCellsArray;
-    NSString *fileName;
     UIButton *tmp;
+    MPMoviePlayerViewController *playerViewController;
+    IBOutlet UIView *videoView;
 
 }
 @property BOOL newMedia;
