@@ -41,4 +41,24 @@ static NSString *databasePath;
     return encodedString;
 }
 
++(NSMutableArray *)repackDictionaryForSetSQLiteTable:(NSDictionary *)dic keyList:(NSArray *)keyList {
+    NSMutableArray* arr = [[NSMutableArray alloc] init];
+    NSMutableDictionary *retDic = [[NSMutableDictionary alloc] init];
+    id value;
+    for (id key in keyList) {
+        value = [dic objectForKey:key];
+        if (value) {
+            [retDic setObject:value forKey:key];
+        }
+        else {
+            
+        }
+        
+    }
+    [arr addObject:retDic];
+    
+    return arr;
+}
+
+
 @end

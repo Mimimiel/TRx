@@ -233,25 +233,48 @@ static FMDatabase *db;
     
     
     NSDictionary *params = [notification userInfo];
-    
+    NSMutableArray* paramsArray, *returnArray;
+    NSArray *fields;
     BOOL success;
     
     NSLog(@"In localStoreEverything");
     if ([[params objectForKey:@"viewName"] isEqualToString:@"historyViewController"]) {
         
         NSLog(@"attempting to add Patient to Local");
-        success = [LocalTalk addNewPatientToLocal:params];
-        if (!success) {
+        //success = [LocalTalk addNewPatientToLocal:params];
+        
+        fields = [NSArray arrayWithObjects:@"FirstName", @"MiddleName", @"LastName", @"Birthday", nil];
+        paramsArray = [Utility repackDictionaryForSetSQLiteTable:params keyList:fields];
+        returnArray = [LocalTalk setSQLiteTable:@"Patient" withData:paramsArray];
+        
+        if (!returnArray || [[[returnArray objectAtIndex:0] stringValue] isEqualToString:@"0"]) {
             [Utility alertWithMessage:@"Unable to add a patient."];
+            NSLog(@"Unable to add a patient");
             return false;
         }
+        
+        
+        NSMutableDictionary *mutableParams = [NSMutableDictionary dictionaryWithDictionary:params];
+        [mutableParams setObject:[returnArray objectAtIndex:0] forKey:@"AppPatientId"];
+        
+        fields = [NSArray arrayWithObjects:@"SurgeryTypeId", @"DoctorId", @"HasTimeout", @"IsCurrent", @"IsLive", @"Id", @"AppPatientId", nil];
+        paramsArray = [Utility repackDictionaryForSetSQLiteTable:mutableParams keyList:fields];
+        
+        
         NSLog(@"attempting to add Record to Local");
-        success = [LocalTalk addPatientRecordToLocal:params];
-        if (!success) {
+        returnArray = [LocalTalk setSQLiteTable:@"PatientRecord" withData:paramsArray];
+        if (!returnArray) {
             [Utility alertWithMessage:@"Unable to add patient record."];
+            NSLog(@"Unable to add patient record");
             return false;
         }
     }
+    else if ([[params objectForKey:@"viewName"] isEqualToString:@"summaryViewController"]) {
+        
+        //load patient data from the server
+        
+    }
+    
     NSLog(@"Exiting localStoreEverything");
     [[NSNotificationCenter defaultCenter] postNotificationName:@"dataFromViewsStoredIntoLocal" object:self userInfo:nil];
     
@@ -265,30 +288,19 @@ static FMDatabase *db;
  think about date created and date modified
  */
 //TODO: addNewPatientToLocal: last modified and created neither stored in big nor little database
-+(BOOL)addNewPatientToLocal:(NSDictionary *)params {
-    NSString *firstName     = [params objectForKey:@"FirstName"];
-    NSString *middleName    = [params objectForKey:@"MiddleName"];
-    NSString *lastName      = [params objectForKey:@"LastName"];
-    NSString *birthday      = [params objectForKey:@"Birthday"];
-    
-    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
-    
-    BOOL retval = [db executeUpdate:@"INSERT INTO Patient (FirstName, MiddleName, LastName, Birthday) VALUES (?, ?, ?, ?)", firstName, middleName, lastName, birthday];
-    
-   // [db close];
-    return retval;
-}
+//+(BOOL)addNewPatientToLocal:(NSDictionary *)params {
+//    
+////    BOOL retval = [db executeUpdate:@"INSERT INTO Patient (FirstName, MiddleName, LastName, Birthday) VALUES (?, ?, ?, ?)", firstName, middleName, lastName, birthday];
+//    
+//   // [db close];
+//    //return retval;
+//}
 /*
  Think about:  How / When do I add date created and last modified?
  */
 //TODO: addNewPatientRecordToLocal: last modified and created neither stored in big nor little database
 +(BOOL)addPatientRecordToLocal:(NSDictionary *)params {
-    NSString *surgeryTypeId = [params objectForKey:@"SurgeryTypeId"];
-    NSString *doctorId      = [params objectForKey:@"DoctorId"];
-    NSString *hasTimeout    = [params objectForKey:@"HasTimeout"];
-    NSString *isCurrent     = [params objectForKey:@"IsCurrent"];
-    NSString *isLive        = [params objectForKey:@"IsLive"];
-    NSString *Id            = [params objectForKey:@"Id"];
+
     BOOL retval;
     
     NSString *AppPatientId = [self localGetAppPatientId];
@@ -296,12 +308,12 @@ static FMDatabase *db;
     
     NSString *query;
     
-    if (!Id) {
-        query = [NSString stringWithFormat:@"INSERT INTO PatientRecord(SurgeryTypeId, DoctorId, HasTimeout, IsLive, IsCurrent, AppPatientId) VALUES (%@, %@, %@, %@, %@, %@)", surgeryTypeId, doctorId, hasTimeout, isLive, isCurrent, AppPatientId];
-    }
-    else {
-        query = [NSString stringWithFormat:@"INSERT INTO PatientRecord(Id, SurgeryTypeId, DoctorId, HasTimeout, IsLive, IsCurrent, AppPatientId) VALUES (%@, %@, %@, %@, %@, %@, %@)", Id, surgeryTypeId, doctorId, hasTimeout, isLive, isCurrent, AppPatientId];
-    }
+//    if (!Id) {
+//        query = [NSString stringWithFormat:@"INSERT INTO PatientRecord(SurgeryTypeId, DoctorId, HasTimeout, IsLive, IsCurrent, AppPatientId) VALUES (%@, %@, %@, %@, %@, %@)", surgeryTypeId, doctorId, hasTimeout, isLive, isCurrent, AppPatientId];
+//    }
+//    else {
+//        query = [NSString stringWithFormat:@"INSERT INTO PatientRecord(Id, SurgeryTypeId, DoctorId, HasTimeout, IsLive, IsCurrent, AppPatientId) VALUES (%@, %@, %@, %@, %@, %@, %@)", Id, surgeryTypeId, doctorId, hasTimeout, isLive, isCurrent, AppPatientId];
+//    }
     
     retval = [db executeUpdate:query];
    // [db close];

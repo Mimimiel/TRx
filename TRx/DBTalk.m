@@ -72,6 +72,11 @@ static DBTalk *singleton;
     else if ((patientId && !recordId) || recordUnsynced) {
         [DBTalk addUpdatePatientRecord];
     }
+    
+    //check if each record is unsynced
+    //if unsynced, 
+    
+    
 
     //check if recordId is null
     NSLog(@"Exiting DBTalk's pushLocalUnsyncedToServer");
@@ -729,7 +734,6 @@ Summary: insert or update rows into any table in the local database
         //TODO: LOCK DOWN OTHER TABS HERE BEFORE WE PUB
 
         [[NSNotificationCenter defaultCenter] postNotificationName:@"loadFromLocal" object:this userInfo:params];
-        NSLog(@"poop: %@", params);
     }
 }
 
