@@ -39,10 +39,11 @@ typedef enum{
     HQYesNo *yesButton;
     HQYesNo *noButton;
     HQTextField *textEntryField;
+    HQTextField *otherTextField;
     
     NSMutableArray *response;
     NSMutableArray *checkBoxes;
-    NSMutableArray *selectionTextFields;
+    //NSMutableArray *selectionTextFields;
     NSMutableArray *questionUnion;
     
     HQView *connectedView;
@@ -52,13 +53,13 @@ typedef enum{
 @property(nonatomic, readwrite) qType type;
 @property(nonatomic, readwrite) HQLabel* questionLabel;
 @property(nonatomic, retain) HQTextField *textEntryField;
+@property(nonatomic, retain) HQTextField *otherTextField;
 @property(nonatomic, retain) HQSelector *yesNoSelector;
 @property(nonatomic, retain) HQYesNo *yesButton;
 @property(nonatomic, retain) HQYesNo *noButton;
 @property(nonatomic, retain) NSString *previousTextEntry;
 @property(nonatomic, retain) NSString *responseString;
 @property(nonatomic, retain) NSMutableArray *checkBoxes;
-@property(nonatomic, retain) NSMutableArray *selectionTextFields;
 @property(nonatomic, retain) HQView *connectedView;
 
 -(void) checkHasAnswer;

@@ -128,8 +128,6 @@
     newTransQuestion.type = [qHelper getNextType];
     [newTransQuestion setQuestionLabelText:[qHelper getNextTranslatedLabel]];
     
-    //[qHelper updateCurrentIndex];
-    
     [newMainQuestion buildQuestionOfType:newMainQuestion.type withHelper:qHelper];
     [self setPositionForMainQuestion:newMainQuestion];
     
@@ -139,6 +137,10 @@
     if(newMainQuestion.type == TEXT_ENTRY){
         newMainQuestion.textEntryField.delegate = self;
         newTransQuestion.textEntryField.delegate = self;
+    }
+    else if (newMainQuestion.type == MULTIPLE_SELECTION){
+        newMainQuestion.otherTextField.delegate = self;
+        newTransQuestion.otherTextField.delegate = self;
     }
     
     newMainQuestion.connectedView = newTransQuestion;
@@ -195,12 +197,23 @@
         [transQuestion.textEntryField resignFirstResponder];
     }
     else if(mainQuestion.type == MULTIPLE_SELECTION){
-        for(HQTextField *tf in mainQuestion.selectionTextFields){
-            [tf resignFirstResponder];
-        }
-        for(HQTextField *tf in transQuestion.selectionTextFields){
-            [tf resignFirstResponder];
-        }
+        [mainQuestion.otherTextField resignFirstResponder];
+        [transQuestion.otherTextField resignFirstResponder];
+    }
+}
+
+-(void) textFieldDidBeginEditing:(UITextField *)textField{
+    float textYPos = 375, moveDist = 0.0;
+    
+    oMainViewPos = mainQuestion.frame.origin.y;
+    oTransViewPos = transQuestion.frame.origin.y;
+    
+    if(textField.frame.origin.y > 200){
+        moveDist = textYPos - textField.frame.origin.y;
+        mainQuestion.frame = CGRectMake(mainQuestion.frame.origin.x, mainQuestion.frame.origin.y - moveDist,
+                                        mainQuestion.frame.size.width, mainQuestion.frame.size.height);
+        transQuestion.frame = CGRectMake(transQuestion.frame.origin.x, transQuestion.frame.origin.y - moveDist,
+                                         transQuestion.frame.size.width, transQuestion.frame.size.height);
     }
 }
 
@@ -208,9 +221,21 @@
     if(textField == mainQuestion.textEntryField){
         transQuestion.textEntryField.text = mainQuestion.textEntryField.text;
     }
-    if(textField == transQuestion.textEntryField){
+    else if(textField == transQuestion.textEntryField){
         mainQuestion.textEntryField.text = transQuestion.textEntryField.text;
     }
+    else if (textField == mainQuestion.otherTextField){
+        transQuestion.otherTextField.text = mainQuestion.otherTextField.text;
+    }
+    else if (textField == transQuestion.otherTextField){
+        mainQuestion.otherTextField.text = transQuestion.otherTextField.text;
+    }
+
+    mainQuestion.frame = CGRectMake(mainQuestion.frame.origin.x, oMainViewPos,
+                                mainQuestion.frame.size.width, mainQuestion.frame.size.height);
+    transQuestion.frame = CGRectMake(transQuestion.frame.origin.x, oTransViewPos,
+                                 transQuestion.frame.size.width, transQuestion.frame.size.height);
+
 }
 
 -(void) findAnswers{
@@ -236,6 +261,9 @@
             if(cb.selected){
                 [answers addObject:cb.optionLabel];
             }
+        }
+        if(mainQuestion.otherTextField.text.length > 0){
+            [answers addObject:mainQuestion.otherTextField.text];
         }
     }
     

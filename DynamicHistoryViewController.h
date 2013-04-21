@@ -13,7 +13,7 @@
 
 @interface DynamicHistoryViewController : UIViewController<UITextFieldDelegate>{
     
-    float availableSpace;
+    float availableSpace, oMainViewPos, oTransViewPos;
     NSInteger pageCount;
     NSString *mainQuestionText;
     NSString *transQuestionText;

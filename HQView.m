@@ -26,7 +26,7 @@
 
 @implementation HQView
 
-@synthesize hasAnswer, questionLabel, type, textEntryField, yesNoSelector, yesButton, noButton, previousTextEntry, responseString, checkBoxes, connectedView, selectionTextFields;
+@synthesize hasAnswer, questionLabel, type, textEntryField, otherTextField, yesNoSelector, yesButton, noButton, previousTextEntry, responseString, checkBoxes, connectedView;
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -42,7 +42,6 @@
         
         response = [[NSMutableArray alloc]init];
         checkBoxes = [[NSMutableArray alloc]init];
-        selectionTextFields = [[NSMutableArray alloc]init];
         questionUnion = [[NSMutableArray alloc]init];
         
         questionLabel = [[HQLabel alloc] init];
@@ -107,6 +106,9 @@
             }
         }
         if(checked){
+            hasAnswer = YES;
+        }
+        else if(otherTextField.text.length > 0){
             hasAnswer = YES;
         }
         else{
@@ -176,7 +178,6 @@
 #pragma mark - Multiple Selection Methods
 
 -(void) buildMultipleSelectionWithOptions:(NSMutableArray *)options{
-    [selectionTextFields removeAllObjects];
     
     NSInteger count = 0;
     NSMutableArray *tmpButtons = [[NSMutableArray alloc] init];
@@ -188,8 +189,8 @@
         HQLabel *tmp = [[HQLabel alloc]init];
         HQLabel *lastLabel = [[HQLabel alloc]init];
         HQCheckBox *box = [HQCheckBox buttonWithType:UIButtonTypeCustom];
-        HQCheckBox *lastBox = [[HQCheckBox alloc]init];
-        HQTextField *textField = [[HQTextField alloc] init];
+        HQCheckBox *lastBox = [HQCheckBox buttonWithType:UIButtonTypeCustom];
+        otherTextField = [[HQTextField alloc] init];
         
         tmp.constrainedWidth = 375;
         [tmp setText:s];
@@ -228,20 +229,18 @@
         else{
             lastLabel = [response lastObject];
             tmp.frame = CGRectMake(lastLabel.frame.origin.x, lastLabel.frame.origin.y + lastLabel.frame.size.height + Y_PADDING, tmp.frame.size.width, tmp.frame.size.height);
-            textField.frame = CGRectMake(tmp.frame.origin.x +(lastLabel.text.length * 10), lastLabel.frame.origin.y + lastLabel.frame.size.height + Y_PADDING, 250, 30);
-            textField.delegate = self;
-            textField.borderStyle = UITextBorderStyleBezel;
-            textField.keyboardType = UIKeyboardTypeDefault;
-            textField.autocorrectionType = UITextAutocorrectionTypeNo;
-            [textEntryField setFont:[UIFont fontWithName:@"HelveticaNeue" size:FONT_SIZE]];
+            otherTextField.frame = CGRectMake(tmp.frame.origin.x +(lastLabel.text.length * 10), lastLabel.frame.origin.y + lastLabel.frame.size.height + Y_PADDING, 250, 30);
+            otherTextField.borderStyle = UITextBorderStyleBezel;
+            otherTextField.keyboardType = UIKeyboardTypeDefault;
+            otherTextField.autocorrectionType = UITextAutocorrectionTypeNo;
+            [otherTextField setFont:[UIFont fontWithName:@"HelveticaNeue" size:FONT_SIZE]];
             
             responseHeight += (tmp.frame.size.height + Y_PADDING);
             
             [response addObject:tmp];
-            [selectionTextFields addObject:textField];
             
             [self addSubview:tmp];
-            [self addSubview:textField];
+            [self addSubview:otherTextField];
         }
         count++;
     }

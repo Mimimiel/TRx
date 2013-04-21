@@ -444,10 +444,10 @@
 				C402E513170F16CF00737787 /* HQSelector.m */,
 				C402E518170F41E400737787 /* HQTextField.h */,
 				C402E519170F41E400737787 /* HQTextField.m */,
-				C402E51F1712131500737787 /* HQView.h */,
-				C402E5201712131500737787 /* HQView.m */,
 				C493A32B172395E80009E346 /* HQYesNo.h */,
 				C493A32C172395E90009E346 /* HQYesNo.m */,
+				C402E51F1712131500737787 /* HQView.h */,
+				C402E5201712131500737787 /* HQView.m */,
 			);
 			name = HistoryQuestionClasses;
 			sourceTree = "<group>";
