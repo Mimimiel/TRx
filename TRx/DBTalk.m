@@ -683,8 +683,17 @@ static DBTalk *singleton;
     return NULL;
 }
 
-
+/*-----------------------------------------------------------------------
+Method: loadDataFromServer withData
+Returns:
+Summary: insert or update rows into any table in the local database
+ each row can look like whatever (i.e. don't have to be identical)
+ Summary: insert rows into some table in the local database
+ //TODO: inserts vs updates? i.e. should this also handle updates
+ //TODO: error handling
+ -----------------------------------------------------------------------*/
 + (void)loadDataFromServer:(NSDictionary *)params {
+    
     __block typeof(self) this = self;
     NSURL *url = [NSURL URLWithString:host];
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];

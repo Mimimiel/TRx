@@ -729,6 +729,7 @@ static FMDatabase *db;
     NSString *firstName, *lastName, *patientId, *imageId, *middleName, *recordId, *birthday, *complaint, *PatientRecordAppId;
     NSURL *pictureURL;
     UIImage *picture;
+    
     //check for connectivity to the Server
     BOOL connectivity = [self checkConnectivity];
     NSLog(@"Connectivity in localGetPatientList is: %d",connectivity);
