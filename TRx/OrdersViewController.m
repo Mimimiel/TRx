@@ -35,7 +35,7 @@
 	// Do any additional setup after loading the view.
     textViews = @[_ordersTextViewTl, _ordersTextViewTr, _ordersTextViewBl, _ordersTextViewBr];
     
-    [_ordersTextViewTl addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(textViewTapped:)]];
+     [_ordersTextViewTl addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(textViewTapped:)]];
      [_ordersTextViewTr addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(textViewTapped:)]];
      [_ordersTextViewBl addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(textViewTapped:)]];
      [_ordersTextViewBr addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(textViewTapped:)]];

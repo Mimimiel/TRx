@@ -87,7 +87,7 @@
         [_audioRecorder prepareToRecord];
     }
     
-
+    
 }
 
 -(void)viewWillAppear:(BOOL)animated {
@@ -99,13 +99,13 @@
     NSDictionary *params = @{@"tableNames" : tables,
                              @"location" : @"surgeryViewController"};
     [[NSNotificationCenter defaultCenter] postNotificationName:@"tabloaded" object:self userInfo:params];
-
+    
 }
 
 -(void)viewDidAppear:(BOOL)animated{
-//  fileNameText.text = now;
+    //  fileNameText.text = now;
     /*listeners for history view controller*/
-   }
+}
 
 - (void)viewDidLoad
 {
@@ -126,35 +126,35 @@
             }
         }
         //NSLog(@"The updated data listener's data in Surgery VC is: %@", data);
-    
+        
         
     } else { NSLog(@"not in the right view controller");}
     [filesTable reloadData];
     
 }
 
-#pragma mark - audio recording button methods 
+#pragma mark - audio recording button methods
 - (IBAction)recordAudio:(id)sender {
     
-    /*if not recording */ 
+    /*if not recording */
     if (!_audioRecorder.recording)
     {
         if(isPaused){ //start recording again
             _playButton.enabled = NO;
-            isPaused = NO; 
-            /*IMPLEMENT: call method to change button to pause button*/ 
+            isPaused = NO;
+            /*IMPLEMENT: call method to change button to pause button*/
             [_audioRecorder record];
         } else {
             //initialize a new file and start recording
             [self newRecording];
-            /*IMPLEMENT: call method to change button to pause button*/ 
-            [_audioRecorder record]; 
+            /*IMPLEMENT: call method to change button to pause button*/
+            [_audioRecorder record];
         }
-        /*if it is recording just pause it*/ 
+        /*if it is recording just pause it*/
     } else if(_audioRecorder.recording) {
         /*IMPLEMENT: call method to change the button to record*/
-        isPaused = YES; 
-        [_audioRecorder pause]; 
+        isPaused = YES;
+        [_audioRecorder pause];
     }
 }
 
@@ -188,15 +188,10 @@
     {
         NSLog(@"error: %@", [error localizedDescription]);
     } else {
-       NSMutableArray *insertArray = [[NSMutableArray alloc]init];
-      /*  NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-        [formatter setDateFormat:@"yyyy-MM-dd_'at'_HH-mm-ss"];
-        now = [NSDate date];
-        NSString *created = [formatter stringFromDate:now]; //append the patientId to the time stamp and add a number */
-        NSString *recordTypeId = [AdminInformation getOperationRecordTypeIdByName:@"Audio"]; //write this method
+        NSMutableArray *insertArray = [[NSMutableArray alloc]init];
+        NSString *recordTypeId = [AdminInformation getOperationRecordTypeIdByName:@"Audio"];
         NSString *appPatientRecordId = [LocalTalk localGetPatientRecordAppId];
-       // NSString *path = [NSNull null];
-      //  NSString *fileName = [appPatientRecordId stringByAppendingString:created]; //figure this out
+        //NSString *path = [NSNull null];
         NSDictionary *dictionary = @{@"AppPatientRecordId" : appPatientRecordId,
                                      @"RecordTypeId"       : recordTypeId,
                                      @"Name"               : fileName,
@@ -212,13 +207,45 @@
         }
         
     }
-    _playButton.enabled = YES; 
+    _playButton.enabled = YES;
 }
 
+- (IBAction)useSelectedFile:(id)sender {
+    tmp = (UIButton*)sender;
+   
+    if ([_audioPlayerForButton isPlaying]){
+        [_audioPlayerForButton pause];
+        [tmp setTitle:@"Play" forState:UIControlStateNormal];
+        [tmp setBackgroundColor:[UIColor greenColor]];
+    } else {
+        [_audioPlayerForButton stop];
+        //  _audioPlayerForButton = nil;
+        int tag = tmp.tag;
+        NSLog(@"%d", tag);
+        NSDictionary *audioFileInformation = [audioCellsArray objectAtIndex:tag];
+        NSString *selectedAudioFileAsString = [audioFileInformation objectForKey:@"Data"];
+        NSData *selectedAudioFile = [Base64 decode:selectedAudioFileAsString];
+        NSError *error;
+        _audioPlayerForButton = [[AVAudioPlayer alloc] initWithData:selectedAudioFile error:&error];
+        _audioPlayerForButton.delegate = self;
+        if (error)
+            NSLog(@"Error: %@",
+                  [error localizedDescription]);
+        else { [_audioPlayerForButton play];
+            [tmp setTitle:@"Pause" forState:UIControlStateNormal];
+            [tmp setBackgroundColor:[UIColor redColor]];
+        }
+    }
+}
 #pragma mark - audio recording delegate methods
 -(void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag{
+    if(player == _audioPlayer) {
     _recordButton.enabled = YES;
-  //  _stopButton.enabled = NO;
+    }
+    else if (player == _audioPlayerForButton){
+        [tmp setTitle:@"Play" forState:UIControlStateNormal];
+        [tmp setBackgroundColor:[UIColor greenColor]];
+    }
 }
 
 -(void)audioPlayerDecodeErrorDidOccur:(AVAudioPlayer *)player error:(NSError *)error{
@@ -252,39 +279,22 @@
 
 #pragma mark - UIImagePickerControllerDelegate
 /*
--(void)imagePickerController:(UIImagePickerController *)picker
-didFinishPickingMediaWithInfo:(NSDictionary *)info{
-    
-    [self dismissViewControllerAnimated:YES completion:nil];
-    
-    //Store the image for the patient
-    
-   // photoID = finalImage;
-   // newPatient.photoID = finalImage;
-    
-    //Display the final image
-    //_imageView.image = finalImage;
-    
-}*/
+ -(void)imagePickerController:(UIImagePickerController *)picker
+ didFinishPickingMediaWithInfo:(NSDictionary *)info{
+ 
+ [self dismissViewControllerAnimated:YES completion:nil];
+ 
+ //Store the image for the patient
+ 
+ // photoID = finalImage;
+ // newPatient.photoID = finalImage;
+ 
+ //Display the final image
+ //_imageView.image = finalImage;
+ 
+ }*/
 
-- (IBAction)useSelectedFile:(id)sender {
-    [_audioPlayerForButton stop];
-    _audioPlayerForButton = nil;
-    UIButton *tmp = (UIButton*)sender;
-    int tag = tmp.tag;
-    NSLog(@"%d", tag);
-    NSDictionary *audioFileInformation = [audioCellsArray objectAtIndex:tag];
-    NSString *selectedAudioFileAsString = [audioFileInformation objectForKey:@"Data"];
-    NSData *selectedAudioFile = [Base64 decode:selectedAudioFileAsString];
-    NSError *error;
-    
-    _audioPlayerForButton = [[AVAudioPlayer alloc] initWithData:selectedAudioFile error:&error];
-    if (error)
-        NSLog(@"Error: %@",
-              [error localizedDescription]);
-    else
-        [_audioPlayerForButton play];
-}
+
 
 #pragma mark - table view data source
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -298,7 +308,21 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info{
     // Return the number of rows in the section.
     return audioCellsArray.count;
 }
-
+- (NSString *)getDurationLabelString:(AVAudioPlayer *)audioPlayer {
+    NSTimeInterval theTimeInterval = audioPlayer.duration;
+    // Get the system calendar
+    NSCalendar *sysCalendar = [NSCalendar currentCalendar];
+    
+    // Create the NSDates
+    NSDate *date1 = [[NSDate alloc] init];
+    NSDate *date2 = [[NSDate alloc] initWithTimeInterval:theTimeInterval sinceDate:date1];
+    // Get conversion to hours, minutes, seconds
+    unsigned int unitFlags = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
+    NSDateComponents *breakdownInfo = [sysCalendar components:unitFlags fromDate:date1  toDate:date2  options:0];
+    NSLog(@"%02d:%02d:%02d", [breakdownInfo hour], [breakdownInfo minute], [breakdownInfo second]);
+    NSString *length = [NSString stringWithFormat:@"%02d:%02d:%02d", [breakdownInfo hour], [breakdownInfo minute], [breakdownInfo second]];
+    return length;
+}
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *audioCellID = @"audioCellId";
@@ -310,70 +334,76 @@ didFinishPickingMediaWithInfo:(NSDictionary *)info{
     NSString *fileNameFromDb = [audioFileInformation objectForKey:@"Name"];
     cell.fileName.text = fileNameFromDb;
     cell.playButton.tag = [indexPath row];
+    [cell.playButton setBackgroundColor:[UIColor greenColor]];
     NSLog(@"%d", cell.playButton.tag);
-  
+    NSString *selectedAudioFileAsString = [audioFileInformation objectForKey:@"Data"];
+    NSData *selectedAudioFile = [Base64 decode:selectedAudioFileAsString];
+    NSError *error;
+    _audioPlayerForButton = [[AVAudioPlayer alloc] initWithData:selectedAudioFile error:&error];
+    NSString *length = [self getDurationLabelString:_audioPlayerForButton];
+    cell.audioFileLength.text = length;
     // Further changes such as text color whatever ...
     
-   // 
-  /*  NSString *fn = [[patients objectAtIndex:row] firstName];
-    NSString *mn = [[patients objectAtIndex:row] middleName];
-    NSString *ln = [[patients objectAtIndex:row] lastName];
-    NSString *name = [NSString stringWithFormat: @"%@ %@ %@", fn, mn, ln];
-    cell.patientName.text = name;
-    cell.chiefComplaint.text = (NSString*)[[patients objectAtIndex:row] chiefComplaint];
-    cell.patientPicture.image = [[patients objectAtIndex:row] photoID];*/
+    //
+    /*  NSString *fn = [[patients objectAtIndex:row] firstName];
+     NSString *mn = [[patients objectAtIndex:row] middleName];
+     NSString *ln = [[patients objectAtIndex:row] lastName];
+     NSString *name = [NSString stringWithFormat: @"%@ %@ %@", fn, mn, ln];
+     cell.patientName.text = name;
+     cell.chiefComplaint.text = (NSString*)[[patients objectAtIndex:row] chiefComplaint];
+     cell.patientPicture.image = [[patients objectAtIndex:row] photoID];*/
     //cell.patientPicture.image = [UIImage imageNamed:_carImages[row]];
     
     return cell;
-
     
-   // for(NSString *key in files){
-      //  NSString *fileType = [[files objectForKey:key] fileTypeId];
-        
-  /*  if() {
-        SessionCellClass *cell = nil;
-        cell = (SessionCellClass *)[tableView dequeueReusableCellWithIdentifier:sessionCellID];
-        if( !cell ) {
-            //  do something to create a new instance of cell
-            //  either alloc/initWithStyle or load via UINib
-        }
-        //  populate the cell with session model
-        return cell;
     
-    else {
-        InfoCellClass *cell = nil;
-        cell = (InfoCellClass *)[tableView dequeueReusableCellWithIdentifier:infoCellID];
-        if( !cell ) {
-            //  do something to create a new instance of info cell
-            //  either alloc/initWithStyle or load via UINib
-            // ...
-            
-            //  get the model object:
-            myObject *person = [[self people] objectAtIndex:indexPath.row - 1];
-            
-            //  populate the cell with that model object
-            //  ...
-            return cell;
-        }
-    }*/
-   /* static NSString *CellIdentifier = @"patientListCell";
-    PatientListViewCell *cell = [tableView
-                                 dequeueReusableCellWithIdentifier:CellIdentifier
-                                 forIndexPath:indexPath];
+    // for(NSString *key in files){
+    //  NSString *fileType = [[files objectForKey:key] fileTypeId];
     
-    // Configure the cell...
-    
-    int row = [indexPath row];
-    NSString *fn = [[patients objectAtIndex:row] firstName];
-    NSString *mn = [[patients objectAtIndex:row] middleName];
-    NSString *ln = [[patients objectAtIndex:row] lastName];
-    NSString *name = [NSString stringWithFormat: @"%@ %@ %@", fn, mn, ln];
-    cell.patientName.text = name;
-    cell.chiefComplaint.text = (NSString*)[[patients objectAtIndex:row] chiefComplaint];
-    cell.patientPicture.image = [[patients objectAtIndex:row] photoID];
-    //cell.patientPicture.image = [UIImage imageNamed:_carImages[row]];
-    
-    return cell;*/
+    /*  if() {
+     SessionCellClass *cell = nil;
+     cell = (SessionCellClass *)[tableView dequeueReusableCellWithIdentifier:sessionCellID];
+     if( !cell ) {
+     //  do something to create a new instance of cell
+     //  either alloc/initWithStyle or load via UINib
+     }
+     //  populate the cell with session model
+     return cell;
+     
+     else {
+     InfoCellClass *cell = nil;
+     cell = (InfoCellClass *)[tableView dequeueReusableCellWithIdentifier:infoCellID];
+     if( !cell ) {
+     //  do something to create a new instance of info cell
+     //  either alloc/initWithStyle or load via UINib
+     // ...
+     
+     //  get the model object:
+     myObject *person = [[self people] objectAtIndex:indexPath.row - 1];
+     
+     //  populate the cell with that model object
+     //  ...
+     return cell;
+     }
+     }*/
+    /* static NSString *CellIdentifier = @"patientListCell";
+     PatientListViewCell *cell = [tableView
+     dequeueReusableCellWithIdentifier:CellIdentifier
+     forIndexPath:indexPath];
+     
+     // Configure the cell...
+     
+     int row = [indexPath row];
+     NSString *fn = [[patients objectAtIndex:row] firstName];
+     NSString *mn = [[patients objectAtIndex:row] middleName];
+     NSString *ln = [[patients objectAtIndex:row] lastName];
+     NSString *name = [NSString stringWithFormat: @"%@ %@ %@", fn, mn, ln];
+     cell.patientName.text = name;
+     cell.chiefComplaint.text = (NSString*)[[patients objectAtIndex:row] chiefComplaint];
+     cell.patientPicture.image = [[patients objectAtIndex:row] photoID];
+     //cell.patientPicture.image = [UIImage imageNamed:_carImages[row]];
+     
+     return cell;*/
 }
 
 /*

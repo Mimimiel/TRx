@@ -8,8 +8,7 @@
 
 #import "LocalTalk.h"
 #import "DBTalk.h"
-#import "FMDatabase.h"
-#import "FMDatabaseQueue.h"
+
 #import "Utility.h"
 #import "SynchData.h"
 #import "AdminInformation.h"
@@ -34,6 +33,9 @@ static FMDatabase *db;
 
 +(LocalTalk *)getSingleton {
     return singleton;
+}
++(FMDatabase *)getDb {
+    return db;
 }
 
 -(void)loadListener{

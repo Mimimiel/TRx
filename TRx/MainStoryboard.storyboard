@@ -774,14 +774,14 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 </label>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3Mg-OR-YWO">
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3Mg-OR-YWO">
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="60" id="NG1-zK-Yzn"/>
-                                                        <constraint firstAttribute="height" constant="59" id="ert-OH-Il4"/>
+                                                        <constraint firstAttribute="height" constant="60" id="sdM-Sk-CHF"/>
                                                     </constraints>
                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                                     <state key="normal" title="Play">
-                                                        <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                                        <color key="titleColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                                     </state>
                                                     <state key="highlighted">
@@ -796,8 +796,8 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                                         </view>
                                         <constraints>
                                             <constraint firstItem="lpa-m7-ojU" firstAttribute="top" secondItem="moS-xk-ENi" secondAttribute="top" constant="26" id="09X-qw-ECm"/>
+                                            <constraint firstItem="3Mg-OR-YWO" firstAttribute="centerY" secondItem="reg-d4-mll" secondAttribute="centerY" type="default" id="C8G-1v-BQX"/>
                                             <constraint firstItem="Z7d-ge-9tJ" firstAttribute="top" secondItem="moS-xk-ENi" secondAttribute="top" constant="48" id="L5A-Td-Ufx"/>
-                                            <constraint firstItem="3Mg-OR-YWO" firstAttribute="top" secondItem="moS-xk-ENi" secondAttribute="top" constant="19" id="X2h-1K-NaV"/>
                                             <constraint firstItem="reg-d4-mll" firstAttribute="leading" secondItem="moS-xk-ENi" secondAttribute="leading" constant="20" type="default" id="X43-5r-cJs"/>
                                             <constraint firstItem="lpa-m7-ojU" firstAttribute="leading" secondItem="reg-d4-mll" secondAttribute="trailing" constant="8" symbolic="YES" type="default" id="cVL-kM-H9z"/>
                                             <constraint firstItem="Z7d-ge-9tJ" firstAttribute="trailing" secondItem="lpa-m7-ojU" secondAttribute="trailing" type="default" id="gW6-bl-QQm"/>

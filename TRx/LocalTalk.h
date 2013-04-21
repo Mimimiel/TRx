@@ -7,6 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "FMDatabase.h"
+#import "FMDatabaseQueue.h"
 
 @interface LocalTalk : NSObject
 
@@ -16,6 +18,8 @@
     LocalTalk *singleton;
 }
 +(LocalTalk *)getSingleton;
++(FMDatabase *)getDb;
+
 +(BOOL)clearIsLiveFlags;
 
 
