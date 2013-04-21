@@ -13,6 +13,7 @@
 
 @implementation Question
 static FMDatabase *db;
+
 + (void)initialize {
     db = [LocalTalk getDb];
 }
@@ -46,7 +47,7 @@ static FMDatabase *db;
            columnName:(NSString *)columnName {
     
     NSString *query = [[NSString alloc] initWithFormat:
-                       @"SELECT %@ FROM Questions WHERE QuestionId = \"%@\"", columnName, questionId];
+                       @"SELECT %@ FROM Question WHERE Id = \"%@\"", columnName, questionId];
     
     FMResultSet *results = [db executeQuery:query];
     
@@ -69,7 +70,7 @@ static FMDatabase *db;
 +(NSString *)getValueForQuestionId:(NSString *)questionId {
     
 
-    NSString *query = [NSString stringWithFormat:@"SELECT Value FROM Patient WHERE QuestionId = \"%@\"", questionId];
+    NSString *query = [NSString stringWithFormat:@"SELECT Value FROM Patient WHERE Id = \"%@\"", questionId];
     
     FMResultSet *results = [db executeQuery:query];
     
