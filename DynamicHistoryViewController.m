@@ -96,7 +96,6 @@
         [previousPages addObject:transQuestion];
         [self findAnswers];
         [qHelper updateCurrentIndexWithResponse:answers];
-        //[qHelper updateCurrentIndex];
     }
     
     if(hasNextPages){
@@ -267,8 +266,7 @@
         }
     }
     
-    //    NSString *answerString = [answers componentsJoinedByString:@", "];
-    //    NSArray *previousAnswers = [answerString componentsSeparatedByString:@", "];
+    answerString = [answers componentsJoinedByString:@", "];
     
 }
 
