@@ -269,29 +269,29 @@ static FMDatabase *db;
         /*
          * Insert Image into Local Database
          */
-        UIImage *image = params[@"Data"];
-        NSData *imageData = UIImageJPEGRepresentation(image, 0.03);
-        NSString *imageStr = [Base64 encode:imageData];
-        [mutableParams setObject:[returnArray objectAtIndex:0] forKey:@"AppPatientRecordId"];
-        
-        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-        NSString *now;
-        [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-        now = [dateFormatter stringFromDate:[NSDate date]];
-        
-        [mutableParams setObject:now forKey:@"Name"];
-        [mutableParams setObject:now forKey:@"Path"];
-        [mutableParams setObject:@"1" forKey:@"IsProfile"];
-        [mutableParams setObject:[LocalTalk getOperationRecordTypeIdByNameFromSQLite:@"Picture"] forKey:@"RecordTypeId"];
-        
-        fields = [NSArray arrayWithObjects:@"Data", @"AppPatientRecordId", @"Name", @"Path", @"RecordTypeId", @"IsProfile", nil];
-        paramsArray = [Utility repackDictionaryForSetSQLiteTable:mutableParams keyList:fields];
-        
-        returnArray = [LocalTalk setSQLiteTable:@"Image" withData:paramsArray];
-        if (!returnArray) {
-            [Utility alertWithMessage:@"Unable to add image to OperationRecords"];
-            NSLog(@"Unable to add image to OperationRecords");
-        }
+//        UIImage *image = params[@"Data"];
+//        NSData *imageData = UIImageJPEGRepresentation(image, 0.03);
+//        NSString *imageStr = [Base64 encode:imageData];
+//        [mutableParams setObject:[returnArray objectAtIndex:0] forKey:@"AppPatientRecordId"];
+//        
+//        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+//        NSString *now;
+//        [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+//        now = [dateFormatter stringFromDate:[NSDate date]];
+//        
+//        [mutableParams setObject:now forKey:@"Name"];
+//        [mutableParams setObject:now forKey:@"Path"];
+//        [mutableParams setObject:@"1" forKey:@"IsProfile"];
+//        [mutableParams setObject:[LocalTalk getOperationRecordTypeIdByNameFromSQLite:@"Picture"] forKey:@"RecordTypeId"];
+//        
+//        fields = [NSArray arrayWithObjects:@"Data", @"AppPatientRecordId", @"Name", @"Path", @"RecordTypeId", @"IsProfile", nil];
+//        paramsArray = [Utility repackDictionaryForSetSQLiteTable:mutableParams keyList:fields];
+//        
+//        returnArray = [LocalTalk setSQLiteTable:@"Image" withData:paramsArray];
+//        if (!returnArray) {
+//            [Utility alertWithMessage:@"Unable to add image to OperationRecords"];
+//            NSLog(@"Unable to add image to OperationRecords");
+//        }
     }
     else if ([[params objectForKey:@"viewName"] isEqualToString:@"summaryViewController"]) {
         
