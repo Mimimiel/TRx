@@ -231,7 +231,7 @@
                              @"MiddleName"  : [[patients objectAtIndex:row] middleName],
                              @"LastName"    : [[patients objectAtIndex:row] lastName],
                              @"Birthday"    : [[patients objectAtIndex:row] birthday],
-                            // @"Data"        : [[patients objectAtIndex:row] photoID],
+                             @"Data"        : [[patients objectAtIndex:row] photoID],
                              @"PhotoURL"    : [[patients objectAtIndex:row] photoURL],
                              @"SurgeryTypeId":[[patients objectAtIndex:row] chiefComplaint],
                              @"PatientRecordId" : patientRecordId,

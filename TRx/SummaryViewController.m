@@ -43,7 +43,14 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
-    [_patientPicture setImage:[LocalTalk localGetPortrait]];
+    
+    //FIXME This is crashing the app as no picture was loaded into LocalTalk
+    UIImage *image = [LocalTalk localGetPortrait];
+    if (image) {
+        [_patientPicture setImage:[LocalTalk localGetPortrait]];
+    }
+    
+    
     
 }
 

@@ -74,10 +74,19 @@ static DBTalk *singleton;
     }
     
     //check if each record is unsynced
-    //if unsynced, 
+    //if unsynced,
+    //get all records from table wherey last mod > last synced
+    NSMutableArray *array = [LocalTalk localGetUnsyncedRecordsFromTable:@"OperationRecord"];
+    
+    for (NSMutableDictionary *dic in array) {
+        if([dic[@"RecordTypeId"] isEqualToString:@"3"]){
+            [DBTalk uploadFileToServer:[LocalTalk localGetPortrait] fileType:@"image" fileName:dic[@"Name"] patientId:patientId];
+        }
+    }
+    //check if image is unsynced and push if unsynced
+        //calls uploadFileToServer() use "image" and later ?? getOperationTypeRecordName
     
     
-
     //check if recordId is null
     NSLog(@"Exiting DBTalk's pushLocalUnsyncedToServer");
 }
@@ -510,12 +519,22 @@ static DBTalk *singleton;
 /*---------------------------------------------------------------------------
  *
  *---------------------------------------------------------------------------*/
-+(BOOL)uploadPictureToServer:(UIImage *)picture
++(BOOL)uploadFileToServer:(id)file
+                 fileType:(NSString *)fileType
                     fileName:(NSString *)fileName
-                   directory:(NSString *)directory {
+                   patientId:(NSString *)patientId {
     
-    NSString *fNameWithSuffix = [NSString stringWithFormat:@"%@.jpeg", fileName];
-    
+    NSString *fNameWithSuffix;
+    NSData *uploadData;
+    if ([fileType isEqualToString:@"image"]) {
+        UIImage *uploadFile = (UIImage *)file;
+        fNameWithSuffix = [NSString stringWithFormat:@"%@.jpeg", fileName];
+        uploadData = UIImageJPEGRepresentation(uploadFile, 1);
+    }
+    else {
+        //audio file
+        
+    }
     /*Using AFNetworking. This works, but it seems to still block until picture is uploaded */
     /*all of a sudden much faster */
     /* --works quickly when I don't call addPictureInfoToDatabase */
@@ -523,12 +542,13 @@ static DBTalk *singleton;
     
     NSURL *url = [NSURL URLWithString:@"http://www.teamecuadortrx.com/TRxTalk/"];
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
-    NSData *imageData = UIImageJPEGRepresentation(picture, 0.03);
     
-    NSDictionary *dic = [[NSDictionary alloc] initWithObjectsAndKeys:directory, @"directory", nil];
+    
+    NSDictionary *dic = [[NSDictionary alloc] initWithObjectsAndKeys:patientId, @"patientId",
+                         fileType, @"fileType", nil];
     
     NSMutableURLRequest *request = [httpClient multipartFormRequestWithMethod:@"POST" path:@"upload.php" parameters:dic constructingBodyWithBlock: ^(id <AFMultipartFormData>formData) {
-        [formData appendPartWithFileData:imageData name:@"file" fileName:fNameWithSuffix mimeType:@"image/jpeg"];
+        [formData appendPartWithFileData:uploadData name:@"file" fileName:fNameWithSuffix mimeType:@"image/jpeg"];
     }];
     
     AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:request];

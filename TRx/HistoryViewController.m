@@ -23,19 +23,17 @@
 
 - (void)viewDidLoad{
     [super viewDidLoad];
-/*
+
     newPatient = [[Patient alloc] initWithFirstName:@"Rob" MiddleName:@"D" LastName:@"woMan" ChiefComplaint:@"1" PhotoID:NULL];
-    newPatient.birthday = @"20010203";
-    _complaintsArray = [AdminInformation getSurgeryNames];
+    newPatient.birthday = @"2001-02-03";
+    //_complaintsArray = [AdminInformation getSurgeryNames];
     
-    _imageView.image = [UIImage imageNamed:@"PatientPhotoBlank.png"];
+    //_imageView.image = [UIImage imageNamed:@"PatientPhotoBlank.png"];
     
-    firstNameText.delegate = self;
-    middleNameText.delegate = self;
-    lastNameText.delegate = self;
-    */
-       
-    
+//    firstNameText.delegate = self;
+//    middleNameText.delegate = self;
+//    lastNameText.delegate = self;
+  
     
 }
 
