@@ -53,4 +53,5 @@
 -(void) setPositionForMainQuestion:(HQView*)question;
 -(void) setPositionForTransQuestion:(HQView*)question;
 
+
 @end

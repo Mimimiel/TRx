@@ -39,8 +39,8 @@
 -(NSInteger) getNextType;
 -(NSString*) getNextEnglishLabel;
 -(NSString*) getNextTranslatedLabel;
--(NSMutableArray*) getOptions;
--(void) updateCurrentIndex;
--(void) updateCurrentIndexWithResponse:(NSMutableArray*)r;
+-(NSArray*) getEnglishChoices;
+-(NSArray*) getTransChoices;
+-(void) updateCurrentIndexWithResponse:(NSMutableArray*)r QuestionType:(NSInteger)q;
 
 @end

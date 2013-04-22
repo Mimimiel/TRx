@@ -244,7 +244,7 @@
     if(connection){
          
         NSString *patientRecordId = [[patients objectAtIndex:row] currentRecordId];
-        //[LocalTalk setIsLive:patientRecordId];
+        [LocalTalk setIsLive:patientRecordId];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"nextpressed" object:self userInfo:params];
         NSLog(@"Made it to the clicked cell and everything worked great"); 
     } else if(!connection) {

@@ -26,7 +26,7 @@
 
 @implementation HQView
 
-@synthesize hasAnswer, questionLabel, type, textEntryField, otherTextField, yesNoSelector, yesButton, noButton, previousTextEntry, responseString, checkBoxes, connectedView;
+@synthesize questionIndex, hasAnswer, isEnglish, shouldBranch, questionLabel, type, textEntryField, otherTextField, yesNoSelector, yesButton, noButton, previousTextEntry, responseString, checkBoxes, connectedView;
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -35,7 +35,11 @@
         
         self.frame = CGRectMake(0, 0, CONST_WIDTH, 100);
         
+        questionIndex = -1;
+        
         hasAnswer = NO;
+        isEnglish = YES;
+        shouldBranch = NO;
         
         totalHeight = 0;
         responseHeight = 0;
@@ -60,21 +64,31 @@
 }
 
 -(void) buildQuestionOfType:(NSInteger)t withHelper:(HQHelper*)h{
+    questionIndex = h.currentIndex;
+    
     if(t==0){
         type = YES_NO;
         [self buildYesNo];
     }
     else if(t==1){
-        type = SELECTION_LIKE;
-        [self buildSingleSelection];
+        type = SELECTION_QUESTION;
+        if(isEnglish){
+            [self buildSelectionWithChoices:[h getEnglishChoices]];
+        }
+        else{
+            [self buildSelectionWithChoices:[h getTransChoices]];
+        }
     }
     else if(t==2){
-        type = MULTIPLE_SELECTION;
-        [self buildMultipleSelectionWithOptions:[h getOptions]];
+        type = SELECTION_CHOICES;
     }
     else if(t==3){
         type = TEXT_ENTRY;
         [self buildTextEntry];
+    }
+    else if(t==4){
+        type = TEXT_SELECTION;
+        [self buildTextSelection];
     }
     else{
         NSLog(@"Error: Invalid Question Type Encountered.");
@@ -98,7 +112,7 @@
             hasAnswer = NO;
         }
     }
-    else if(type == MULTIPLE_SELECTION){
+    else if(type == SELECTION_QUESTION){
         BOOL checked = NO;
         for(HQCheckBox *cb in checkBoxes){
             if(cb.selected){
@@ -112,7 +126,7 @@
             hasAnswer = YES;
         }
         else{
-            hasAnswer = NO;
+            hasAnswer = YES;
         }
     }
 }
@@ -123,7 +137,8 @@
     
     yesButton = [[HQYesNo alloc]initWithFrame:CGRectMake(questionLabel.frame.origin.x + YES_PADDING, questionLabel.frame.origin.y + Y_PADDING + questionLabel.frame.size.height, 125, 75)];
     noButton = [[HQYesNo alloc]initWithFrame:CGRectMake(questionLabel.frame.origin.x + NO_PADDING, questionLabel.frame.origin.y + Y_PADDING + questionLabel.frame.size.height, 125, 75)];
-    [yesButton setTitle:@"Yes" forState:UIControlStateNormal];
+    if(isEnglish)   [yesButton setTitle:@"Yes" forState:UIControlStateNormal];
+    else            [yesButton setTitle:@"Si" forState:UIControlStateNormal];
     [noButton setTitle:@"No" forState:UIControlStateNormal];
     [yesButton addTarget:self action:@selector(yesPressed:) forControlEvents:UIControlEventTouchDown];
     [noButton addTarget:self action:@selector(noPressed:) forControlEvents:UIControlEventTouchDown];
@@ -177,7 +192,7 @@
 
 #pragma mark - Multiple Selection Methods
 
--(void) buildMultipleSelectionWithOptions:(NSMutableArray *)options{
+-(void) buildSelectionWithChoices:(NSArray *)choices{
     
     NSInteger count = 0;
     NSMutableArray *tmpButtons = [[NSMutableArray alloc] init];
@@ -185,7 +200,7 @@
                                                                            options:NSRegularExpressionCaseInsensitive
                                                                              error:nil];
     
-    for(NSString *s in options){
+    for(NSString *s in choices){
         HQLabel *tmp = [[HQLabel alloc]init];
         HQLabel *lastLabel = [[HQLabel alloc]init];
         HQCheckBox *box = [HQCheckBox buttonWithType:UIButtonTypeCustom];
@@ -228,8 +243,8 @@
         }
         else{
             lastLabel = [response lastObject];
-            tmp.frame = CGRectMake(lastLabel.frame.origin.x, lastLabel.frame.origin.y + lastLabel.frame.size.height + Y_PADDING, tmp.frame.size.width, tmp.frame.size.height);
-            otherTextField.frame = CGRectMake(tmp.frame.origin.x +(lastLabel.text.length * 10), lastLabel.frame.origin.y + lastLabel.frame.size.height + Y_PADDING, 250, 30);
+            tmp.frame = CGRectMake(self.frame.origin.x, lastLabel.frame.origin.y + lastLabel.frame.size.height + Y_PADDING, tmp.frame.size.width, tmp.frame.size.height);
+            otherTextField.frame = CGRectMake(tmp.frame.origin.x + 75, lastLabel.frame.origin.y + lastLabel.frame.size.height + Y_PADDING, 250, 30);
             otherTextField.borderStyle = UITextBorderStyleBezel;
             otherTextField.keyboardType = UIKeyboardTypeDefault;
             otherTextField.autocorrectionType = UITextAutocorrectionTypeNo;
@@ -290,6 +305,10 @@
     [self addSubview:textEntryField];
     
     [self adjustFrame];
+    
+}
+
+-(void) buildTextSelection{
     
 }
 

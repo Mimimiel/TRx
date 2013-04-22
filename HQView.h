@@ -17,14 +17,17 @@
 
 typedef enum{
     YES_NO,
-    SELECTION_LIKE,
-    MULTIPLE_SELECTION,
-    TEXT_ENTRY
+    SELECTION_QUESTION,
+    SELECTION_CHOICES,
+    TEXT_ENTRY,
+    TEXT_SELECTION
 }qType;
 
 @interface HQView : UIView <UITextFieldDelegate>{
     
-    BOOL hasAnswer;
+    BOOL hasAnswer, isEnglish, shouldBranch;
+    
+    NSInteger questionIndex;
     
     float totalHeight;
     float responseHeight;
@@ -48,7 +51,10 @@ typedef enum{
     HQView *connectedView;
 }
 
+@property(nonatomic, readwrite) NSInteger questionIndex;
 @property(nonatomic, readwrite) BOOL hasAnswer;
+@property(nonatomic, readwrite) BOOL isEnglish;
+@property(nonatomic, readwrite) BOOL shouldBranch;
 @property(nonatomic, readwrite) qType type;
 @property(nonatomic, readwrite) HQLabel* questionLabel;
 @property(nonatomic, retain) HQTextField *textEntryField;
@@ -66,7 +72,7 @@ typedef enum{
 -(void) buildQuestionOfType:(NSInteger)t withHelper:(HQHelper*)h;
 -(void) buildYesNo;
 -(void) buildSingleSelection;
--(void) buildMultipleSelectionWithOptions:(NSMutableArray*)options;
+-(void) buildSelectionWithChoices:(NSArray*)choices;
 -(void) buildTextEntry;
 
 @end
