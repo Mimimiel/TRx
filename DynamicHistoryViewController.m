@@ -86,7 +86,7 @@
     if(pageCount != 1){
         [mainQuestion checkHasAnswer];
         
-        if(!mainQuestion.hasAnswer){
+        if(!mainQuestion.hasAnswer && mainQuestion.type != SELECTION_QUESTION){
             UIAlertView *provideAnswer = [[UIAlertView alloc] initWithTitle:@"Wait!" message:@"Please provide an answer before continuing." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
             [provideAnswer show];
             return;
@@ -95,7 +95,7 @@
         [previousPages addObject:mainQuestion];
         [previousPages addObject:transQuestion];
         [self findAnswers];
-        [qHelper updateCurrentIndexWithResponse:answers];
+        [qHelper updateCurrentIndexWithResponse:answers QuestionType:mainQuestion.type];
     }
     
     if(hasNextPages){
@@ -115,7 +115,9 @@
     }
     
     HQView *newMainQuestion = [[HQView alloc] init];
+    newMainQuestion.isEnglish = YES;
     HQView *newTransQuestion = [[HQView alloc] init];
+    newTransQuestion.isEnglish = NO;
     
     if(pageCount != 1){
         [self dismissCurrentQuestion];
@@ -137,7 +139,7 @@
         newMainQuestion.textEntryField.delegate = self;
         newTransQuestion.textEntryField.delegate = self;
     }
-    else if (newMainQuestion.type == MULTIPLE_SELECTION){
+    else if (newMainQuestion.type == SELECTION_QUESTION){
         newMainQuestion.otherTextField.delegate = self;
         newTransQuestion.otherTextField.delegate = self;
     }
@@ -195,20 +197,23 @@
         [mainQuestion.textEntryField resignFirstResponder];
         [transQuestion.textEntryField resignFirstResponder];
     }
-    else if(mainQuestion.type == MULTIPLE_SELECTION){
+    else if(mainQuestion.type == SELECTION_QUESTION){
         [mainQuestion.otherTextField resignFirstResponder];
         [transQuestion.otherTextField resignFirstResponder];
     }
 }
 
 -(void) textFieldDidBeginEditing:(UITextField *)textField{
-    float textYPos = 375, moveDist = 0.0;
+    float textYPos = 250, moveDist = 0.0, mPos, tPos;
+    
+    mPos = mainQuestion.frame.origin.y + mainQuestion.frame.size.height;
+    tPos = transQuestion.frame.origin.y + transQuestion.frame.size.height;
     
     oMainViewPos = mainQuestion.frame.origin.y;
     oTransViewPos = transQuestion.frame.origin.y;
     
-    if(textField.frame.origin.y > 200){
-        moveDist = textYPos - textField.frame.origin.y;
+    if(mPos > 350){
+        moveDist = textYPos - mainQuestion.frame.origin.y;
         mainQuestion.frame = CGRectMake(mainQuestion.frame.origin.x, mainQuestion.frame.origin.y - moveDist,
                                         mainQuestion.frame.size.width, mainQuestion.frame.size.height);
         transQuestion.frame = CGRectMake(transQuestion.frame.origin.x, transQuestion.frame.origin.y - moveDist,
@@ -254,11 +259,12 @@
         }
     }
     
-    else if (mainQuestion.type == MULTIPLE_SELECTION){
+    else if (mainQuestion.type == SELECTION_QUESTION){
         [answers addObject:@"YES"];
         for(HQCheckBox *cb in mainQuestion.checkBoxes){
             if(cb.selected){
                 [answers addObject:cb.optionLabel];
+                
             }
         }
         if(mainQuestion.otherTextField.text.length > 0){

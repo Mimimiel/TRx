@@ -56,19 +56,55 @@
     tmp = [[indexHelper alloc] initWithID:@"preOp_GettingWorse" NextYes:1 NextNo:1];
     [questionTracker addObject:tmp];
     
-    tmp = [[indexHelper alloc] initWithID:@"preOp_HaveMedicalProblems" NextYes:2 NextNo:2];
+    tmp = [[indexHelper alloc] initWithID:@"preOp_HaveMedicalProblems" NextYes:2 NextNo:4];
     [questionTracker addObject:tmp];
     
-    tmp = [[indexHelper alloc] initWithID:@"preOp_EverBeenInHospital" NextYes:1 NextNo:2];
+    tmp = [[indexHelper alloc] initWithID:@"preOp_MedicalProblemsLike" NextYes:0 NextNo:0];
     [questionTracker addObject:tmp];
     
-    tmp = [[indexHelper alloc] initWithID:@"preOp_HaveEyeProblems" NextYes:1 NextNo:1];
+    tmp = [[indexHelper alloc] initWithID:@"preOp_HaveInfections" NextYes:2 NextNo:2];
     [questionTracker addObject:tmp];
     
-    tmp = [[indexHelper alloc] initWithID:@"preOp_HearingTrouble" NextYes:1 NextNo:1];
+    tmp = [[indexHelper alloc] initWithID:@"preOp_InfectionsLike" NextYes:0 NextNo:0];
     [questionTracker addObject:tmp];
     
-    tmp = [[indexHelper alloc] initWithID:@"preOp_HaveHeartburnTroubleSwallowing" NextYes:1 NextNo:1];
+    tmp = [[indexHelper alloc] initWithID:@"preOp_BeenHospital" NextYes:1 NextNo:2];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[indexHelper alloc] initWithID:@"preOp_HospitalFor" NextYes:1 NextNo:1];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[indexHelper alloc] initWithID:@"preOp_EyeProblems" NextYes:1 NextNo:1];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[indexHelper alloc] initWithID:@"preOp_HearingProblems" NextYes:1 NextNo:1];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[indexHelper alloc] initWithID:@"preOp_HeartburnSwallowing" NextYes:1 NextNo:1];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[indexHelper alloc] initWithID:@"preOp_HeartProblems" NextYes:2 NextNo:2];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[indexHelper alloc] initWithID:@"preOp_HeartProblemsLike" NextYes:0 NextNo:0];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[indexHelper alloc] initWithID:@"preOp_LungProblems" NextYes:2 NextNo:2];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[indexHelper alloc] initWithID:@"preOp_LungProblemsLike" NextYes:0 NextNo:0];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[indexHelper alloc] initWithID:@"preOp_GiProblems" NextYes:2 NextNo:2];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[indexHelper alloc] initWithID:@"preOp_GiProblemsLike" NextYes:0 NextNo:0];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[indexHelper alloc] initWithID:@"preOp_NeurologicProblems" NextYes:2 NextNo:2];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[indexHelper alloc] initWithID:@"preOp_NeurologicProblemsLike" NextYes:0 NextNo:0];
     [questionTracker addObject:tmp];
 }
 
@@ -88,29 +124,53 @@
     return [Question getTranslatedLabel:qKey.questionId];
 }
 
--(NSMutableArray*) getOptions{
+-(NSArray*) getEnglishChoices{
     
-    //Dynamically generate this array from server...
-    NSMutableArray *a = [[NSMutableArray alloc] initWithObjects:@"TB", @"AIDS", @"Hepititis", @"Pneumonia", @"Bronchitis", @"Other", nil];
+    NSString *choiceString = [Question getEnglishLabel:[[questionTracker objectAtIndex:(currentIndex +1)] questionId]];
+    
+    NSArray *a = [choiceString componentsSeparatedByString:@", "];
     
     return a;
 }
 
--(void) updateCurrentIndex{
-    //Determine next index here...
+-(NSArray*) getTransChoices{
     
-    nextIndex = currentIndex + [[questionTracker objectAtIndex:currentIndex] nextYes];
+    NSString *choiceString = [Question getTranslatedLabel:[[questionTracker objectAtIndex:(currentIndex +1)] questionId]];
     
-    currentIndex = nextIndex;
+    NSArray *a = [choiceString componentsSeparatedByString:@", "];
+    
+    return a;
 }
 
--(void) updateCurrentIndexWithResponse:(NSMutableArray*)r{
+-(void) updateCurrentIndexWithResponse:(NSMutableArray*)r QuestionType:(NSInteger)q{
     
-    if([[r objectAtIndex:0] isEqual: @"YES"]){
-        nextIndex = currentIndex + [[questionTracker objectAtIndex:currentIndex] nextYes];
+    if(q == 1){
+        
+        if([[[questionTracker objectAtIndex:currentIndex] questionId] isEqualToString: @"preOp_HaveMedicalProblems"]){
+            if([r containsObject:@"Infection"]){
+                nextIndex = currentIndex + [[questionTracker objectAtIndex:currentIndex] nextYes];
+            }
+            else{
+                nextIndex = currentIndex + [[questionTracker objectAtIndex:currentIndex] nextNo];
+            }
+        }
+        else{
+            if([[r objectAtIndex:0] isEqual: @"YES"]){
+                nextIndex = currentIndex + [[questionTracker objectAtIndex:currentIndex] nextYes];
+            }
+            else if ([[r objectAtIndex:0] isEqual:@"NO"]){
+                nextIndex = currentIndex + [[questionTracker objectAtIndex:currentIndex] nextNo];
+            }
+        }
+        
     }
-    else if ([[r objectAtIndex:0] isEqual:@"NO"]){
-        nextIndex = currentIndex + [[questionTracker objectAtIndex:currentIndex] nextNo];
+    else{
+        if([[r objectAtIndex:0] isEqual: @"YES"]){
+            nextIndex = currentIndex + [[questionTracker objectAtIndex:currentIndex] nextYes];
+        }
+        else if ([[r objectAtIndex:0] isEqual:@"NO"]){
+            nextIndex = currentIndex + [[questionTracker objectAtIndex:currentIndex] nextNo];
+        }
     }
     
     currentIndex = nextIndex;
