@@ -8,6 +8,7 @@
 
 #import "LocalTalk.h"
 #import "DBTalk.h"
+#import "Base64.h"
 
 #import "Utility.h"
 #import "SynchData.h"
@@ -222,12 +223,6 @@ static FMDatabase *db;
 
 /*-----------------Local Store Mega Method---------------------------*/
 
-/*
- If it is the history view controller
- add patient and patient record
- add other data to
- */
-
 
 -(BOOL)localStoreFromViewsToLocal:(NSNotification *)notification {
     
@@ -235,14 +230,14 @@ static FMDatabase *db;
     NSDictionary *params = [notification userInfo];
     NSMutableArray* paramsArray, *returnArray;
     NSArray *fields;
-    BOOL success;
     
     NSLog(@"In localStoreEverything");
     if ([[params objectForKey:@"viewName"] isEqualToString:@"historyViewController"]) {
         
         NSLog(@"attempting to add Patient to Local");
-        //success = [LocalTalk addNewPatientToLocal:params];
-        
+        /*
+         * Add a patient
+         */
         fields = [NSArray arrayWithObjects:@"FirstName", @"MiddleName", @"LastName", @"Birthday", nil];
         paramsArray = [Utility repackDictionaryForSetSQLiteTable:params keyList:fields];
         returnArray = [LocalTalk setSQLiteTable:@"Patient" withData:paramsArray];
@@ -252,7 +247,9 @@ static FMDatabase *db;
             NSLog(@"Unable to add a patient");
             return false;
         }
-        
+        /*
+         * Add a record, packing AppPatientId back into params
+         */
         
         NSMutableDictionary *mutableParams = [NSMutableDictionary dictionaryWithDictionary:params];
         [mutableParams setObject:[returnArray objectAtIndex:0] forKey:@"AppPatientId"];
@@ -268,11 +265,42 @@ static FMDatabase *db;
             NSLog(@"Unable to add patient record");
             return false;
         }
+        
+        /*
+         * Insert Image into Local Database
+         */
+        UIImage *image = params[@"Data"];
+        NSData *imageData = UIImageJPEGRepresentation(image, 0.03);
+        NSString *imageStr = [Base64 encode:imageData];
+        [mutableParams setObject:[returnArray objectAtIndex:0] forKey:@"AppPatientRecordId"];
+        
+        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        NSString *now;
+        [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+        now = [dateFormatter stringFromDate:[NSDate date]];
+        
+        [mutableParams setObject:now forKey:@"Name"];
+        [mutableParams setObject:now forKey:@"Path"];
+        [mutableParams setObject:@"1" forKey:@"IsProfile"];
+        [mutableParams setObject:[LocalTalk getOperationRecordTypeIdByNameFromSQLite:@"Picture"] forKey:@"RecordTypeId"];
+        
+        fields = [NSArray arrayWithObjects:@"Data", @"AppPatientRecordId", @"Name", @"Path", @"RecordTypeId", @"IsProfile", nil];
+        paramsArray = [Utility repackDictionaryForSetSQLiteTable:mutableParams keyList:fields];
+        
+        returnArray = [LocalTalk setSQLiteTable:@"Image" withData:paramsArray];
+        if (!returnArray) {
+            [Utility alertWithMessage:@"Unable to add image to OperationRecords"];
+            NSLog(@"Unable to add image to OperationRecords");
+        }
     }
     else if ([[params objectForKey:@"viewName"] isEqualToString:@"summaryViewController"]) {
         
         //load patient data from the server
         
+    }
+    else if ([[params objectForKey:@"viewName"] isEqualToString:@"questionView"]) {
+        
+        //
     }
     
     NSLog(@"Exiting localStoreEverything");
@@ -281,44 +309,7 @@ static FMDatabase *db;
     return true;
 }
 
-/*
- addPatient for historyViewController adding a new patient
- and for loading data into sqlite from server ?
- 
- think about date created and date modified
- */
-//TODO: addNewPatientToLocal: last modified and created neither stored in big nor little database
-//+(BOOL)addNewPatientToLocal:(NSDictionary *)params {
-//    
-////    BOOL retval = [db executeUpdate:@"INSERT INTO Patient (FirstName, MiddleName, LastName, Birthday) VALUES (?, ?, ?, ?)", firstName, middleName, lastName, birthday];
-//    
-//   // [db close];
-//    //return retval;
-//}
-/*
- Think about:  How / When do I add date created and last modified?
- */
-//TODO: addNewPatientRecordToLocal: last modified and created neither stored in big nor little database
-+(BOOL)addPatientRecordToLocal:(NSDictionary *)params {
 
-    BOOL retval;
-    
-    NSString *AppPatientId = [self localGetAppPatientId];
-    NSLog(@"PatientId: %@", AppPatientId);
-    
-    NSString *query;
-    
-//    if (!Id) {
-//        query = [NSString stringWithFormat:@"INSERT INTO PatientRecord(SurgeryTypeId, DoctorId, HasTimeout, IsLive, IsCurrent, AppPatientId) VALUES (%@, %@, %@, %@, %@, %@)", surgeryTypeId, doctorId, hasTimeout, isLive, isCurrent, AppPatientId];
-//    }
-//    else {
-//        query = [NSString stringWithFormat:@"INSERT INTO PatientRecord(Id, SurgeryTypeId, DoctorId, HasTimeout, IsLive, IsCurrent, AppPatientId) VALUES (%@, %@, %@, %@, %@, %@, %@)", Id, surgeryTypeId, doctorId, hasTimeout, isLive, isCurrent, AppPatientId];
-//    }
-    
-    retval = [db executeUpdate:query];
-   // [db close];
-    return retval;
-}
 
 /*-----------------------------------------------------------------------
  Method: setSQLiteTable withData
@@ -449,34 +440,37 @@ static FMDatabase *db;
  *---------------------------------------------------------------------------*/
 +(NSString *)localGetPatientId {
     
+    //Get Patient.Id (patient server identifier) from Local for the IsLive PatientRecord
     NSString *query;
     query = [NSString stringWithFormat:
              @"SELECT b.Id as Id FROM PatientRecord as a JOIN Patient as b ON a.AppPatientId = b.AppId WHERE a.IsLive = 1"];
     //query = @"SELECT Id FROM PatientRecord"
-    query = @"SELECT pat.Id FROM PatientRecord rec, Patient pat WHERE rec.AppPatientId = pat.AppId AND rec.IsLive = 1";
+    //query = @"SELECT pat.Id FROM PatientRecord rec, Patient pat WHERE rec.AppPatientId = pat.AppId AND rec.IsLive = 1";
     return [self localGetId:query];
 }
 +(NSString *)localGetPatientRecordId {
-    
+    //Get PatientRecord.Id (patient record server identifier) for the IsLive PatientRecord
     NSString *query;
     query = [NSString stringWithFormat:@"SELECT Id FROM PatientRecord WHERE IsLive = 1"];
     return [self localGetId:query];
 }
 /*TODO: CHANGE THIS FUNCTIONS NAME */
 +(NSString *)localGetAppPatientId {
-    
+    //Get Patient.AppId (patient local identifier) for the most recently inserted Patient
     NSString *query;
     query = [NSString stringWithFormat:@"SELECT MAX(rowid) FROM Patient"];
     return [self localGetId:query];
 }
 
 +(NSString *)localGetPatientRecordAppId {
+    //Get PatientRecord.AppId (patient record local identifier) for the IsLive PatientRecord
     NSString *query;
     query = [NSString stringWithFormat:@"SELECT AppId FROM PatientRecord WHERE IsLive = 1"];
     return [self localGetId:query];
 }
 
 +(NSString *)localGetPatientAppId {
+    //Get PatientRecord.AppPatientId (patient local identifier) for the IsLive PatientRecord
     NSString *query;
     query = [NSString stringWithFormat:@"SELECT AppPatientId FROM PatientRecord WHERE IsLive = 1"];
     return [self localGetId:query];
@@ -836,8 +830,9 @@ static FMDatabase *db;
  UIImage of current patient otherwise
  *---------------------------------------------------------------------------*/
 +(UIImage *)localGetPortrait {
-    // NSString *query = [NSString stringWithFormat:@"SELECT imageBlob FROM Images WHERE imageType = \"portrait\""];
-    NSString *query = [NSString stringWithFormat:@"Select * from Images"];
+
+    
+    NSString *query = [NSString stringWithFormat:@"Select op.Data from OperationRecord op JOIN PatientRecord pr ON op.AppPatientRecordId = pr.AppId WHERE pr.IsLive = 1"];
     
     FMResultSet *results = [db executeQuery:query];
     if (!results) {
@@ -846,7 +841,8 @@ static FMDatabase *db;
         return nil;
     }
     [results next];
-    NSData *data = [results dataForColumnIndex:0];
+    NSString *dataStr = [results stringForColumnIndex:0];
+    NSData *data = [Base64 decode:dataStr];
     
     UIImage *image = [UIImage imageWithData:data];
     if (!image) {
@@ -855,6 +851,7 @@ static FMDatabase *db;
     }
     return image;
 }
+
 
 +(NSData*)localGetAudio:(NSString *)fileName {
     
@@ -973,6 +970,21 @@ static FMDatabase *db;
 }
 
 #pragma mark - Helper methods
+
+
++(NSMutableArray *)localGetUnsyncedRecordsFromTable:(NSString *)table {
+    NSString *query = [NSString stringWithFormat:@"Select * FROM %@ WHERE LastModified > LastSynced", table];
+    NSMutableArray *array = [[NSMutableArray alloc] init];
+    FMResultSet *results = [db executeQuery:query];
+    if (!results) {
+        //errors
+    }
+    while ([results next]) {
+        [array addObject:[results resultDictionary]];
+        
+    }
+    return array;
+}
 
 
 /*---------------------------------------------------------------------------

@@ -77,5 +77,9 @@
 +(BOOL)getConnectivity;
 +(void)loadDataFromServer:(NSDictionary *)params;
 -(void)pushLocalUnsyncedToServer;
++(BOOL)uploadFileToServer:(id)file
+                 fileType:(NSString *)fileType
+                 fileName:(NSString *)fileName
+                patientId:(NSString *)patientId;
 
 @end
