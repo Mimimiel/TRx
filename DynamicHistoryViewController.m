@@ -98,21 +98,21 @@
         [qHelper updateCurrentIndexWithResponse:answers QuestionType:mainQuestion.type];
     }
     
-    if(hasNextPages){
-        [self dismissCurrentQuestion];
-        
-        transQuestion = [nextPages lastObject];
-        [nextPages removeLastObject];
-        [self .view addSubview:transQuestion];
-        
-        mainQuestion = [nextPages lastObject];
-        [nextPages removeLastObject];
-        [self.view addSubview:mainQuestion];
-        
-        if([nextPages lastObject] == NULL)  hasNextPages = NO;
-        
-        return;
-    }
+//    if(hasNextPages){
+//        [self dismissCurrentQuestion];
+//        
+//        transQuestion = [nextPages lastObject];
+//        [nextPages removeLastObject];
+//        [self .view addSubview:transQuestion];
+//        
+//        mainQuestion = [nextPages lastObject];
+//        [nextPages removeLastObject];
+//        [self.view addSubview:mainQuestion];
+//        
+//        if([nextPages lastObject] == NULL)  hasNextPages = NO;
+//        
+//        return;
+//    }
     
     HQView *newMainQuestion = [[HQView alloc] init];
     newMainQuestion.isEnglish = YES;
@@ -175,6 +175,7 @@
     [previousPages removeLastObject];
     [self.view addSubview:mainQuestion];
     
+    qHelper.currentIndex = mainQuestion.questionIndex;
 }
 
 -(void) dismissCurrentQuestion{

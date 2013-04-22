@@ -27,6 +27,8 @@ typedef enum{
     
     BOOL hasAnswer, isEnglish, shouldBranch;
     
+    NSInteger questionIndex;
+    
     float totalHeight;
     float responseHeight;
     
@@ -49,6 +51,7 @@ typedef enum{
     HQView *connectedView;
 }
 
+@property(nonatomic, readwrite) NSInteger questionIndex;
 @property(nonatomic, readwrite) BOOL hasAnswer;
 @property(nonatomic, readwrite) BOOL isEnglish;
 @property(nonatomic, readwrite) BOOL shouldBranch;
@@ -66,7 +69,7 @@ typedef enum{
 
 -(void) checkHasAnswer;
 -(void) setQuestionLabelText:(NSString *)text;
--(void) buildQuestionOfType:(NSInteger)t withHelper:(HQView*)h;
+-(void) buildQuestionOfType:(NSInteger)t withHelper:(HQHelper*)h;
 -(void) buildYesNo;
 -(void) buildSingleSelection;
 -(void) buildSelectionWithChoices:(NSArray*)choices;

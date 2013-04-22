@@ -26,7 +26,7 @@
 
 @implementation HQView
 
-@synthesize hasAnswer, isEnglish, shouldBranch, questionLabel, type, textEntryField, otherTextField, yesNoSelector, yesButton, noButton, previousTextEntry, responseString, checkBoxes, connectedView;
+@synthesize questionIndex, hasAnswer, isEnglish, shouldBranch, questionLabel, type, textEntryField, otherTextField, yesNoSelector, yesButton, noButton, previousTextEntry, responseString, checkBoxes, connectedView;
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -34,6 +34,8 @@
     if (self) {
         
         self.frame = CGRectMake(0, 0, CONST_WIDTH, 100);
+        
+        questionIndex = -1;
         
         hasAnswer = NO;
         isEnglish = YES;
@@ -62,6 +64,8 @@
 }
 
 -(void) buildQuestionOfType:(NSInteger)t withHelper:(HQHelper*)h{
+    questionIndex = h.currentIndex;
+    
     if(t==0){
         type = YES_NO;
         [self buildYesNo];
