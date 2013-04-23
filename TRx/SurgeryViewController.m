@@ -66,7 +66,7 @@
     [filesTable setDataSource:self];
     _playButton.enabled = NO;
     fileNameText.delegate = self;
-   // [self playVideo];
+    [self playVideo];
     // Do any additional setup after loading the view.
 }
 
@@ -96,42 +96,33 @@
 
 - (void) playVideo
 {
-    NSString *url = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"MyMovie.mov"];
-    
-    playerViewController = [[MPMoviePlayerViewController alloc] initWithContentURL:[NSURL fileURLWithPath:url]];
-    
-    [[NSNotificationCenter defaultCenter]
-     addObserver:self
-     selector:@selector(movieFinishedCallback:)
-     name:MPMoviePlayerPlaybackDidFinishNotification
-     object:[playerViewController moviePlayer]];
-    
-    
-    [videoView addSubview:playerViewController.view];
-    
-    //play movie
-    
-    MPMoviePlayerController *player = [playerViewController moviePlayer];
+   
+    NSURL *url = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"MyMovie" ofType:@"mov"]];
+    player = [[MPMoviePlayerController alloc] initWithContentURL:url];
+    player.view.frame = self.view.bounds;
+    [self.view addSubview:player.view];
     player.controlStyle = MPMovieControlStyleEmbedded;
-    player.fullscreen = NO;
-    
-    [player play];
+    [player.view setFrame:CGRectMake(370, 30, (self.view.frame.size.width)-400 , 300)];
+    player.scalingMode = MPMovieScalingModeAspectFit;
+    player.shouldAutoplay = NO;
+    [player prepareToPlay];
+
 }
 
 // The call back
 - (void) movieFinishedCallback:(NSNotification*) aNotification {
    
     MPMoviePlayerController *player = [aNotification object];
-    [[NSNotificationCenter defaultCenter]
+    /*[[NSNotificationCenter defaultCenter]
      removeObserver:self
      name:MPMoviePlayerPlaybackDidFinishNotification
-     object:player];
+     object:player];*/
     
     //player.initialPlaybackTime = -1;
     //[player pause];
     [player stop];
     
-    [player.view removeFromSuperview];
+    //[player.view removeFromSuperview];
     
     // call autorelease the analyzer says call too many times
     // call release the analyzer says incorrect decrement

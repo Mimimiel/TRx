@@ -144,11 +144,11 @@
     NSString *mn = [[patients objectAtIndex:row] middleName]; 
     NSString *ln = [[patients objectAtIndex:row] lastName];
     NSURL *url = [[patients objectAtIndex:row] photoURL];
-   // if(){
-      //  name = [NSString stringWithFormat: @"%@ %@", fn, ln];
-    //} else {
-    name = [NSString stringWithFormat: @"%@ %@ %@", fn, mn, ln]; 
-
+    if([mn isEqualToString:@"NULL"]){
+        name = [NSString stringWithFormat: @"%@ %@", fn, ln];
+    } else {
+        name = [NSString stringWithFormat: @"%@ %@ %@", fn, mn, ln];
+    }
     cell.patientName.text = name;
     cell.chiefComplaint.text = (NSString*)[[patients objectAtIndex:row] chiefComplaint];
   

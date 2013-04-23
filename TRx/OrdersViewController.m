@@ -9,10 +9,7 @@
 #import "OrdersViewController.h"
 
 @interface OrdersViewController ()
-@property (nonatomic) IBOutlet UITextView *ordersTextViewTl;
-@property (nonatomic) IBOutlet UITextView *ordersTextViewTr;
-@property (nonatomic) IBOutlet UITextView *ordersTextViewBl;
-@property (nonatomic) IBOutlet UITextView *ordersTextViewBr;
+
 
 @end
 
@@ -29,6 +26,18 @@
     return self;
 }
 
+- (void)viewDidAppear:(BOOL)animated {
+    /*listeners for history view controller*/
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    
+    [center addObserver:self selector:@selector(updatedDataListener:) name:@"loadFromLocal" object:nil];
+    
+    NSArray *tables = @[@"Orders"];
+    NSDictionary *params = @{@"tableNames" : tables,
+                             @"location" : @"ordersViewController"};
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"tabloaded" object:self userInfo:params];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -43,6 +52,67 @@
     [self.view addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(outsideTapped)]];
 
 }
+
+-(void)updatedDataListener:(NSNotification *)notification {
+    NSDictionary *params = [notification userInfo];
+    if([[params objectForKey:@"location"] isEqualToString:@"ordersViewController"]){
+        NSMutableDictionary *data = [LocalTalk getData:params];
+        NSLog(@"The updated data listener's data in Order VC is: %@", data);
+        //if something was returned successfully
+        //which will happen every time except for the first time they ever click the orders tab for a patient load the orders into the text boxes
+        if(data){
+            NSMutableArray *ordersFiles = [[NSMutableArray alloc] init];
+            for(NSString *key in data){
+                if([key isEqualToString:@"Orders"]){
+                    ordersFiles = [data objectForKey:key];
+                }
+            }
+            for(NSDictionary *dict in ordersFiles){
+                if([[dict objectForKey:@"OrderTypeId"] isEqualToString:@"1"]){
+                    _ordersTextViewTl.text = [dict objectForKey:@"Text"];
+                } else if ([[dict objectForKey:@"OrderTypeId"] isEqualToString:@"2"]){
+                    _ordersTextViewBl.text = [dict objectForKey:@"Text"];
+
+                } else if ([[dict objectForKey:@"OrderTypeId"] isEqualToString:@"3"]){
+                    _ordersTextViewTr.text = [dict objectForKey:@"Text"];
+
+                } else if ([[dict objectForKey:@"OrderTypeId"] isEqualToString:@"4"]){
+                    _ordersTextViewBr.text = [dict objectForKey:@"Text"];
+                }
+            }
+            
+        }else {
+            NSArray *tables = @[@"OrderTemplate"];
+            NSDictionary *newParams = @{@"tableNames" : tables,
+                                        @"location" : @"ordersViewController"};
+            NSMutableDictionary *data = [LocalTalk getData:newParams];
+            if(data){
+                NSMutableArray *ordersFiles = [[NSMutableArray alloc] init];
+                for(NSString *key in data){
+                    if([key isEqualToString:@"OrderTemplate"]){
+                        ordersFiles = [data objectForKey:key];
+                    }
+                }
+                for(NSDictionary *dict in ordersFiles){
+                    if([[dict objectForKey:@"OrderTypeId"] isEqualToString:@"1"]){
+                        _ordersTextViewTl.text = [dict objectForKey:@"Text"];
+                    } else if ([[dict objectForKey:@"OrderTypeId"] isEqualToString:@"2"]){
+                        _ordersTextViewBl.text = [dict objectForKey:@"Text"];
+                        
+                    } else if ([[dict objectForKey:@"OrderTypeId"] isEqualToString:@"3"]){
+                        _ordersTextViewTr.text = [dict objectForKey:@"Text"];
+                        
+                    } else if ([[dict objectForKey:@"OrderTypeId"] isEqualToString:@"4"]){
+                        _ordersTextViewBr.text = [dict objectForKey:@"Text"];
+                    }
+                }
+            }
+        }
+        
+    } else { NSLog(@"not in the right view controller"); }
+    
+}
+
 - (void) textViewTapped:(UIGestureRecognizer *)recognizer {
     UITextView *textView = (UITextView *)recognizer.view;
     textView.editable = YES;

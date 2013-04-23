@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="3084" systemVersion="11G63b" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" initialViewController="7jt-WL-d61">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="3084" systemVersion="12D78" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" initialViewController="7jt-WL-d61">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="2083"/>
     </dependencies>
@@ -944,9 +944,6 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                                     <action selector="playAudio:" destination="tBt-y5-Yuc" eventType="touchUpInside" id="Le3-cu-Yyt"/>
                                 </connections>
                             </button>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="oQs-2C-x8M">
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
@@ -956,7 +953,6 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                             <constraint firstItem="Ai4-z4-qeu" firstAttribute="top" secondItem="6Fo-5v-rD2" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="4rB-3R-JHg"/>
                             <constraint firstItem="4yF-KK-JjT" firstAttribute="top" secondItem="qqP-ZF-naN" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="5r5-9U-F75"/>
                             <constraint firstItem="4yF-KK-JjT" firstAttribute="bottom" secondItem="0a9-TC-lCU" secondAttribute="bottom" type="default" id="6um-j5-zcM"/>
-                            <constraint firstItem="oQs-2C-x8M" firstAttribute="leading" secondItem="F6Y-Gc-rXd" secondAttribute="leading" constant="383" id="6xU-Ix-iMe"/>
                             <constraint firstItem="Pz6-9k-7le" firstAttribute="top" secondItem="qqP-ZF-naN" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="AUo-Mq-srD"/>
                             <constraint firstItem="XtG-Jn-tQM" firstAttribute="leading" secondItem="hsA-a9-Icq" secondAttribute="leading" type="default" id="FPx-Ce-jUD"/>
                             <constraint firstItem="9ye-F1-S6k" firstAttribute="top" secondItem="F6Y-Gc-rXd" secondAttribute="top" constant="274" id="Lbw-mI-2oy"/>
@@ -968,7 +964,6 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                             <constraint firstItem="Ai4-z4-qeu" firstAttribute="leading" secondItem="hsA-a9-Icq" secondAttribute="trailing" constant="8" symbolic="YES" type="default" id="RJw-CE-9Yx"/>
                             <constraint firstItem="hsA-a9-Icq" firstAttribute="leading" secondItem="F6Y-Gc-rXd" secondAttribute="leading" constant="31" id="RRc-b1-Ocl"/>
                             <constraint firstItem="Pz6-9k-7le" firstAttribute="bottom" secondItem="4yF-KK-JjT" secondAttribute="bottom" type="default" id="WcS-FJ-dMc"/>
-                            <constraint firstAttribute="trailing" secondItem="oQs-2C-x8M" secondAttribute="trailing" constant="31" id="Z9I-8q-H9L"/>
                             <constraint firstItem="Pz6-9k-7le" firstAttribute="leading" secondItem="4yF-KK-JjT" secondAttribute="trailing" constant="8" symbolic="YES" type="default" id="Zvf-P2-uKp"/>
                             <constraint firstItem="4yF-KK-JjT" firstAttribute="centerX" secondItem="Ai4-z4-qeu" secondAttribute="centerX" type="default" id="Zyz-6A-2C1"/>
                             <constraint firstItem="0a9-TC-lCU" firstAttribute="top" secondItem="qqP-ZF-naN" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="dR4-Lv-Rlx"/>
@@ -977,13 +972,11 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                             <constraint firstItem="Xnd-Sj-1lN" firstAttribute="bottom" secondItem="F6Y-Gc-rXd" secondAttribute="bottom" type="default" id="eLS-xk-KIJ"/>
                             <constraint firstItem="SWa-SB-GkA" firstAttribute="leading" secondItem="qqP-ZF-naN" secondAttribute="leading" type="default" id="eSC-ba-A8Y"/>
                             <constraint firstItem="XtG-Jn-tQM" firstAttribute="bottom" secondItem="SWa-SB-GkA" secondAttribute="bottom" type="default" id="gKg-RP-agf"/>
-                            <constraint firstItem="oQs-2C-x8M" firstAttribute="top" secondItem="F6Y-Gc-rXd" secondAttribute="top" constant="20" symbolic="YES" type="default" id="grH-iR-X70"/>
                             <constraint firstItem="SWa-SB-GkA" firstAttribute="trailing" secondItem="TTx-8M-Fke" secondAttribute="trailing" type="default" id="i3S-qC-CSr"/>
                             <constraint firstItem="6Fo-5v-rD2" firstAttribute="top" secondItem="F6Y-Gc-rXd" secondAttribute="top" constant="26" id="jOY-cF-tNV"/>
                             <constraint firstItem="3et-SF-35C" firstAttribute="trailing" secondItem="Pz6-9k-7le" secondAttribute="trailing" type="default" id="k1s-Yt-Tuf"/>
                             <constraint firstItem="4yF-KK-JjT" firstAttribute="leading" secondItem="0a9-TC-lCU" secondAttribute="trailing" constant="8" symbolic="YES" type="default" id="leW-Nq-Afu"/>
                             <constraint firstItem="4yF-KK-JjT" firstAttribute="centerX" secondItem="6Fo-5v-rD2" secondAttribute="centerX" type="default" id="ofU-4f-zd2"/>
-                            <constraint firstAttribute="bottom" secondItem="oQs-2C-x8M" secondAttribute="bottom" constant="677" id="ovP-lc-Xx4"/>
                             <constraint firstItem="SWa-SB-GkA" firstAttribute="leading" secondItem="XtG-Jn-tQM" secondAttribute="trailing" constant="8" symbolic="YES" type="default" id="pZ2-zB-kPU"/>
                             <constraint firstItem="qqP-ZF-naN" firstAttribute="trailing" secondItem="9ye-F1-S6k" secondAttribute="trailing" type="default" id="syi-E4-tZE"/>
                             <constraint firstItem="Xnd-Sj-1lN" firstAttribute="leading" secondItem="F6Y-Gc-rXd" secondAttribute="leading" type="default" id="tnm-M0-0IQ"/>
@@ -999,7 +992,6 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                         <outlet property="playButton" destination="Pz6-9k-7le" id="jdq-ct-eB6"/>
                         <outlet property="recordButton" destination="0a9-TC-lCU" id="Unn-ys-wQO"/>
                         <outlet property="saveRecording" destination="4yF-KK-JjT" id="a1f-3t-tDY"/>
-                        <outlet property="videoView" destination="oQs-2C-x8M" id="2rm-JR-Riq"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="aO7-MA-OWM" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1194,6 +1186,112 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
         <image name="DefaultBackgroundPortrait@2x.png" width="1536" height="2048"/>
         <image name="HistoryBackgroundLandscape.png" width="1024" height="768"/>
     </resources>
+    <classes>
+        <class className="DynamicHistoryViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/DynamicHistoryViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="backPressed:"/>
+                <relationship kind="action" name="nextPressed:"/>
+                <relationship kind="outlet" name="backButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="nextButton" candidateClass="UIButton"/>
+            </relationships>
+        </class>
+        <class className="HistoryNavigationController" superclassName="UINavigationController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/HistoryNavigationController.h"/>
+        </class>
+        <class className="HistoryViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/HistoryViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="addPatient:"/>
+                <relationship kind="action" name="nextView:"/>
+                <relationship kind="action" name="useCamera:"/>
+                <relationship kind="outlet" name="birthdayPicker" candidateClass="UIDatePicker"/>
+                <relationship kind="outlet" name="complaintPicker" candidateClass="UIPickerView"/>
+                <relationship kind="outlet" name="firstNameText" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="imageView" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="lastNameText" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="middleNameText" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="next" candidateClass="UIButton"/>
+            </relationships>
+        </class>
+        <class className="NSLayoutConstraint" superclassName="NSObject">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/NSLayoutConstraint.h"/>
+        </class>
+        <class className="OrdersViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/OrdersViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="ordersTextViewBl" candidateClass="UITextView"/>
+                <relationship kind="outlet" name="ordersTextViewBr" candidateClass="UITextView"/>
+                <relationship kind="outlet" name="ordersTextViewTl" candidateClass="UITextView"/>
+                <relationship kind="outlet" name="ordersTextViewTr" candidateClass="UITextView"/>
+            </relationships>
+        </class>
+        <class className="PACUViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/PACUViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="patientName" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="patientSurgery" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="patientThumbnail" candidateClass="UIImageView"/>
+            </relationships>
+        </class>
+        <class className="PatientListViewCell" superclassName="UITableViewCell">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/PatientListViewCell.h"/>
+            <relationships>
+                <relationship kind="outlet" name="chiefComplaint" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="patientName" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="patientPicture" candidateClass="UIImageView"/>
+            </relationships>
+        </class>
+        <class className="PatientListViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/PatientListViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="addPatients:"/>
+                <relationship kind="action" name="refreshPatients:"/>
+                <relationship kind="outlet" name="addPatientsButton" candidateClass="UIBarButtonItem"/>
+                <relationship kind="outlet" name="refreshButton" candidateClass="UIBarButtonItem"/>
+            </relationships>
+        </class>
+        <class className="PhysicalViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/PhysicalViewController.h"/>
+        </class>
+        <class className="PrimaryNavigationController" superclassName="UINavigationController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/PrimaryNavigationController.h"/>
+        </class>
+        <class className="PrimaryTabBarController" superclassName="UITabBarController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/PrimaryTabBarController.h"/>
+        </class>
+        <class className="SummaryViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/SummaryViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="patientPicture" candidateClass="UIImageView"/>
+            </relationships>
+        </class>
+        <class className="SurgeryListViewCell" superclassName="UITableViewCell">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/SurgeryListViewCell.h"/>
+            <relationships>
+                <relationship kind="outlet" name="audioFileLength" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="fileIcon" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="fileName" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="playButton" candidateClass="UIButton"/>
+            </relationships>
+        </class>
+        <class className="SurgeryViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/SurgeryViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="playAudio:"/>
+                <relationship kind="action" name="recordAudio:"/>
+                <relationship kind="action" name="saveRecord:"/>
+                <relationship kind="action" name="useCamera:"/>
+                <relationship kind="action" name="useSelectedFile:"/>
+                <relationship kind="outlet" name="fileNameText" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="filesTable" candidateClass="UITableView"/>
+                <relationship kind="outlet" name="playButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="recordButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="saveRecording" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="videoView" candidateClass="UIView"/>
+            </relationships>
+        </class>
+    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar" statusBarStyle="blackTranslucent"/>
         <simulatedOrientationMetrics key="orientation"/>

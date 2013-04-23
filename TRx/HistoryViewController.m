@@ -26,7 +26,8 @@
     [super viewDidLoad];
 
     newPatient = [[Patient alloc] initWithFirstName:@"Rob" MiddleName:@"D" LastName:@"woMan" ChiefComplaint:@"1" PhotoID:NULL];
-    newPatient.birthday = @"2001-02-03";
+    //newPatient.birthday = @"2001-02-03";
+    
     _complaintsArray = [AdminInformation getSurgeryNames];
     
     //_imageView.image = [UIImage imageNamed:@"PatientPhotoBlank.png"];
@@ -92,6 +93,9 @@
 //    [LocalTalkWrapper addPatientObjectToLocal:newPatient];
 //    [LocalTalkWrapper addNewPatientAndSynchData];
     
+    NSDate * selected = [_birthdayPicker date];
+    newPatient.birthday = [selected description];
+    
     if (!newPatient.middleName) {
         newPatient.middleName = @"NULL";
     }
@@ -110,6 +114,7 @@
     
     NSData *imageData = UIImageJPEGRepresentation(newPatient.photoID, 0.03);
     NSString *imageStr = [Base64 encode:imageData];
+
     
     NSDictionary *params = @{@"viewName"    : @"historyViewController",
                              @"FirstName"   : newPatient.firstName,

@@ -16,7 +16,6 @@
 
 @implementation DBTalk
 
-
 static NSString *host = nil;
 static NSString *imageDir = nil;
 static NSString *dbPath = nil;
@@ -52,9 +51,13 @@ static DBTalk *singleton;
 
 +(void)checkReachability {
     NSLog(@"IN here checking reachability");
-    internetReachable = [Reachability reachabilityForLocalWiFi];
+    internetReachable = [Reachability reachabilityWithHostname:@"www.teamecuadortrx.com"];
     NetworkStatus netStatus = [internetReachable currentReachabilityStatus];
-    connectivity = (netStatus==ReachableViaWiFi);
+    if(netStatus == ReachableViaWiFi){
+        connectivity = (netStatus==ReachableViaWiFi);
+    } else {
+        connectivity = 0;
+    }
 }
 
 
