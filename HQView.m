@@ -317,8 +317,7 @@
 
 -(void) restorePreviousAnswers{
     
-    answerString = @"YES, AIDS, Bronchitis";
-    //answerString = [Question getValueForQuestionId:questionId];
+    answerString = [Question getValueForQuestionId:questionId];
     NSArray *answers = [answerString componentsSeparatedByString:@", "];
     
     if(type == TEXT_ENTRY){
