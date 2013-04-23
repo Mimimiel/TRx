@@ -316,10 +316,15 @@
 }
 
 -(void) restorePreviousAnswers{
- 
+    
     answerString = [Question getValueForQuestionId:questionId];
+    NSArray *answers = [answerString componentsSeparatedByString:@", "];
     
-    
+    if(type == TEXT_ENTRY){
+        if([answers containsObject:@"YES"]){
+            textEntryField.text = [answers objectAtIndex:1];
+        }
+    }
 }
 
 -(void) adjustFrame{
