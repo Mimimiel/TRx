@@ -229,6 +229,7 @@ static FMDatabaseQueue *queue;
     
     NSDictionary *params = [notification userInfo];
     NSMutableArray* paramsArray, *returnArray;
+    NSMutableDictionary *mutableParams;
     NSArray *fields;
     
     NSLog(@"In localStoreEverything");
@@ -251,7 +252,7 @@ static FMDatabaseQueue *queue;
          * Add a record, packing AppPatientId back into params
          */
         
-        NSMutableDictionary *mutableParams = [NSMutableDictionary dictionaryWithDictionary:params];
+        mutableParams = [NSMutableDictionary dictionaryWithDictionary:params];
         [mutableParams setObject:[returnArray objectAtIndex:0] forKey:@"AppPatientId"];
         
         fields = [NSArray arrayWithObjects:@"SurgeryTypeId", @"DoctorId", @"HasTimeout", @"IsCurrent", @"IsLive", @"Id", @"AppPatientId", nil];
@@ -279,12 +280,12 @@ static FMDatabaseQueue *queue;
         [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
         NSString *now = [dateFormatter stringFromDate:[NSDate date]];
         
-        imageDic[@"Name"] = now;
-        imageDic[@"Path"] = now;
-        imageDic[@"IsProfile"] = @"1";
-        imageDic[@"Data"] = params[@"Data"];
+        imageDic[@"Name"]               = now;
+        imageDic[@"Path"]               = now;
+        imageDic[@"IsProfile"]          = @"1";
+        imageDic[@"Data"]               = params[@"Data"];
         imageDic[@"AppPatientRecordId"] = [returnArray objectAtIndex:0];
-        imageDic[@"RecordTypeId"] = [AdminInformation getOperationRecordTypeIdByName:@"Picture"];
+        imageDic[@"RecordTypeId"]       = [AdminInformation getOperationRecordTypeIdByName:@"Picture"];
         
         paramsArray[0] = imageDic;
         
@@ -301,7 +302,31 @@ static FMDatabaseQueue *queue;
         
     }
     else if ([[params objectForKey:@"viewName"] isEqualToString:@"questionView"]) {
-        paramsArray[0] = params;
+        /*
+         * add question to sqlite. 
+         */
+        
+        //check for AppId and pass if not nil
+        NSString *query = [NSString stringWithFormat:@"SELECT AppId FOR History WHERE QuestionId = \"%@\" AND AppPatientRecordId = %@", params[@"QuestionId"], params[@"AppPatientRecordId"]];
+        
+        FMResultSet *results = [db executeQuery:query];
+        if (!results) {
+            NSLog(@"The query %@ didn't return anything good :(", query);
+            NSLog(@"%@", [db lastErrorMessage]);
+            [Utility alertWithMessage:@"Error retrieving question's AppId"];
+            return false;
+        }
+        [results next];
+        NSString *appId = [NSString stringWithFormat:@"%d", [results intForColumnIndex:0]];
+        if (!appId) {
+            appId = @"0";
+        }
+        mutableParams = [NSMutableDictionary dictionaryWithDictionary:params];
+        mutableParams[@"AppId"] = appId;
+        
+        fields = [NSArray arrayWithObjects:@"QuestionId", @"Value", @"AppId", @"AppPatientRecordId", nil];
+        paramsArray[0] = [Utility repackDictionaryForSetSQLiteTable:params keyList:fields];
+        
         [LocalTalk setSQLiteTable:@"History" withData:paramsArray];
     }
     
