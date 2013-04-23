@@ -1,14 +1,14 @@
 //
-//  HQLabel.h
+//  PQLabel.h
 //  TRx
 //
-//  Created by Mark Bellott on 4/5/13.
+//  Created by Mark Bellott on 4/23/13.
 //  Copyright (c) 2013 Team Ecuador. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
 
-@interface HQLabel : UILabel{
+@interface PQLabel : UILabel{
     
     float minHeight;
     float constrainedWidth;

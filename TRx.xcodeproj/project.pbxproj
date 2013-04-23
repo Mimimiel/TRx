@@ -88,6 +88,12 @@
 		C499B58D16ED6A9F00F40046 /* PatientPhotoBlank@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C499B58B16ED6A9F00F40046 /* PatientPhotoBlank@2x.png */; };
 		C499B59516EEB2A900F40046 /* CameraButtonNormal.png in Resources */ = {isa = PBXBuildFile; fileRef = C499B59316EEB2A900F40046 /* CameraButtonNormal.png */; };
 		C499B59616EEB2A900F40046 /* CameraButtonNormal@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C499B59416EEB2A900F40046 /* CameraButtonNormal@2x.png */; };
+		C49B5BB317271C77000BABDD /* DynamicPhysicalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C49B5BB217271C77000BABDD /* DynamicPhysicalViewController.m */; };
+		C49B5BB617272B28000BABDD /* PhysicalNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = C49B5BB517272B28000BABDD /* PhysicalNavigationController.m */; };
+		C49B5BBA17274121000BABDD /* PQHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = C49B5BB917274121000BABDD /* PQHelper.m */; };
+		C49B5BBD17274135000BABDD /* PQLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = C49B5BBC17274135000BABDD /* PQLabel.m */; };
+		C49B5BC01727415C000BABDD /* PQTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = C49B5BBF1727415C000BABDD /* PQTextField.m */; };
+		C49B5BC31727416D000BABDD /* PQView.m in Sources */ = {isa = PBXBuildFile; fileRef = C49B5BC21727416D000BABDD /* PQView.m */; };
 		C49DC03A16EFDB8D00810B60 /* 0012.png in Resources */ = {isa = PBXBuildFile; fileRef = C49DC02016EFDB8D00810B60 /* 0012.png */; };
 		C49DC03B16EFDB8D00810B60 /* 0012@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C49DC02116EFDB8D00810B60 /* 0012@2x.png */; };
 		C49DC03C16EFDB8D00810B60 /* 0058.png in Resources */ = {isa = PBXBuildFile; fileRef = C49DC02216EFDB8D00810B60 /* 0058.png */; };
@@ -269,6 +275,18 @@
 		C499B58B16ED6A9F00F40046 /* PatientPhotoBlank@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "PatientPhotoBlank@2x.png"; path = "Resources/TRx_png/PatientPhotoBlank@2x.png"; sourceTree = SOURCE_ROOT; };
 		C499B59316EEB2A900F40046 /* CameraButtonNormal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = CameraButtonNormal.png; path = Resources/TRx_png/CameraButtonNormal.png; sourceTree = SOURCE_ROOT; };
 		C499B59416EEB2A900F40046 /* CameraButtonNormal@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "CameraButtonNormal@2x.png"; path = "Resources/TRx_png/CameraButtonNormal@2x.png"; sourceTree = SOURCE_ROOT; };
+		C49B5BB117271C77000BABDD /* DynamicPhysicalViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicPhysicalViewController.h; sourceTree = "<group>"; };
+		C49B5BB217271C77000BABDD /* DynamicPhysicalViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DynamicPhysicalViewController.m; sourceTree = "<group>"; };
+		C49B5BB417272B28000BABDD /* PhysicalNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhysicalNavigationController.h; sourceTree = "<group>"; };
+		C49B5BB517272B28000BABDD /* PhysicalNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhysicalNavigationController.m; sourceTree = "<group>"; };
+		C49B5BB817274121000BABDD /* PQHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PQHelper.h; sourceTree = "<group>"; };
+		C49B5BB917274121000BABDD /* PQHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PQHelper.m; sourceTree = "<group>"; };
+		C49B5BBB17274135000BABDD /* PQLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PQLabel.h; sourceTree = "<group>"; };
+		C49B5BBC17274135000BABDD /* PQLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PQLabel.m; sourceTree = "<group>"; };
+		C49B5BBE1727415C000BABDD /* PQTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PQTextField.h; sourceTree = "<group>"; };
+		C49B5BBF1727415C000BABDD /* PQTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PQTextField.m; sourceTree = "<group>"; };
+		C49B5BC11727416D000BABDD /* PQView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PQView.h; sourceTree = "<group>"; };
+		C49B5BC21727416D000BABDD /* PQView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PQView.m; sourceTree = "<group>"; };
 		C49DC02016EFDB8D00810B60 /* 0012.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = 0012.png; path = Resources/TRx_png/0012.png; sourceTree = SOURCE_ROOT; };
 		C49DC02116EFDB8D00810B60 /* 0012@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "0012@2x.png"; path = "Resources/TRx_png/0012@2x.png"; sourceTree = SOURCE_ROOT; };
 		C49DC02216EFDB8D00810B60 /* 0058.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = 0058.png; path = Resources/TRx_png/0058.png; sourceTree = SOURCE_ROOT; };
@@ -589,8 +607,13 @@
 		C469AA7016E8FD8700E75E7A /* Tab 3 - Physical */ = {
 			isa = PBXGroup;
 			children = (
+				C49B5BB7172740F3000BABDD /* PhysicalQuestionClasses */,
+				C49B5BB417272B28000BABDD /* PhysicalNavigationController.h */,
+				C49B5BB517272B28000BABDD /* PhysicalNavigationController.m */,
 				C469AA8216E9082D00E75E7A /* PhysicalViewController.h */,
 				C469AA8316E9082D00E75E7A /* PhysicalViewController.m */,
+				C49B5BB117271C77000BABDD /* DynamicPhysicalViewController.h */,
+				C49B5BB217271C77000BABDD /* DynamicPhysicalViewController.m */,
 			);
 			name = "Tab 3 - Physical";
 			sourceTree = "<group>";
@@ -726,6 +749,21 @@
 				C499B59416EEB2A900F40046 /* CameraButtonNormal@2x.png */,
 			);
 			name = Buttons;
+			sourceTree = "<group>";
+		};
+		C49B5BB7172740F3000BABDD /* PhysicalQuestionClasses */ = {
+			isa = PBXGroup;
+			children = (
+				C49B5BB817274121000BABDD /* PQHelper.h */,
+				C49B5BB917274121000BABDD /* PQHelper.m */,
+				C49B5BBB17274135000BABDD /* PQLabel.h */,
+				C49B5BBC17274135000BABDD /* PQLabel.m */,
+				C49B5BBE1727415C000BABDD /* PQTextField.h */,
+				C49B5BBF1727415C000BABDD /* PQTextField.m */,
+				C49B5BC11727416D000BABDD /* PQView.h */,
+				C49B5BC21727416D000BABDD /* PQView.m */,
+			);
+			name = PhysicalQuestionClasses;
 			sourceTree = "<group>";
 		};
 		C4EB786416EF94CE0026F8E7 /* Summary Images */ = {
@@ -973,6 +1011,12 @@
 				1331538217211DB800F4C804 /* FMDatabaseQueue.m in Sources */,
 				19C6945317234D18006CBC30 /* Base64.m in Sources */,
 				C493A32D172395E90009E346 /* HQYesNo.m in Sources */,
+				C49B5BB317271C77000BABDD /* DynamicPhysicalViewController.m in Sources */,
+				C49B5BB617272B28000BABDD /* PhysicalNavigationController.m in Sources */,
+				C49B5BBA17274121000BABDD /* PQHelper.m in Sources */,
+				C49B5BBD17274135000BABDD /* PQLabel.m in Sources */,
+				C49B5BC01727415C000BABDD /* PQTextField.m in Sources */,
+				C49B5BC31727416D000BABDD /* PQView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -66,15 +66,12 @@
     previousPages = [[NSMutableArray alloc] init];
     answers = [[NSMutableArray alloc] init];
     
-    [self initializeQueue];
+    qHelper = [[HQHelper alloc] init];
+    
     [self loadNextQuestion];
 }
 
-#pragma mark - Question Loading Methods
-
--(void) initializeQueue{
-    qHelper = [[HQHelper alloc] init];
-}
+#pragma mark - Question Handling Methods
 
 -(void) loadNextQuestion{
     

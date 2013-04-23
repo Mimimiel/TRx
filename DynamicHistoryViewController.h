@@ -22,8 +22,7 @@
     
     HQView *mainQuestion;
     HQView *transQuestion;
-    
-    
+              
     //Arrays of Questions for main storage
     NSMutableArray *currentPage;
     NSMutableArray *previousPages;
@@ -38,17 +37,6 @@
 //IBActions
 -(IBAction)nextPressed:(id)sender;
 -(IBAction)backPressed:(id)sender;
-
-//Initial Methods
--(void) initialSetup;
--(void) initializeQueue;
-
-//Question Handling Methods
--(void) loadNextQuestion;
--(void) loadPreviousQuestion;
--(void) dismissCurrentQuestion;
--(void) setPositionForMainQuestion:(HQView*)question;
--(void) setPositionForTransQuestion:(HQView*)question;
 
 
 @end
