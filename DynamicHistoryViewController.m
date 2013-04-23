@@ -126,6 +126,8 @@
     newMainQuestion.connectedView = newTransQuestion;
     newTransQuestion.connectedView = newMainQuestion;
     
+    [newMainQuestion restorePreviousAnswers];
+    
     mainQuestion = newMainQuestion;
     transQuestion = newTransQuestion;
     
