@@ -100,7 +100,7 @@ static FMDatabase *db;
     
     NSString *appPatientRecordId = [LocalTalk localGetPatientRecordAppId];
     
-    NSString *query = [NSString stringWithFormat:@"SELECT Value FROM History WHERE AppPatientRecordId = \"%@\" and QuestionId = \"%@\"", appPatientRecordId, questionId];
+    NSString *query = [NSString stringWithFormat:@"SELECT Value FROM History WHERE AppPatientRecordId = %@ and QuestionId = \"%@\"", appPatientRecordId, questionId];
     
     
     FMResultSet *results = [db executeQuery:query];

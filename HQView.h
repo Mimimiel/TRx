@@ -32,6 +32,7 @@ typedef enum{
     float totalHeight;
     float responseHeight;
     
+    NSString *questionId;
     NSString *previousTextEntry;
     NSString *answerString;
     

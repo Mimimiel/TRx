@@ -94,6 +94,7 @@
         NSLog(@"Error: Invalid Question Type Encountered.");
     }
     
+    questionId = [h getQuestionId];
     [self restorePreviousAnswers];
 }
 
@@ -316,7 +317,7 @@
 
 -(void) restorePreviousAnswers{
  
-    answerString;
+    answerString = [Question getValueForQuestionId:questionId];
     
     
 }
