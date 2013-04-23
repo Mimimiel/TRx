@@ -229,8 +229,9 @@ static FMDatabaseQueue *queue;
     
     NSDictionary *params = [notification userInfo];
     NSMutableArray* paramsArray, *returnArray;
+    NSMutableDictionary *mutableParams;
     NSArray *fields;
-    
+    paramsArray = [[NSMutableArray alloc] init];
     NSLog(@"In localStoreEverything");
     if ([[params objectForKey:@"viewName"] isEqualToString:@"historyViewController"]) {
         
@@ -251,7 +252,7 @@ static FMDatabaseQueue *queue;
          * Add a record, packing AppPatientId back into params
          */
         
-        NSMutableDictionary *mutableParams = [NSMutableDictionary dictionaryWithDictionary:params];
+        mutableParams = [NSMutableDictionary dictionaryWithDictionary:params];
         [mutableParams setObject:[returnArray objectAtIndex:0] forKey:@"AppPatientId"];
         
         fields = [NSArray arrayWithObjects:@"SurgeryTypeId", @"DoctorId", @"HasTimeout", @"IsCurrent", @"IsLive", @"Id", @"AppPatientId", nil];
@@ -279,17 +280,17 @@ static FMDatabaseQueue *queue;
         [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
         NSString *now = [dateFormatter stringFromDate:[NSDate date]];
         
-        imageDic[@"Name"] = now;
-        imageDic[@"Path"] = now;
-        imageDic[@"IsProfile"] = @"1";
-        imageDic[@"Data"] = params[@"Data"];
+        imageDic[@"Name"]               = now;
+        imageDic[@"Path"]               = now;
+        imageDic[@"IsProfile"]          = @"1";
+        imageDic[@"Data"]               = params[@"Data"];
         imageDic[@"AppPatientRecordId"] = [returnArray objectAtIndex:0];
-        imageDic[@"RecordTypeId"] = [AdminInformation getOperationRecordTypeIdByName:@"Picture"];
+        imageDic[@"RecordTypeId"]       = [AdminInformation getOperationRecordTypeIdByName:@"Picture"];
         
         paramsArray[0] = imageDic;
         
         
-        returnArray = [LocalTalk setSQLiteTable:@"Image" withData:paramsArray];
+        returnArray = [LocalTalk setSQLiteTable:@"OperationRecord" withData:paramsArray];
         if (!returnArray) {
             [Utility alertWithMessage:@"Unable to add image to OperationRecords"];
             NSLog(@"Unable to add image to OperationRecords");
@@ -301,8 +302,36 @@ static FMDatabaseQueue *queue;
         
     }
     else if ([[params objectForKey:@"viewName"] isEqualToString:@"questionView"]) {
+        /*
+         * add question to sqlite. 
+         */
         
-        //
+        //check for AppId and pass if not nil
+        NSString *query = [NSString stringWithFormat:@"SELECT AppId FROM History WHERE QuestionId = \"%@\" AND AppPatientRecordId = %@", params[@"QuestionId"], params[@"AppPatientRecordId"]];
+        
+        FMResultSet *results = [db executeQuery:query];
+        if (!results) {
+            NSLog(@"The query %@ didn't return anything good :(", query);
+            NSLog(@"%@", [db lastErrorMessage]);
+            //[Utility alertWithMessage:@"Error retrieving question's AppId"];
+            return false;
+        }
+        [results next];
+        NSString *appId = [NSString stringWithFormat:@"%d", [results intForColumnIndex:0]];
+        if (!appId) {
+            appId = @"0";
+        }
+        mutableParams = [NSMutableDictionary dictionaryWithDictionary:params];
+        mutableParams[@"AppId"] = appId;
+        
+        fields = [NSArray arrayWithObjects:@"QuestionId", @"Value", @"AppId", @"AppPatientRecordId", nil];
+        [paramsArray removeAllObjects];
+        paramsArray  = [Utility repackDictionaryForSetSQLiteTable:mutableParams keyList:fields];
+        
+        returnArray = [LocalTalk setSQLiteTable:@"History" withData:paramsArray];
+        if (!returnArray) {
+            [Utility alertWithMessage:@"Error setting question"];
+        }
     }
     
     NSLog(@"Exiting localStoreEverything");
@@ -310,6 +339,18 @@ static FMDatabaseQueue *queue;
     
     return true;
 }
+
+/*-----------------------------------------------------------------------
+ Methods are helpers for LocalStoreFromViewsToLocal
+ -
+ -
+ -
+ ------------------------------------------------------------------------*/
+
+
+
+
+/*----------------End Helpers for LocalStoreFromViewsToLocal-------------*/
 
 
 

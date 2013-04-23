@@ -31,11 +31,9 @@ static FMDatabase *db;
 +(void)storeQuestionAnswer:(NSString *)answer questionId:(NSString *)questionId{
     
     NSString *view = @"questionView";
-    NSString *appId = [LocalTalk localGetAppPatientId];
     NSString *appPatientRecordId = [LocalTalk localGetPatientRecordAppId];
     
-    NSDictionary *params = @{@"AppId":              appId,
-                             @"AppPatientRecordId": appPatientRecordId,
+    NSDictionary *params = @{@"AppPatientRecordId": appPatientRecordId,
                              @"viewName":           view,
                              @"Value":              answer,
                              @"QuestionId":         questionId};
@@ -43,11 +41,6 @@ static FMDatabase *db;
     [[NSNotificationCenter defaultCenter] postNotificationName:@"nextpressed" object:self userInfo:params];
     
 }
-
-
-
-
-
 
 /*---------------------------------------------------------------------------
  * Takes a questionId and returns appropriate English Label or NULL
@@ -83,7 +76,7 @@ static FMDatabase *db;
     FMResultSet *results = [db executeQuery:query];
     
     if (!results) {
-        NSLog(@"%@", [db lastErrorMessage]);;
+        NSLog(@"%@", [db lastErrorMessage]);
         return nil;
     }
     [results next];
@@ -93,26 +86,29 @@ static FMDatabase *db;
 
 /*---------------------------------------------------------------------------
  Summary:
- gets value stored with key QuestionId
+    gets value stored for current patient with key QuestionId
  Returns:
- nil or NSString with value
+    nil or NSString with value
  *---------------------------------------------------------------------------*/
 
 +(NSString *)getValueForQuestionId:(NSString *)questionId {
+    NSString *appPatientRecordId = [LocalTalk localGetPatientRecordAppId];
     
-    NSString *appId = [LocalTalk localGetPatientAppId];
-    NSString *query = [NSString stringWithFormat:@"SELECT Value FROM History WHERE Id = \"%@\"", questionId];
+    NSString *query = [NSString stringWithFormat:@"SELECT Value FROM History WHERE AppPatientRecordId = %@ and QuestionId = \"%@\"", appPatientRecordId, questionId];
+    
     
     FMResultSet *results = [db executeQuery:query];
     
     if (!results) {
-        NSLog(@"%@", [db lastErrorMessage]);;
+        NSLog(@"%@", [db lastErrorMessage]);
+        [Utility alertWithMessage:@"Unable to retrieve question answer"];
         return nil;
     }
     [results next];
-    NSString *retval = [results stringForColumnIndex:0];
+    NSString *value = [results stringForColumnIndex:0];
+    NSLog(@"%@", value);
     
-    return retval;
+    return value;
 }
 
 

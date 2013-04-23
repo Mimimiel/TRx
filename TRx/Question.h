@@ -12,6 +12,7 @@
 
 @interface Question : LocalTalk
 
++(void)storeQuestionAnswer:(NSString *)answer questionId:(NSString *)questionId;
 +(NSString *)getEnglishLabel:(NSString *)questionId;
 +(NSString *)getTranslatedLabel:(NSString *)questionId;
 +(NSString *)getSpanishLabel:(NSString *)questionId;

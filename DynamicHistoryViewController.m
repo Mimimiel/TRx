@@ -57,8 +57,6 @@
 
 -(void) initialSetup{
     
-    hasNextPages = NO;
-    
     pageCount = 1;
     availableSpace = MAX_Y - MIN_Y;
     
@@ -66,7 +64,6 @@
     transQuestion = [[HQView alloc]init];
     
     previousPages = [[NSMutableArray alloc] init];
-    nextPages = [[NSMutableArray alloc]init];
     answers = [[NSMutableArray alloc] init];
     
     [self initializeQueue];
@@ -80,8 +77,6 @@
 }
 
 -(void) loadNextQuestion{
-    //Load Question from the Queue, Hard coded for now...
-    
     
     if(pageCount != 1){
         [mainQuestion checkHasAnswer];
@@ -97,22 +92,6 @@
         [self findAnswers];
         [qHelper updateCurrentIndexWithResponse:answers QuestionType:mainQuestion.type];
     }
-    
-//    if(hasNextPages){
-//        [self dismissCurrentQuestion];
-//        
-//        transQuestion = [nextPages lastObject];
-//        [nextPages removeLastObject];
-//        [self .view addSubview:transQuestion];
-//        
-//        mainQuestion = [nextPages lastObject];
-//        [nextPages removeLastObject];
-//        [self.view addSubview:mainQuestion];
-//        
-//        if([nextPages lastObject] == NULL)  hasNextPages = NO;
-//        
-//        return;
-//    }
     
     HQView *newMainQuestion = [[HQView alloc] init];
     newMainQuestion.isEnglish = YES;
@@ -147,6 +126,8 @@
     newMainQuestion.connectedView = newTransQuestion;
     newTransQuestion.connectedView = newMainQuestion;
     
+    [newMainQuestion restorePreviousAnswers];
+    
     mainQuestion = newMainQuestion;
     transQuestion = newTransQuestion;
     
@@ -160,10 +141,6 @@
     if(pageCount == 1){
         return;
     }
-    
-    hasNextPages = YES;
-    [nextPages addObject:mainQuestion];
-    [nextPages addObject:transQuestion];
     
     [self dismissCurrentQuestion];
     
@@ -274,7 +251,9 @@
     }
     
     answerString = [answers componentsJoinedByString:@", "];
-    
+    mainQuestion.answerString = answerString;
+    transQuestion.answerString = answerString;
+    [Question storeQuestionAnswer:answerString questionId:[qHelper getQuestionId]];
 }
 
 @end

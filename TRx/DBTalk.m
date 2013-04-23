@@ -81,13 +81,24 @@ static DBTalk *singleton;
     //get all records from table wherey last mod > last synced
     
     
+    //FIXME this is going to push every time until everything is working and syncing
+    //Find a work-around for short-term (only push on own tab?????)
+    
     NSMutableArray *array = [LocalTalk localGetUnsyncedRecordsFromTable:@"OperationRecord"];
     
-    for (NSMutableDictionary *dic in array) {
-        if([dic[@"RecordTypeId"] isEqualToString:@"3"]){
-            [DBTalk uploadFileToServer:[LocalTalk localGetPortrait] fileType:@"image" fileName:dic[@"Name"] patientId:patientId];
+    //FIXME this is only getting the current patient's ID; I need Id for any unsynced image
+    patientId     = [LocalTalk localGetPatientId];
+    NSString *recordTypeId;
+    if (array) {
+        for (NSDictionary *dic in array) {
+            recordTypeId = [NSString stringWithFormat:@"%@", dic[@"RecordTypeId"]];
+            if([recordTypeId isEqualToString:@"3"]){
+                NSLog(@"Attempting to add image: ");
+                [DBTalk uploadFileToServer:[LocalTalk localGetPortrait] fileType:@"image" fileName:dic[@"Name"] patientId:patientId];
+            }
         }
     }
+    
     
     //check if image is unsynced and push if unsynced
         //calls uploadFileToServer() use "image" and later ?? getOperationTypeRecordName

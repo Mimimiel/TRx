@@ -27,12 +27,9 @@
     //Arrays of Questions for main storage
     NSMutableArray *currentPage;
     NSMutableArray *previousPages;
-    NSMutableArray *nextPages;
     NSMutableArray *answers;
     
     NSString *answerString;
-    
-    Boolean hasNextPages;
     
     IBOutlet UIButton *backButton, *nextButton;
     

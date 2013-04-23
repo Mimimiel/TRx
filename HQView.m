@@ -26,7 +26,7 @@
 
 @implementation HQView
 
-@synthesize questionIndex, hasAnswer, isEnglish, shouldBranch, questionLabel, type, textEntryField, otherTextField, yesNoSelector, yesButton, noButton, previousTextEntry, responseString, checkBoxes, connectedView;
+@synthesize questionIndex, hasAnswer, isEnglish, shouldBranch, questionLabel, type, textEntryField, otherTextField, yesNoSelector, yesButton, noButton, previousTextEntry, answerString, checkBoxes, connectedView;
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -93,6 +93,9 @@
     else{
         NSLog(@"Error: Invalid Question Type Encountered.");
     }
+    
+    questionId = [h getQuestionId];
+    //[self restorePreviousAnswers];
 }
 
 -(void) checkHasAnswer{
@@ -140,8 +143,8 @@
     if(isEnglish)   [yesButton setTitle:@"Yes" forState:UIControlStateNormal];
     else            [yesButton setTitle:@"Si" forState:UIControlStateNormal];
     [noButton setTitle:@"No" forState:UIControlStateNormal];
-    [yesButton addTarget:self action:@selector(yesPressed:) forControlEvents:UIControlEventTouchDown];
-    [noButton addTarget:self action:@selector(noPressed:) forControlEvents:UIControlEventTouchDown];
+    [yesButton addTarget:self action:@selector(yesPressed) forControlEvents:UIControlEventTouchDown];
+    [noButton addTarget:self action:@selector(noPressed) forControlEvents:UIControlEventTouchDown];
     
     responseHeight = yesButton.frame.size.height;
     [response addObject:noButton];
@@ -152,7 +155,7 @@
     [self adjustFrame];
 }
 
--(void) yesPressed:(id)sender{
+-(void) yesPressed{
     
     if(!yesButton.selected){
         
@@ -170,7 +173,7 @@
     
 }
 
--(void) noPressed:(id)sender{
+-(void) noPressed{
     
     if(!noButton.selected){
         
@@ -310,6 +313,38 @@
 
 -(void) buildTextSelection{
     
+}
+
+-(void) restorePreviousAnswers{
+    
+    answerString = [Question getValueForQuestionId:questionId];
+    NSArray *answers = [answerString componentsSeparatedByString:@", "];
+    
+    if(type == TEXT_ENTRY){
+        if([answers containsObject:@"YES"] && [answers count] > 1){
+            textEntryField.text = [answers objectAtIndex:1];
+            connectedView.textEntryField.text = [answers objectAtIndex:1];
+        }
+    }
+    else if (type == YES_NO){
+        if([answers containsObject:@"YES"]){
+            [self yesPressed];
+        }
+        else if ([answers containsObject:@"NO"]){
+            [self noPressed];
+        }
+    }
+    else if(type == SELECTION_QUESTION){
+        for(HQCheckBox *cb in checkBoxes){
+            if([answers containsObject:cb.optionLabel]){
+                [self checkPressed:cb];
+            }
+        }
+        if(![[[checkBoxes lastObject] optionLabel] isEqual:[answers lastObject]]){
+            otherTextField.text = [answers lastObject];
+            connectedView.otherTextField.text = [answers lastObject];
+        }
+    }
 }
 
 -(void) adjustFrame{
