@@ -231,7 +231,7 @@ static FMDatabaseQueue *queue;
     NSMutableArray* paramsArray, *returnArray;
     NSMutableDictionary *mutableParams;
     NSArray *fields;
-    
+    paramsArray = [[NSMutableArray alloc] init];
     NSLog(@"In localStoreEverything");
     if ([[params objectForKey:@"viewName"] isEqualToString:@"historyViewController"]) {
         
@@ -307,13 +307,13 @@ static FMDatabaseQueue *queue;
          */
         
         //check for AppId and pass if not nil
-        NSString *query = [NSString stringWithFormat:@"SELECT AppId FOR History WHERE QuestionId = \"%@\" AND AppPatientRecordId = %@", params[@"QuestionId"], params[@"AppPatientRecordId"]];
+        NSString *query = [NSString stringWithFormat:@"SELECT AppId FROM History WHERE QuestionId = \"%@\" AND AppPatientRecordId = %@", params[@"QuestionId"], params[@"AppPatientRecordId"]];
         
         FMResultSet *results = [db executeQuery:query];
         if (!results) {
             NSLog(@"The query %@ didn't return anything good :(", query);
             NSLog(@"%@", [db lastErrorMessage]);
-            [Utility alertWithMessage:@"Error retrieving question's AppId"];
+            //[Utility alertWithMessage:@"Error retrieving question's AppId"];
             return false;
         }
         [results next];
@@ -325,9 +325,13 @@ static FMDatabaseQueue *queue;
         mutableParams[@"AppId"] = appId;
         
         fields = [NSArray arrayWithObjects:@"QuestionId", @"Value", @"AppId", @"AppPatientRecordId", nil];
-        paramsArray[0] = [Utility repackDictionaryForSetSQLiteTable:params keyList:fields];
+        [paramsArray removeAllObjects];
+        paramsArray  = [Utility repackDictionaryForSetSQLiteTable:mutableParams keyList:fields];
         
-        [LocalTalk setSQLiteTable:@"History" withData:paramsArray];
+        returnArray = [LocalTalk setSQLiteTable:@"History" withData:paramsArray];
+        if (!returnArray) {
+            [Utility alertWithMessage:@"Error setting question"];
+        }
     }
     
     NSLog(@"Exiting localStoreEverything");
@@ -335,6 +339,18 @@ static FMDatabaseQueue *queue;
     
     return true;
 }
+
+/*-----------------------------------------------------------------------
+ Methods are helpers for LocalStoreFromViewsToLocal
+ -
+ -
+ -
+ ------------------------------------------------------------------------*/
+
+
+
+
+/*----------------End Helpers for LocalStoreFromViewsToLocal-------------*/
 
 
 

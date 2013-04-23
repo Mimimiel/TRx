@@ -76,7 +76,7 @@ static FMDatabase *db;
     FMResultSet *results = [db executeQuery:query];
     
     if (!results) {
-        NSLog(@"%@", [db lastErrorMessage]);;
+        NSLog(@"%@", [db lastErrorMessage]);
         return nil;
     }
     [results next];
@@ -92,7 +92,6 @@ static FMDatabase *db;
  *---------------------------------------------------------------------------*/
 
 +(NSString *)getValueForQuestionId:(NSString *)questionId {
-    
     NSString *appPatientRecordId = [LocalTalk localGetPatientRecordAppId];
     
     NSString *query = [NSString stringWithFormat:@"SELECT Value FROM History WHERE AppPatientRecordId = %@ and QuestionId = \"%@\"", appPatientRecordId, questionId];
@@ -101,11 +100,13 @@ static FMDatabase *db;
     FMResultSet *results = [db executeQuery:query];
     
     if (!results) {
-        NSLog(@"%@", [db lastErrorMessage]);;
+        NSLog(@"%@", [db lastErrorMessage]);
+        [Utility alertWithMessage:@"Unable to retrieve question answer"];
         return nil;
     }
     [results next];
     NSString *value = [results stringForColumnIndex:0];
+    NSLog(@"%@", value);
     
     return value;
 }
