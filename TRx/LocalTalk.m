@@ -325,9 +325,10 @@ static FMDatabaseQueue *queue;
         mutableParams[@"AppId"] = appId;
         
         fields = [NSArray arrayWithObjects:@"QuestionId", @"Value", @"AppId", @"AppPatientRecordId", nil];
+        
         [paramsArray removeAllObjects];
         paramsArray  = [Utility repackDictionaryForSetSQLiteTable:mutableParams keyList:fields];
-        
+        NSLog(@"%@", paramsArray);
         returnArray = [LocalTalk setSQLiteTable:@"History" withData:paramsArray];
         if (!returnArray) {
             [Utility alertWithMessage:@"Error setting question"];
@@ -372,12 +373,15 @@ static FMDatabaseQueue *queue;
     BOOL success;
     NSMutableArray* returnIDs = [[NSMutableArray alloc] init];
     NSMutableArray* updateSQL = [[NSMutableArray alloc] init];
+    NSMutableArray* insertSQL = [[NSMutableArray alloc] init];
     NSInteger affectedID;
     NSMutableString* appID;
     NSMutableString *sql;
     BOOL defaultFlag = FALSE;
     NSArray* defaults = @[@"Doctor", @"SurgeryType", @"RecordType"];
     FMResultSet *exists;
+    
+    //TODO: clean up this logic somewhat
     
     //Slightly different logic for default/admin type tables
     if([defaults containsObject:tableName]){
@@ -437,10 +441,23 @@ static FMDatabaseQueue *queue;
             
             if(!success){
                 //INSERT
+                [updateSQL removeAllObjects];
+                [insertSQL removeAllObjects];
+                
+                for(NSString* key in row){
+                    if(![key isEqualToString:@"AppId"]){
+                        sql = [NSMutableString stringWithFormat: @"%@", key];
+                        [insertSQL addObject:sql];
+                        
+                        sql = [NSMutableString stringWithFormat: @"%@", row[key]];
+                        [updateSQL addObject:sql];
+                    }
+                }
+                
                 sql = [NSMutableString stringWithFormat:@"INSERT INTO %@ (%@) VALUES ('%@')",
                        tableName,
-                       [[row allKeys] componentsJoinedByString:@", "],
-                       [[row allValues] componentsJoinedByString:@"', '"]];
+                       [insertSQL componentsJoinedByString:@", "],
+                       [updateSQL componentsJoinedByString:@"', '"]];
             
                 success = [db executeUpdate:sql];
                 if(success){
