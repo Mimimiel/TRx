@@ -27,7 +27,7 @@
 
     newPatient = [[Patient alloc] initWithFirstName:@"Rob" MiddleName:@"D" LastName:@"woMan" ChiefComplaint:@"1" PhotoID:NULL];
     newPatient.birthday = @"2001-02-03";
-    //_complaintsArray = [AdminInformation getSurgeryNames];
+    _complaintsArray = [AdminInformation getSurgeryNames];
     
     //_imageView.image = [UIImage imageNamed:@"PatientPhotoBlank.png"];
     
@@ -193,8 +193,13 @@ finishedSavingWithError:(NSError *)error
 }
 
 - (NSString *)pickerView:(UIPickerView *)thePickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
-    return [_complaintsArray objectAtIndex:row];
+    NSDictionary *surgeries = [_complaintsArray objectAtIndex:row];
+    if([surgeries objectForKey:@"IsCurrent"]){
+        NSString *surgeryName = [surgeries objectForKey:@"Name"];
+        return surgeryName;
+    } else { return NULL; }
 }
+
 
 - (void)pickerView:(UIPickerView *)thePickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
     
