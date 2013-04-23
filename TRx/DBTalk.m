@@ -172,11 +172,18 @@ static DBTalk *singleton;
     else {
         //successfully returned patient
         
-        BOOL success = [LocalTalk insertPatientId:retval forFirstName:[jsonDic objectForKey:@"FirstName"]
-                          lastName:[jsonDic objectForKey:@"LastName"] birthday:[jsonDic objectForKey:@"Birthday"]];
+//        BOOL success = [LocalTalk insertPatientId:retval forFirstName:[jsonDic objectForKey:@"FirstName"]
+//                          lastName:[jsonDic objectForKey:@"LastName"] birthday:[jsonDic objectForKey:@"Birthday"]];
+        NSMutableArray *array = [[NSMutableArray alloc] init];
+        NSMutableArray *retArray = [[NSMutableArray alloc] init];
+        NSString *appId = [LocalTalk localGetPatientAppId];
+        NSDictionary *dic = @{@"AppId": appId,
+                              @"Id": retval};
+        array[0] = dic;
+        retArray = [LocalTalk setSQLiteTable:@"Patient" withData:array];
         
-        //successfully stored PatientId in database
-        if (success) {
+        //successfully stored patient?
+        if ([appId isEqualToString:[NSString stringWithFormat:@"%@", retArray[0]]]) {
             [DBTalk addUpdatePatientRecord];
         }
         

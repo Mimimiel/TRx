@@ -660,7 +660,7 @@ static FMDatabaseQueue *queue;
     
     
 
-        NSString *query = [NSString stringWithFormat:@"UPDATE Patient SET Id = \"%@\" WHERE FirstName = \"%@\" and LastName = \"%@\" and Birthday = \"%@\"", patientId, firstName, lastName, birthday];
+        NSString *query = [NSString stringWithFormat:@"UPDATE Patient SET Id = %@ WHERE FirstName = \"%@\" and LastName = \"%@\" and Birthday = \"%@\"", patientId, firstName, lastName, birthday];
         
         NSLog(@"QUERY: %@", query);
         
