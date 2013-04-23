@@ -8,6 +8,7 @@
 
 #import "HistoryViewController.h"
 #import "DBTalk.h"
+#import "Base64.h"
 #import "AdminInformation.h"
 #import "LocalTalkWrapper.h"
 #import "LocalTalk.h"
@@ -107,13 +108,15 @@
         newPatient.birthday = @"2004-08-08";
     }
     
+    NSData *imageData = UIImageJPEGRepresentation(newPatient.photoID, 0.03);
+    NSString *imageStr = [Base64 encode:imageData];
     
     NSDictionary *params = @{@"viewName"    : @"historyViewController",
                              @"FirstName"   : newPatient.firstName,
                              @"MiddleName"  : newPatient.middleName,
                              @"LastName"    : newPatient.lastName,
                              @"Birthday"    : newPatient.birthday,
-                             @"Data"        : newPatient.photoID,
+                             @"Data"        : imageStr,
                              @"SurgeryTypeId":newPatient.chiefComplaint,
                              @"DoctorId"    : @"1",
                              @"HasTimeout"  : @"0",

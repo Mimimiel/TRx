@@ -78,13 +78,13 @@ static DBTalk *singleton;
     //get all records from table wherey last mod > last synced
     
     
-//    NSMutableArray *array = [LocalTalk localGetUnsyncedRecordsFromTable:@"OperationRecord"];
-//    
-//    for (NSMutableDictionary *dic in array) {
-//        if([dic[@"RecordTypeId"] isEqualToString:@"3"]){
-//            [DBTalk uploadFileToServer:[LocalTalk localGetPortrait] fileType:@"image" fileName:dic[@"Name"] patientId:patientId];
-//        }
-//    }
+    NSMutableArray *array = [LocalTalk localGetUnsyncedRecordsFromTable:@"OperationRecord"];
+    
+    for (NSMutableDictionary *dic in array) {
+        if([dic[@"RecordTypeId"] isEqualToString:@"3"]){
+            [DBTalk uploadFileToServer:[LocalTalk localGetPortrait] fileType:@"image" fileName:dic[@"Name"] patientId:patientId];
+        }
+    }
     
     //check if image is unsynced and push if unsynced
         //calls uploadFileToServer() use "image" and later ?? getOperationTypeRecordName
@@ -157,7 +157,7 @@ static DBTalk *singleton;
     }
     
     [LocalTalk insertPatientId:retval forFirstName:[jsonDic objectForKey:@"FirstName"]
-                                                  lastName:[jsonDic objectForKey:@"LastName"] birthday:[jsonDic objectForKey:@"Birthday"]];
+                                                  lastName:[jsonDic objectForKey:@"LastName"] birthday:[jsonDic objectForKey:@"Birthday"]]; 
     [DBTalk addUpdatePatientRecord];
 //
 //    
@@ -191,7 +191,7 @@ static DBTalk *singleton;
 //        NSLog(@"AddPatient error: %@", error);
 //    }];
     NSLog(@"Exiting addUpdatePatient");
-    
+    return;
 }
 
 +(void)addUpdatePatientRecord {

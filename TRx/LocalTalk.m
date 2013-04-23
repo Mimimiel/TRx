@@ -19,6 +19,7 @@
 
 static LocalTalk *singleton;
 static FMDatabase *db;
+static FMDatabaseQueue *queue;
 +(void)initialize{
     
     static BOOL initialized = false;
@@ -28,7 +29,7 @@ static FMDatabase *db;
         singleton = [[LocalTalk alloc] init];
         db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
         [db open];
-        
+        queue = [FMDatabaseQueue databaseQueueWithPath:[Utility getDatabasePath]];
     }
 }
 
@@ -123,7 +124,6 @@ static FMDatabase *db;
             [dictionary setObject:tmpArray forKey:table];
         }
     }
-   // [db close];
     
     NSLog(@"----------I'm leaving get data------------");
     return dictionary;
@@ -269,29 +269,31 @@ static FMDatabase *db;
         /*
          * Insert Image into Local Database
          */
-//        UIImage *image = params[@"Data"];
-//        NSData *imageData = UIImageJPEGRepresentation(image, 0.03);
-//        NSString *imageStr = [Base64 encode:imageData];
-//        [mutableParams setObject:[returnArray objectAtIndex:0] forKey:@"AppPatientRecordId"];
-//        
-//        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-//        NSString *now;
-//        [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-//        now = [dateFormatter stringFromDate:[NSDate date]];
-//        
-//        [mutableParams setObject:now forKey:@"Name"];
-//        [mutableParams setObject:now forKey:@"Path"];
-//        [mutableParams setObject:@"1" forKey:@"IsProfile"];
-//        [mutableParams setObject:[LocalTalk getOperationRecordTypeIdByNameFromSQLite:@"Picture"] forKey:@"RecordTypeId"];
-//        
-//        fields = [NSArray arrayWithObjects:@"Data", @"AppPatientRecordId", @"Name", @"Path", @"RecordTypeId", @"IsProfile", nil];
-//        paramsArray = [Utility repackDictionaryForSetSQLiteTable:mutableParams keyList:fields];
-//        
-//        returnArray = [LocalTalk setSQLiteTable:@"Image" withData:paramsArray];
-//        if (!returnArray) {
-//            [Utility alertWithMessage:@"Unable to add image to OperationRecords"];
-//            NSLog(@"Unable to add image to OperationRecords");
-//        }
+        NSMutableDictionary *imageDic = [[NSMutableDictionary alloc] init];
+        
+        //encode image as text
+        
+        
+        //use date as image name and path
+        NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+        [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+        NSString *now = [dateFormatter stringFromDate:[NSDate date]];
+        
+        imageDic[@"Name"] = now;
+        imageDic[@"Path"] = now;
+        imageDic[@"IsProfile"] = @"1";
+        imageDic[@"Data"] = params[@"Data"];
+        imageDic[@"AppPatientRecordId"] = [returnArray objectAtIndex:0];
+        imageDic[@"RecordTypeId"] = [AdminInformation getOperationRecordTypeIdByName:@"Picture"];
+        
+        paramsArray[0] = imageDic;
+        
+        
+        returnArray = [LocalTalk setSQLiteTable:@"Image" withData:paramsArray];
+        if (!returnArray) {
+            [Utility alertWithMessage:@"Unable to add image to OperationRecords"];
+            NSLog(@"Unable to add image to OperationRecords");
+        }
     }
     else if ([[params objectForKey:@"viewName"] isEqualToString:@"summaryViewController"]) {
         
@@ -598,12 +600,18 @@ static FMDatabase *db;
               lastName:(NSString *)lastName
               birthday:(NSString *)birthday {
     
-    [db closeOpenResultSets];
-    NSString *query = [NSString stringWithFormat:@"UPDATE Patient SET Id = \"%@\" WHERE FirstName = \"%@\" and LastName = \"%@\" and Birthday = \"%@\"", patientId, firstName, lastName, birthday];
     
-    NSLog(@"QUERY: %@", query);
-    
-    BOOL result = [db executeUpdate:query];
+
+        NSString *query = [NSString stringWithFormat:@"UPDATE Patient SET Id = \"%@\" WHERE FirstName = \"%@\" and LastName = \"%@\" and Birthday = \"%@\"", patientId, firstName, lastName, birthday];
+        
+        NSLog(@"QUERY: %@", query);
+        
+        BOOL result = [db executeUpdate:query];
+        [db lastErrorMessage];
+        
+
+
+
     
     //    NSString *testquery = [NSString stringWithFormat:@"SELECT * FROM Patient WHERE FirstName = \"%@\" and LastName = \"%@\" and Birthday = \"%@\"", firstName, lastName, birthday];
     //    NSLog(@"printing testquery: %@", testquery);
@@ -697,8 +705,7 @@ static FMDatabase *db;
 
 #pragma mark - Local Get Methods
 +(NSString *)getOperationRecordTypeIdByNameFromSQLite:operationRecordTypeName{
-    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
-    [db open];
+
     NSString *query = [NSString stringWithFormat: @"SELECT Id FROM RecordType WHERE Name = '%@'", operationRecordTypeName];
     NSLog(@"%@", query);
     FMResultSet *result = [db executeQuery:query];
@@ -711,8 +718,6 @@ static FMDatabase *db;
     }
     NSString *retval = [result stringForColumnIndex:0];
     
-    
-    //[db close];
     return retval;
 }
 
