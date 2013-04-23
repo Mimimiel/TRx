@@ -31,11 +31,9 @@ static FMDatabase *db;
 +(void)storeQuestionAnswer:(NSString *)answer questionId:(NSString *)questionId{
     
     NSString *view = @"questionView";
-    NSString *appId = [LocalTalk localGetAppPatientId];
     NSString *appPatientRecordId = [LocalTalk localGetPatientRecordAppId];
     
-    NSDictionary *params = @{@"AppId":              appId,
-                             @"AppPatientRecordId": appPatientRecordId,
+    NSDictionary *params = @{@"AppPatientRecordId": appPatientRecordId,
                              @"viewName":           view,
                              @"Value":              answer,
                              @"QuestionId":         questionId};
@@ -93,15 +91,17 @@ static FMDatabase *db;
 
 /*---------------------------------------------------------------------------
  Summary:
- gets value stored with key QuestionId
+    gets value stored for current patient with key QuestionId
  Returns:
- nil or NSString with value
+    nil or NSString with value
  *---------------------------------------------------------------------------*/
 
 +(NSString *)getValueForQuestionId:(NSString *)questionId {
     
-    NSString *appId = [LocalTalk localGetPatientAppId];
-    NSString *query = [NSString stringWithFormat:@"SELECT Value FROM History WHERE Id = \"%@\"", questionId];
+    NSString *appPatientRecordId = [LocalTalk localGetPatientRecordAppId];
+    
+    NSString *query = [NSString stringWithFormat:@"SELECT Value FROM History WHERE AppPatientRecordId = \"%@\" and QuestionId = \"%@\"", appPatientRecordId, questionId];
+    
     
     FMResultSet *results = [db executeQuery:query];
     
@@ -110,9 +110,9 @@ static FMDatabase *db;
         return nil;
     }
     [results next];
-    NSString *retval = [results stringForColumnIndex:0];
+    NSString *value = [results stringForColumnIndex:0];
     
-    return retval;
+    return value;
 }
 
 

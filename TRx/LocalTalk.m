@@ -301,8 +301,8 @@ static FMDatabaseQueue *queue;
         
     }
     else if ([[params objectForKey:@"viewName"] isEqualToString:@"questionView"]) {
-        
-        //
+        paramsArray[0] = params;
+        [LocalTalk setSQLiteTable:@"History" withData:paramsArray];
     }
     
     NSLog(@"Exiting localStoreEverything");
