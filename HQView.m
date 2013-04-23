@@ -26,7 +26,7 @@
 
 @implementation HQView
 
-@synthesize questionIndex, hasAnswer, isEnglish, shouldBranch, questionLabel, type, textEntryField, otherTextField, yesNoSelector, yesButton, noButton, previousTextEntry, responseString, checkBoxes, connectedView;
+@synthesize questionIndex, hasAnswer, isEnglish, shouldBranch, questionLabel, type, textEntryField, otherTextField, yesNoSelector, yesButton, noButton, previousTextEntry, answerString, checkBoxes, connectedView;
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -93,6 +93,8 @@
     else{
         NSLog(@"Error: Invalid Question Type Encountered.");
     }
+    
+    [self restorePreviousAnswers];
 }
 
 -(void) checkHasAnswer{
@@ -309,6 +311,13 @@
 }
 
 -(void) buildTextSelection{
+    
+}
+
+-(void) restorePreviousAnswers{
+ 
+    answerString;
+    
     
 }
 

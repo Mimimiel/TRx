@@ -37,6 +37,7 @@
 
 -(void) initializeQuestionTracker;
 -(NSInteger) getNextType;
+-(NSString*) getQuestionId;
 -(NSString*) getNextEnglishLabel;
 -(NSString*) getNextTranslatedLabel;
 -(NSArray*) getEnglishChoices;

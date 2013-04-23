@@ -106,12 +106,41 @@
     
     tmp = [[indexHelper alloc] initWithID:@"preOp_NeurologicProblemsLike" NextYes:0 NextNo:0];
     [questionTracker addObject:tmp];
+    
+    tmp = [[indexHelper alloc] initWithID:@"preOp_SurgeriesBefore" NextYes:2 NextNo:2];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[indexHelper alloc] initWithID:@"preOp_SurgeriesLike" NextYes:0 NextNo:0];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[indexHelper alloc] initWithID:@"preOp_AnesthesiaProblems" NextYes:2 NextNo:2];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[indexHelper alloc] initWithID:@"preOp_AnesthesiaLike" NextYes:0 NextNo:0];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[indexHelper alloc] initWithID:@"preOp_TakeMedications" NextYes:1 NextNo:2];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[indexHelper alloc] initWithID:@"preOp_ListMedications" NextYes:1 NextNo:1];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[indexHelper alloc] initWithID:@"preOp_AllergicFoodMedicine" NextYes:1 NextNo:2];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[indexHelper alloc] initWithID:@"preOp_ListAllergies" NextYes:1 NextNo:1];
+    [questionTracker addObject:tmp];
 }
 
 -(NSInteger) getNextType{
     indexHelper* qKey = [questionTracker objectAtIndex:currentIndex];
     NSString *typeString = [Question getQuestionType:qKey.questionId];
     return [typeString integerValue];
+    
+}
+
+-(NSString*) getQuestionId{
+    return [[questionTracker objectAtIndex:currentIndex] questionId];
 }
 
 -(NSString*) getNextEnglishLabel{

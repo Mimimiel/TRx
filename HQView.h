@@ -32,8 +32,8 @@ typedef enum{
     float totalHeight;
     float responseHeight;
     
-    NSString *responseString;
     NSString *previousTextEntry;
+    NSString *answerString;
     
     
     qType type;
@@ -63,7 +63,7 @@ typedef enum{
 @property(nonatomic, retain) HQYesNo *yesButton;
 @property(nonatomic, retain) HQYesNo *noButton;
 @property(nonatomic, retain) NSString *previousTextEntry;
-@property(nonatomic, retain) NSString *responseString;
+@property(nonatomic, retain) NSString *answerString;
 @property(nonatomic, retain) NSMutableArray *checkBoxes;
 @property(nonatomic, retain) HQView *connectedView;
 
@@ -74,5 +74,7 @@ typedef enum{
 -(void) buildSingleSelection;
 -(void) buildSelectionWithChoices:(NSArray*)choices;
 -(void) buildTextEntry;
+-(void) restorePreviousAnswers;
+-(void) adjustFrame;
 
 @end
