@@ -53,7 +53,8 @@
 
 /*Function to refresh patients list, we need to make this async and to disable the refreshButton button until it's done*/ 
 -(void)refreshPatients:(id)sender{
-    patients = [LocalTalk localGetPatientList];    
+    patients = [LocalTalk localGetPatientList];
+    [self.tableView reloadData];
 }
 
 
