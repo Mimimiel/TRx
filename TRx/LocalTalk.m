@@ -289,7 +289,7 @@ static FMDatabaseQueue *queue;
         paramsArray[0] = imageDic;
         
         
-        returnArray = [LocalTalk setSQLiteTable:@"Image" withData:paramsArray];
+        returnArray = [LocalTalk setSQLiteTable:@"OperationRecord" withData:paramsArray];
         if (!returnArray) {
             [Utility alertWithMessage:@"Unable to add image to OperationRecords"];
             NSLog(@"Unable to add image to OperationRecords");

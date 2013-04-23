@@ -79,9 +79,12 @@ static DBTalk *singleton;
     
     
     NSMutableArray *array = [LocalTalk localGetUnsyncedRecordsFromTable:@"OperationRecord"];
-    
-    for (NSMutableDictionary *dic in array) {
-        if([dic[@"RecordTypeId"] isEqualToString:@"3"]){
+    patientId     = [LocalTalk localGetPatientId];
+    NSString *recordTypeId;
+    for (NSDictionary *dic in array) {
+        recordTypeId = [NSString stringWithFormat:@"%@", dic[@"RecordTypeId"]];
+        if([recordTypeId isEqualToString:@"3"]){
+            NSLog(@"Attempting to add image: ");
             [DBTalk uploadFileToServer:[LocalTalk localGetPortrait] fileType:@"image" fileName:dic[@"Name"] patientId:patientId];
         }
     }
