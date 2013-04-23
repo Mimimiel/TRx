@@ -169,10 +169,21 @@ static DBTalk *singleton;
         NSString *dbErr = [jsonDic objectForKey:@"@error"];
         NSLog(@"Error from DB: %@", dbErr);
     }
+    else {
+        //successfully returned patient
+        
+        BOOL success = [LocalTalk insertPatientId:retval forFirstName:[jsonDic objectForKey:@"FirstName"]
+                          lastName:[jsonDic objectForKey:@"LastName"] birthday:[jsonDic objectForKey:@"Birthday"]];
+        
+        //successfully stored PatientId in database
+        if (success) {
+            [DBTalk addUpdatePatientRecord];
+        }
+        
+    }
     
-    [LocalTalk insertPatientId:retval forFirstName:[jsonDic objectForKey:@"FirstName"]
-                                                  lastName:[jsonDic objectForKey:@"LastName"] birthday:[jsonDic objectForKey:@"Birthday"]]; 
-    [DBTalk addUpdatePatientRecord];
+    
+    
 //
 //    
 //    NSURL *url =  [[NSURL alloc] initWithString:host];

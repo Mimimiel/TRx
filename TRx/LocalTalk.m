@@ -449,7 +449,7 @@ static FMDatabaseQueue *queue;
                         sql = [NSMutableString stringWithFormat: @"%@", key];
                         [insertSQL addObject:sql];
                         
-                        sql = [NSMutableString stringWithFormat: @"%@", row[key]];
+                        sql = [NSMutableString stringWithFormat: @"%@", row[key] ];
                         [updateSQL addObject:sql];
                     }
                 }
