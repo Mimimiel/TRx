@@ -131,6 +131,18 @@
     tmp = [[indexHelper alloc] initWithID:@"preOp_ListAllergies" NextYes:1 NextNo:1];
     [questionTracker addObject:tmp];
     
+    tmp = [[indexHelper alloc] initWithID:@"preOp_DoSmoke" NextYes:1 NextNo:2];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[indexHelper alloc] initWithID:@"preOp_PacksDay" NextYes:1 NextNo:1];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[indexHelper alloc] initWithID:@"preOp_DoDrink" NextYes:1 NextNo:2];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[indexHelper alloc] initWithID:@"preOp_DrinksDay" NextYes:1 NextNo:1];
+    [questionTracker addObject:tmp];
+    
     tmp = [[indexHelper alloc] initWithID:@"preOp_Done" NextYes:0 NextNo:0];
     [questionTracker addObject:tmp];
 

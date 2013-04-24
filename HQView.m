@@ -26,7 +26,7 @@
 
 @implementation HQView
 
-@synthesize questionIndex, hasAnswer, isEnglish, shouldBranch, questionLabel, type, textEntryField, otherTextField, yesNoSelector, yesButton, noButton, previousTextEntry, answerString, checkBoxes, connectedView;
+@synthesize questionIndex, hasAnswer, isEnglish, shouldBranch, questionLabel, type, textEntryField, otherTextField, yesButton, noButton, previousTextEntry, answerString, checkBoxes, connectedView;
 
 - (id)initWithFrame:(CGRect)frame
 {

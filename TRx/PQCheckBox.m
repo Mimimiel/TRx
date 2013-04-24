@@ -1,14 +1,14 @@
 //
-//  HQCheckBox.m
+//  PQCheckBox.m
 //  TRx
 //
-//  Created by Mark Bellott on 4/5/13.
+//  Created by Mark Bellott on 4/24/13.
 //  Copyright (c) 2013 Team Ecuador. All rights reserved.
 //
 
-#import "HQCheckBox.h"
+#import "PQCheckBox.h"
 
-@implementation HQCheckBox
+@implementation PQCheckBox
 
 @synthesize toggleCount, optionLabel, arrayIndex;
 
@@ -42,3 +42,4 @@
 }
 
 @end
+

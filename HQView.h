@@ -8,9 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "HQCheckBox.h"
-#import "HQHelper.h"
 #import "HQLabel.h"
-#import "HQSelector.h"
 #import "HQTextField.h"
 #import "HQYesNo.h"
 #import "HQHelper.h"
@@ -39,7 +37,6 @@ typedef enum{
     
     qType type;
     HQLabel *questionLabel;
-    HQSelector *yesNoSelector;
     HQYesNo *yesButton;
     HQYesNo *noButton;
     HQTextField *textEntryField;
@@ -60,7 +57,6 @@ typedef enum{
 @property(nonatomic, readwrite) HQLabel* questionLabel;
 @property(nonatomic, retain) HQTextField *textEntryField;
 @property(nonatomic, retain) HQTextField *otherTextField;
-@property(nonatomic, retain) HQSelector *yesNoSelector;
 @property(nonatomic, retain) HQYesNo *yesButton;
 @property(nonatomic, retain) HQYesNo *noButton;
 @property(nonatomic, retain) NSString *previousTextEntry;
