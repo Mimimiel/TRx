@@ -469,12 +469,15 @@ static FMDatabaseQueue *queue;
         [returnIDs addObject:[NSNumber numberWithInteger:affectedID]];
     }
     
+    /*
     if([tableName isEqualToString:@"Doctor"]){
         sql = [NSMutableString stringWithFormat: @"SELECT * FROM Doctor WHERE FirstName = 'David'"];
         FMResultSet *retval = [db executeQuery:sql];
         [retval next];
         NSLog([NSString stringWithFormat:@"%@", [retval stringForColumn:@"FirstName"]]);
     }
+     */
+    
     return returnIDs;
 }
 
