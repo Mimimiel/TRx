@@ -32,7 +32,7 @@
     
     [center addObserver:self selector:@selector(updatedDataListener:) name:@"loadFromLocal" object:nil];
     
-    NSArray *tables = @[@"Orders"];
+    NSArray *tables = @[@"Order"];
     NSDictionary *params = @{@"tableNames" : tables,
                              @"location" : @"ordersViewController"};
     [[NSNotificationCenter defaultCenter] postNotificationName:@"tabloaded" object:self userInfo:params];
@@ -63,22 +63,30 @@
         if(data){
             NSMutableArray *ordersFiles = [[NSMutableArray alloc] init];
             for(NSString *key in data){
-                if([key isEqualToString:@"Orders"]){
+                if([key isEqualToString:@"Order"]){
                     ordersFiles = [data objectForKey:key];
                 }
             }
+            @try{
             for(NSDictionary *dict in ordersFiles){
-                if([[dict objectForKey:@"OrderTypeId"] isEqualToString:@"1"]){
-                    _ordersTextViewTl.text = [dict objectForKey:@"Text"];
-                } else if ([[dict objectForKey:@"OrderTypeId"] isEqualToString:@"2"]){
-                    _ordersTextViewBl.text = [dict objectForKey:@"Text"];
-
-                } else if ([[dict objectForKey:@"OrderTypeId"] isEqualToString:@"3"]){
-                    _ordersTextViewTr.text = [dict objectForKey:@"Text"];
-
-                } else if ([[dict objectForKey:@"OrderTypeId"] isEqualToString:@"4"]){
-                    _ordersTextViewBr.text = [dict objectForKey:@"Text"];
+                if([dict[@"OrderTypeId"] integerValue] == 1){
+                    [_ordersTextViewTl setText:dict[@"Text"]];
                 }
+                else if([dict[@"OrderTypeId"] integerValue] == 2){
+                    [_ordersTextViewBl setText:dict[@"Text"]];
+
+                }
+                else if([dict[@"OrderTypeId"] integerValue] == 3){
+                    [_ordersTextViewTr setText:dict[@"Text"]];
+
+                }
+                else if([dict[@"OrderTypeId"] integerValue] == 4){
+                    [_ordersTextViewBr setText:dict[@"Text"]];
+                }
+            }
+            }
+            @catch (NSException *e) {
+              //TODO: error handling
             }
             
         }else {

@@ -12,6 +12,7 @@
 #import "NZURLConnection.h"
 #import "Utility.h"
 #import "LocalTalk.h"
+#import "Base64.h"
 #import <UIKit/UIKit.h>
 
 @implementation DBTalk
@@ -930,6 +931,7 @@ static DBTalk *singleton;
     NSMutableDictionary *tables = [[NSMutableDictionary alloc] init];
     NSMutableDictionary *tmp = [[NSMutableDictionary alloc] init];
     NSMutableArray *tmpArray = [[NSMutableArray alloc] init];
+    NSArray *defaults = @[@"Doctor", @"SurgeryType", @"RecordType", @"OrderType", @"OrderTemplate"];
     
     [json addObjectsFromArray:tableData];
     for(NSDictionary *table in json){
@@ -1001,28 +1003,23 @@ static DBTalk *singleton;
         //INSERT or UPDATE OperationRecord
         //TODO: really should be using a table name variable
         //TODO: there are probably some times we should instead update
+        //TODO: for now this only works with type PICTURE, and it is hardcoded to boot
         if(success && [tables objectForKey:@"OperationRecord"] != nil){
             [tmp removeAllObjects];
             [tmpArray removeAllObjects];
             for(NSDictionary *row in tables[@"OperationRecord"]){
-                //TODO: for now this only works with type PICTURE, and it is hardcoded to boot
                 if([row[@"RecordTypeId"] isEqualToString:@"3"]){
                     tmp = [[NSMutableDictionary alloc] init];
                     [tmp addEntriesFromDictionary:row];
                     [tmp removeObjectForKey:@"PatientRecordId"];
                     tmp[@"AppPatientRecordId"] = patientRecordAppId;
                     
-                    //NSURL *url = [get];
-                    /*
-                    [NSURLRequest requestWithURL:[]] placeholderImage:NULL success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
-                        NSLog(@"success");
-                        cell.patientPicture.image = image;
-                    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
-                        NSLog(@"fail");
-                    }];
-*/
+                    NSURL *url = [DBTalk getProfileThumbURLFromServerForPatient:patientId andRecord:patientRecordId];
+                    NSData *imageData = [NSData dataWithContentsOfURL:url];
+                    NSString *imageText;
+                    imageText = [Base64 encode:imageData];
+                    tmp[@"Data"] = imageText;
                     
-                    //tmp[@"Data"] = [DBTalk ];
                     [tmpArray addObject:tmp];
                 }
             }
@@ -1031,6 +1028,39 @@ static DBTalk *singleton;
                 if([returnId integerValue] == 0){
                     success = false;
                     //TODO: upon failure, do what? (besides not trying to further add records etc)
+                }
+            }
+        }
+        
+        //INSERT or UPDATE All other non-default tables
+        for(NSString *key in tables){
+            [tmp removeAllObjects];
+            [tmpArray removeAllObjects];
+            [returnIDs removeAllObjects];
+            
+            if(success && [defaults containsObject:key]){
+                for(NSDictionary *row in tables[key]){
+                    //TODO: this could maybe be condensed...
+                    tmp = [[NSMutableDictionary alloc] init];
+                    [tmp addEntriesFromDictionary:row];
+                    [tmpArray addObject:tmp];
+                }
+                returnIDs = [LocalTalk setSQLiteTable:key withData:tmpArray];
+            }
+            else if(success && ![key isEqualToString:@"Patient"] && ![key isEqualToString:@"PatientRecord"] && ![key isEqualToString:@"OperationRecord"]){
+                for(NSDictionary *row in tables[key]){
+                    tmp = [[NSMutableDictionary alloc] init];
+                    [tmp addEntriesFromDictionary:row];
+                    [tmp removeObjectForKey:@"PatientRecordId"];
+                    tmp[@"AppPatientRecordId"] = patientRecordAppId;
+                    [tmpArray addObject:tmp];
+                }
+                returnIDs = [LocalTalk setSQLiteTable:key withData:tmpArray];
+            }
+            
+            for(NSString *returnId in returnIDs){
+                if([returnId integerValue] == 0){
+                    success = false;
                 }
             }
         }
