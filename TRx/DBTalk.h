@@ -29,6 +29,7 @@
 
 +(UIImage *)getPortraitFromServer:(NSString *)fileName;
 +(NSURL *)getThumbFromServer:(NSString *)fileName;
++(NSURL *)getProfileThumbURLFromServerForPatient:(NSString *)patientId andRecord:(NSString *)patientRecordId;
 +(UIImage *)getProfilePictureFromServer:(NSString *)patientId;
 
 +(NSString *)addProfilePicture:(UIImage *)picture

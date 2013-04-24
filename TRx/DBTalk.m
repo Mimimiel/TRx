@@ -483,17 +483,20 @@ static DBTalk *singleton;
     
     return url;
 }
-+(NSURL *)getProfileThumbFromServerForPatient:(NSString *)patientId {
++(NSURL *)getProfileThumbURLFromServerForPatient:(NSString *)patientId andRecord:(NSString *)patientRecordId {
     
-    NSString *fileName = [DBTalk getProfilePictureNameForPatient:patientId];
+    NSString *fileName = [DBTalk getProfilePictureNameForRecord:patientRecordId];
+    if (!fileName) {
+        return nil;
+    }
     
-    NSString *str = [NSString stringWithFormat:@"%@%@/images/thumbs/%@", imageDir2, patientId, fileName];
+    NSString *str = [NSString stringWithFormat:@"%@%@/images/thumbs/%@.jpeg", imageDir2, patientId, fileName];
     NSURL *url = [NSURL URLWithString:str];
     return url;
 }
-+(NSString *)getProfilePictureNameForPatient:(NSString *)patientId {
++(NSString *)getProfilePictureNameForRecord:(NSString *)patientRecordId {
     
-    NSString *encodedString = [NSString stringWithFormat:@"%@get/profileURL/%@", host, patientId];
+    NSString *encodedString = [NSString stringWithFormat:@"%@get/profileURL/%@", host, patientRecordId];
     NSLog(@"%@", encodedString);
     NSData *data = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:encodedString]];
     
@@ -501,11 +504,17 @@ static DBTalk *singleton;
         
         NSError *jsonError;
         NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&jsonError];
-        NSDictionary *dic = jsonArray[0];
-        NSString *fileName = [dic objectForKey:@"Path"];
-        return fileName;
+        if (jsonArray) {
+            NSLog(@"%@", jsonArray);
+            if (!jsonArray || ![jsonArray count]) {
+                return nil;
+            }
+            NSDictionary *dic = jsonArray[0];
+            NSString *fileName = [dic objectForKey:@"Path"];
+            return fileName;
+        }
     }
-    NSLog(@"getDoctorList didn't work: error in PHP");
+    NSLog(@"getProfilePictureNameForRecord didn't work: error in PHP");
     return NULL;
     
     

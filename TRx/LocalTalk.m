@@ -278,7 +278,10 @@ static FMDatabaseQueue *queue;
         //use date as image name and path
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
         [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-        NSString *now = [dateFormatter stringFromDate:[NSDate date]];
+        //NSString *now = [dateFormatter stringFromDate:[NSDate date]];
+        
+        CFAbsoluteTime time = CFAbsoluteTimeGetCurrent();
+        NSString *now = [NSString stringWithFormat:@"%f", time];
         
         imageDic[@"Name"]               = now;
         imageDic[@"Path"]               = now;
@@ -818,13 +821,14 @@ static FMDatabaseQueue *queue;
             complaint   = [AdminInformation getSurgeryNameById:complaint];
             imageId     = [NSString stringWithFormat:@"%@n000", patientId];
             PatientRecordAppId = nil;
-            pictureURL = [DBTalk getThumbFromServer:imageId];
+            pictureURL =  [DBTalk getProfileThumbURLFromServerForPatient:patientId andRecord:recordId]; //[DBTalk getThumbFromServer:imageId];
             
             Patient *obj = [[Patient alloc] initWithPatientId:patientId currentRecordId:recordId patientRecordAppId:PatientRecordAppId firstName:firstName MiddleName:middleName LastName:lastName birthday:birthday ChiefComplaint:complaint PhotoID:picture PhotoURL:pictureURL];
             
             obj.patientId = patientId;
             NSLog(@"%@", picture);
             NSLog(@"%@", imageId);
+            NSLog(@"pictureUrl: %@", pictureURL);
             [patients addObject:obj];
         }
         
