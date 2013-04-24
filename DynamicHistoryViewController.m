@@ -27,7 +27,7 @@
         [self.navigationController popViewControllerAnimated:YES];
     }
     else{
-        if([[qHelper getQuestionId] isEqualToString:@"preOp_Done"]){
+        if([[qHelper getQuestionId] isEqualToString:@"phys_Done"]){
             nextButton.enabled = YES;
             [nextButton setHidden:NO];
         }

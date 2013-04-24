@@ -7,9 +7,9 @@
 //
 
 #define MAX_Y 50.0f
-#define MID_Y 275.0f
-#define MIN_Y 500.0f
-#define MAIN_X 250.0f
+#define MID_Y 425.0f
+#define MIN_Y 1000.0f
+#define MAIN_X 175.0f
 
 #import "DynamicPhysicalViewController.h"
 
@@ -96,7 +96,7 @@
     [newMainQuestion buildQuestionOfType:newMainQuestion.type withHelper:qHelper];
     [self setPositionForMainQuestion:newMainQuestion];
     
-    if([[qHelper getQuestionId] isEqualToString:@"preOp_Done"]){
+    if([[qHelper getQuestionId] isEqualToString:@"phys_Done"]){
         nextButton.enabled = NO;
         [nextButton setHidden:YES];
     }
@@ -150,13 +150,13 @@
 }
 
 -(void) textFieldDidBeginEditing:(UITextField *)textField{
-    float textYPos = 250, moveDist = 0.0, mPos, tPos;
+    float textYPos = 450, moveDist = 0.0, mPos;
     
     mPos = mainQuestion.frame.origin.y + mainQuestion.frame.size.height;
     
     oMainViewPos = mainQuestion.frame.origin.y;
     
-    if(mPos > 350){
+    if(mPos > 700){
         moveDist = textYPos - mainQuestion.frame.origin.y;
         mainQuestion.frame = CGRectMake(mainQuestion.frame.origin.x, mainQuestion.frame.origin.y - moveDist,
                                         mainQuestion.frame.size.width, mainQuestion.frame.size.height);

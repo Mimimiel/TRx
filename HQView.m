@@ -139,7 +139,7 @@
 
 -(void) buildYesNo{
     
-    if([questionId isEqualToString:@"preOp_Done"]){
+    if([questionId isEqualToString:@"phys_Done"]){
         return;
     }
     
