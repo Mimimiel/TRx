@@ -914,11 +914,14 @@ Principal Diagnosis:
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="TmG-aP-1Jc" userLabel="PatientThumbnail">
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="150" id="6Cc-ev-bDw"/>
+                                    <constraint firstAttribute="width" constant="150" id="ZNK-op-bJh"/>
                                     <constraint firstAttribute="height" constant="150" id="p4t-bc-9Mh"/>
                                 </constraints>
                             </imageView>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Name" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hyP-wJ-Hff" userLabel="NameLabel">
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="150" id="Mio-3h-rAn"/>
+                                </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
@@ -928,22 +931,34 @@ Principal Diagnosis:
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QBm-fF-sea">
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="481" id="fs7-nG-Z5m"/>
+                                </constraints>
+                                <string key="text">DISCHARGE ORDERS (CATARACT)1. You should not drive, consume alcoholic beverages or sign legal documents for 24 hours.2. Contact a local physician if you experience any of the following: Severe pain at injection site Redness, swelling, drainage at injection site Numbness or weakness in legs Difficulty controlling bowel or bladder function Positional headache Fever, chills3. Medication: None</string>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="jGm-GJ-9K2" firstAttribute="leading" secondItem="v0N-NE-vAT" secondAttribute="leading" constant="20" symbolic="YES" type="default" id="0Gr-Da-EyX"/>
-                            <constraint firstItem="hyP-wJ-Hff" firstAttribute="top" secondItem="TmG-aP-1Jc" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="20k-LX-d1a"/>
-                            <constraint firstItem="hyP-wJ-Hff" firstAttribute="trailing" secondItem="jGm-GJ-9K2" secondAttribute="trailing" type="default" id="LHd-s7-J4g"/>
-                            <constraint firstItem="hyP-wJ-Hff" firstAttribute="trailing" secondItem="TmG-aP-1Jc" secondAttribute="trailing" type="default" id="eH2-yh-lEK"/>
+                            <constraint firstItem="QBm-fF-sea" firstAttribute="top" secondItem="v0N-NE-vAT" secondAttribute="top" constant="483" id="18A-bL-I0N"/>
+                            <constraint firstItem="jGm-GJ-9K2" firstAttribute="top" secondItem="v0N-NE-vAT" secondAttribute="top" constant="43" id="Db7-wx-YSf"/>
+                            <constraint firstItem="jGm-GJ-9K2" firstAttribute="trailing" secondItem="hyP-wJ-Hff" secondAttribute="trailing" type="default" id="Stp-pj-fi7"/>
+                            <constraint firstItem="QBm-fF-sea" firstAttribute="leading" secondItem="v0N-NE-vAT" secondAttribute="leading" constant="20" symbolic="YES" type="default" id="aD5-f1-5OT"/>
+                            <constraint firstItem="jGm-GJ-9K2" firstAttribute="leading" secondItem="TmG-aP-1Jc" secondAttribute="trailing" constant="8" symbolic="YES" type="default" id="c0o-FP-6UI"/>
                             <constraint firstItem="TmG-aP-1Jc" firstAttribute="leading" secondItem="v0N-NE-vAT" secondAttribute="leading" constant="20" symbolic="YES" type="default" id="fCV-Cv-LUV"/>
                             <constraint firstItem="TmG-aP-1Jc" firstAttribute="top" secondItem="v0N-NE-vAT" secondAttribute="top" constant="20" symbolic="YES" type="default" id="hGp-mO-5jt"/>
-                            <constraint firstItem="hyP-wJ-Hff" firstAttribute="leading" secondItem="v0N-NE-vAT" secondAttribute="leading" constant="20" symbolic="YES" type="default" id="kwB-pX-jVY"/>
-                            <constraint firstItem="jGm-GJ-9K2" firstAttribute="top" secondItem="hyP-wJ-Hff" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="wdh-Li-slq"/>
+                            <constraint firstItem="hyP-wJ-Hff" firstAttribute="leading" secondItem="TmG-aP-1Jc" secondAttribute="trailing" constant="8" symbolic="YES" type="default" id="lpB-4P-Z5H"/>
+                            <constraint firstItem="hyP-wJ-Hff" firstAttribute="top" secondItem="v0N-NE-vAT" secondAttribute="top" constant="20" symbolic="YES" type="default" id="r1M-KK-tnU"/>
+                            <constraint firstAttribute="trailing" secondItem="QBm-fF-sea" secondAttribute="trailing" constant="20" symbolic="YES" type="default" id="vpy-QH-vHE"/>
                         </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="PACU" image="0238.png" id="eyo-QH-EzR"/>
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics"/>
                     <connections>
+                        <outlet property="ordersTextViewBr" destination="QBm-fF-sea" id="WuP-3D-0GE"/>
                         <outlet property="patientName" destination="hyP-wJ-Hff" id="QFz-Pt-BXw"/>
                         <outlet property="patientSurgery" destination="jGm-GJ-9K2" id="nPw-1C-he5"/>
                         <outlet property="patientThumbnail" destination="TmG-aP-1Jc" id="VDC-UA-uzH"/>
