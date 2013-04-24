@@ -8,6 +8,8 @@
 
 #import "SummaryViewController.h"
 #import "LocalTalk.h"
+#import "DBTalk.h"
+
 @interface SummaryViewController ()
 
 @end
@@ -44,13 +46,48 @@
 	// Do any additional setup after loading the view.
     
     //FIXME This is crashing the app as no picture was loaded into LocalTalk
-    UIImage *image = [LocalTalk localGetPortrait];
-    if (image) {
-        [_patientPicture setImage:[LocalTalk localGetPortrait]];
+//    UIImage *image = [LocalTalk localGetPortrait];
+//    if (image) {
+//        [_patientPicture setImage:[LocalTalk localGetPortrait]];
+//    }
+    
+    NSURL *pictureURL = [DBTalk getProfileThumbURLFromServerForPatient:[LocalTalk localGetPatientId] andRecord:[LocalTalk localGetPatientRecordId]];
+    NSData *imageData = [NSData dataWithContentsOfURL:pictureURL];
+    UIImage *image = [UIImage imageWithData:imageData];
+    if(image) {
+        [_patientPicture setImage:image];
     }
     
+    NSArray *tables = @[@"Patient"];
+    NSDictionary *params = @{@"tableNames" : tables,@"location" : @"PACUViewController"};
+    NSMutableArray *retval;
+    NSMutableDictionary *data = [LocalTalk getData:params];
+    for(NSString *key in data){
+        if([key isEqualToString:@"Patient"]){
+            retval = [data objectForKey:key];
+        }
+    }
     
+    NSDictionary *dict = retval[0];
     
+    NSString *name;
+    NSString *lname;
+    name = @"Name: ";
+    name = [name stringByAppendingString:[dict objectForKey:@"FirstName"]];
+    lname = [dict objectForKey:@"LastName"];
+    name = [name stringByAppendingString:@" "];
+    name = [name stringByAppendingString:lname];
+    _pName.text = name;
+    
+    NSString *birthday;
+    birthday = @"Birthday: ";
+    birthday = [birthday stringByAppendingString:[dict objectForKey:@"Birthday"]];
+    _pBirthday.text = birthday;
+    
+    NSString *surgery;
+    surgery = @"Surgery: Cataracts";
+    //surgery = [surgery stringByAppendingString:[dict objectForKey:@"Surgery"]];
+    _pSurgery.text = surgery;
 }
 
 -(void)updatedDataListener:(NSNotification *)notification {
