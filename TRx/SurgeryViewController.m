@@ -79,10 +79,11 @@
         for(NSString *key in files){
             if([key isEqualToString:@"OperationRecord"]){
                 audioCellsArray = [files objectForKey:key];
+                [filesTable reloadData];
             }
         }
     } else { NSLog(@"not in the right view controller");}
-    [filesTable reloadData];
+   
 }
 
 #pragma mark - UITextField delegate methods 
