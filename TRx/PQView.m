@@ -59,4 +59,39 @@
     questionLabel.text = text;
 }
 
+-(void) buildQuestionOfType:(NSInteger)t withHelper:(PQHelper*)h{
+    questionIndex = h.currentIndex;
+    
+//    if(t==0){
+//        type = YES_NO;
+//        [self buildYesNo];
+//    }
+//    else if(t==1){
+//        type = SELECTION_QUESTION;
+//        if(isEnglish){
+//            [self buildSelectionWithChoices:[h getEnglishChoices]];
+//        }
+//        else{
+//            [self buildSelectionWithChoices:[h getTransChoices]];
+//        }
+//    }
+//    else if(t==2){
+//        type = SELECTION_CHOICES;
+//    }
+//    else if(t==3){
+//        type = TEXT_ENTRY;
+//        [self buildTextEntry];
+//    }
+//    if(t==4){
+//        type = TEXT_SELECTION;
+//        [self buildTextSelection];
+//    }
+//    else{
+//        NSLog(@"Error: Invalid Question Type Encountered.");
+//    }
+    
+    questionId = [h getQuestionId];
+    //[self restorePreviousAnswers];
+}
+
 @end

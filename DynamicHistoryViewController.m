@@ -27,6 +27,9 @@
         [self.navigationController popViewControllerAnimated:YES];
     }
     else{
+        if([[qHelper getQuestionId] isEqualToString:@"preOp_Done"]){
+            nextButton.enabled = YES;
+        }
         [self loadPreviousQuestion];
         pageCount--;
     }
@@ -110,6 +113,10 @@
     
     [newTransQuestion buildQuestionOfType:newTransQuestion.type withHelper:qHelper];
     [self setPositionForTransQuestion:newTransQuestion];
+    
+    if([[qHelper getQuestionId] isEqualToString:@"preOp_Done"]){
+        nextButton.enabled = NO;
+    }
     
     if(newMainQuestion.type == TEXT_ENTRY){
         newMainQuestion.textEntryField.delegate = self;

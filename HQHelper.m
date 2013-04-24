@@ -130,6 +130,10 @@
     
     tmp = [[indexHelper alloc] initWithID:@"preOp_ListAllergies" NextYes:1 NextNo:1];
     [questionTracker addObject:tmp];
+    
+    tmp = [[indexHelper alloc] initWithID:@"preOp_Done" NextYes:0 NextNo:0];
+    [questionTracker addObject:tmp];
+
 }
 
 -(NSInteger) getNextType{
