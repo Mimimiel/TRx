@@ -92,5 +92,6 @@
 +(BOOL)storeMutableArrayFromAdmin:(NSMutableArray *)adminArray  inTable:(NSString *)tableName;
 +(NSString *)getOperationRecordTypeIdByNameFromSQLite:operationRecordTypeName;
 +(NSMutableArray *)localGetUnsyncedRecordsFromTable:(NSString *)table;
++(NSMutableDictionary *)localGetOperationRecordInfoByName:(NSString *)name;
 
 @end

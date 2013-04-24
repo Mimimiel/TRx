@@ -18,6 +18,7 @@
 
 static NSString *host = nil;
 static NSString *imageDir = nil;
+static NSString *imageDir2 = nil;
 static NSString *dbPath = nil;
 static BOOL connectivity = false;
 static Reachability *internetReachable = nil;
@@ -34,6 +35,7 @@ static DBTalk *singleton;
     {
         host = @"http://www.teamecuadortrx.com/TRxTalk/index.php/";
         imageDir = @"http://teamecuadortrx.com/TRxTalk/Data/images/";
+        imageDir2 = @"http://teamecuadortrx.com/TRxTalk/PatientData/";
         dbPath = [Utility getDatabasePath];
         
         initialized = true;
@@ -197,8 +199,6 @@ static DBTalk *singleton;
     else {
         //successfully returned patient
         
-//        BOOL success = [LocalTalk insertPatientId:retval forFirstName:[jsonDic objectForKey:@"FirstName"]
-//                          lastName:[jsonDic objectForKey:@"LastName"] birthday:[jsonDic objectForKey:@"Birthday"]];
         NSMutableArray *array = [[NSMutableArray alloc] init];
         NSMutableArray *retArray = [[NSMutableArray alloc] init];
         NSString *appId = [LocalTalk localGetPatientAppId];
@@ -483,6 +483,33 @@ static DBTalk *singleton;
     
     return url;
 }
++(NSURL *)getProfileThumbFromServerForPatient:(NSString *)patientId {
+    
+    NSString *fileName = [DBTalk getProfilePictureNameForPatient:patientId];
+    
+    NSString *str = [NSString stringWithFormat:@"%@%@/images/thumbs/%@", imageDir2, patientId, fileName];
+    NSURL *url = [NSURL URLWithString:str];
+    return url;
+}
++(NSString *)getProfilePictureNameForPatient:(NSString *)patientId {
+    
+    NSString *encodedString = [NSString stringWithFormat:@"%@get/profileURL/%@", host, patientId];
+    NSLog(@"%@", encodedString);
+    NSData *data = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:encodedString]];
+    
+    if (data) {
+        
+        NSError *jsonError;
+        NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&jsonError];
+        NSDictionary *dic = jsonArray[0];
+        NSString *fileName = [dic objectForKey:@"Path"];
+        return fileName;
+    }
+    NSLog(@"getDoctorList didn't work: error in PHP");
+    return NULL;
+    
+    
+}
 
 
 /*---------------------------------------------------------------------------
@@ -644,23 +671,23 @@ static DBTalk *singleton;
 //NOTE custom Names are only for internal use. They get stored
 //in the server but do not get used in the file structure.
 
-+(void)uploadFileToServer:(id)file
-               customName:(NSString *)customName
-                 fileType:(NSString *)fileType
-               forPatient:(NSString *)patientId {
-    
-    if ([fileType isEqualToString:@"image"]) {
-        UIImage *image = [[UIImage alloc] initWithData:file];
-        //[DBTalk uploadImageToServer:image fileName:customName forPatient:patientId];
-    }
-    else if ([fileType isEqualToString:@"audio"]) {
-        
-    }
-    else {
-        NSLog(@"No method for file of that type");
-        [Utility alertWithMessage:@"No method for file of that type"];
-    }
-}
+//+(void)uploadFileToServer:(id)file
+//               customName:(NSString *)customName
+//                 fileType:(NSString *)fileType
+//               forPatient:(NSString *)patientId {
+//    
+//    if ([fileType isEqualToString:@"image"]) {
+//        UIImage *image = [[UIImage alloc] initWithData:file];
+//        //[DBTalk uploadImageToServer:image fileName:customName forPatient:patientId];
+//    }
+//    else if ([fileType isEqualToString:@"audio"]) {
+//        
+//    }
+//    else {
+//        NSLog(@"No method for file of that type");
+//        [Utility alertWithMessage:@"No method for file of that type"];
+//    }
+//}
 
 
 
@@ -671,30 +698,45 @@ static DBTalk *singleton;
 
 //FIXME sent picture info to database
 +(NSString *)pictureInfoToDatabase:(NSDictionary *)params {
-    
-    
-    
+  
     NSURL *url = [NSURL URLWithString:host];
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
     
     [httpClient postPath:@"add/picturePathToDatabase" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"Picture path added successfully");
         NSLog(@"Response: %@", [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding]);
-//        NSError *jsonError;
-//        NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:responseObject options:kNilOptions error:&jsonError];
-//        NSDictionary *dic = jsonArray[0];
-//        NSString *retval = [dic objectForKey:@"@returnValue"];
-//        if ([retval isEqualToString:@"0"]) {
-//            NSString *err = [dic objectForKey:@"error"];
-//            [Utility alertWithMessage:err];
-//            NSLog(@"error: %@", err);
-//            
-//        }
-//        else {
-//            //update sync
-//            NSLog(@"Response: %@", [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding]);
-//            NSLog(@"It really worked: %@", dic);
-//        }
+
+        NSError *jsonError;
+        NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:responseObject options:kNilOptions error:&jsonError];
+        NSDictionary *dic = jsonArray[0];
+        NSString *retval = [dic objectForKey:@"@returnValue"];
+        if ([retval isEqualToString:@"0"]) {
+            NSString *err = [dic objectForKey:@"error"];
+            [Utility alertWithMessage:err];
+            NSLog(@"error: %@", err);
+            
+        }
+        else {
+            //update sync
+            NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+            [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+            NSString *now = [dateFormatter stringFromDate:[NSDate date]];
+            
+            NSLog(@"It really worked: %@", dic);
+            NSMutableDictionary *myDic = [LocalTalk localGetOperationRecordInfoByName:params[@"Name"]];
+            
+            myDic[@"Id"] = dic[@"@returnValue"];
+            myDic[@"LastSynced"] = now;
+            NSMutableArray *array = [[NSMutableArray alloc] init];
+            
+            array[0] = @{@"AppId" : [NSString stringWithFormat:@"%@", myDic[@"AppId"]],
+                         @"LastSynced" : now,
+                         @"Id" :    dic[@"@returnValue"]};
+            
+            
+            [LocalTalk setSQLiteTable:@"OperationRecord" withData:array];
+            
+        }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Picture path update failed");
     }];

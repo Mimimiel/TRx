@@ -881,6 +881,23 @@ static FMDatabaseQueue *queue;
     return retval;
 }
 
++(NSMutableDictionary *)localGetOperationRecordInfoByName:(NSString *)name {
+    NSString *query = [NSString stringWithFormat:@"SELECT * FROM OperationRecord WHERE Name = \"%@\"", name];
+    NSDictionary *dict;
+    FMResultSet *results = [db executeQuery:query];
+    if (!results) {
+        NSLog(@"The query in localGetPatientListFromSQLite didn't return anything good :(");
+        NSLog(@"%@", [db lastErrorMessage]);
+    }
+    while([results next]){
+        dict = [results resultDictionary];
+    }
+    
+    NSMutableDictionary *retDic = [[NSMutableDictionary alloc] initWithDictionary:dict];
+    
+    return retDic;
+}
+
 
 /*---------------------------------------------------------------------------
  Summary:
