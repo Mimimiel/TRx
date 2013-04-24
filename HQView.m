@@ -335,12 +335,14 @@
         }
     }
     else if(type == SELECTION_QUESTION){
+        NSMutableArray *lables = [[NSMutableArray alloc]init];
         for(HQCheckBox *cb in checkBoxes){
+            [lables addObject:cb.optionLabel];
             if([answers containsObject:cb.optionLabel]){
                 [self checkPressed:cb];
             }
         }
-        if(![[[checkBoxes lastObject] optionLabel] isEqual:[answers lastObject]]){
+        if(![lables containsObject:[answers lastObject]] && ![[answers objectAtIndex:0] isEqualToString:@"NO"]){
             otherTextField.text = [answers lastObject];
             connectedView.otherTextField.text = [answers lastObject];
         }

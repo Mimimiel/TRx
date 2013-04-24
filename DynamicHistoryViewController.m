@@ -244,15 +244,28 @@
     }
     
     else if (mainQuestion.type == SELECTION_QUESTION){
-        [answers addObject:@"YES"];
+        NSInteger counter = 0;;
+        NSMutableArray *holder = [[NSMutableArray alloc] init];
+        
         for(HQCheckBox *cb in mainQuestion.checkBoxes){
             if(cb.selected){
-                [answers addObject:cb.optionLabel];
-                
+                [holder addObject:cb.optionLabel];
+                counter++;
             }
         }
-        if(mainQuestion.otherTextField.text.length > 0){
-            [answers addObject:mainQuestion.otherTextField.text];
+        
+        if((counter == 0) && (mainQuestion.otherTextField.text.length == 0)){
+            [answers addObject:@"NO"];
+        }
+        else{
+            [answers addObject:@"YES"];
+        
+            for(NSString *s in holder){
+                [answers addObject:s];
+            }
+            if(mainQuestion.otherTextField.text.length > 0){
+                [answers addObject:mainQuestion.otherTextField.text];
+            }
         }
     }
     
