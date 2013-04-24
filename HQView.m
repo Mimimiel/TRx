@@ -26,7 +26,7 @@
 
 @implementation HQView
 
-@synthesize questionIndex, hasAnswer, isEnglish, shouldBranch, questionLabel, type, textEntryField, otherTextField, yesNoSelector, yesButton, noButton, previousTextEntry, answerString, checkBoxes, connectedView;
+@synthesize questionIndex, hasAnswer, isEnglish, shouldBranch, questionLabel, type, textEntryField, otherTextField, yesButton, noButton, previousTextEntry, answerString, checkBoxes, connectedView;
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -65,6 +65,7 @@
 
 -(void) buildQuestionOfType:(NSInteger)t withHelper:(HQHelper*)h{
     questionIndex = h.currentIndex;
+    questionId = [h getQuestionId];
     
     if(t==0){
         type = YES_NO;
@@ -137,6 +138,10 @@
 #pragma mark - Yes No Methods
 
 -(void) buildYesNo{
+    
+    if([questionId isEqualToString:@"phys_Done"]){
+        return;
+    }
     
     yesButton = [[HQYesNo alloc]initWithFrame:CGRectMake(questionLabel.frame.origin.x + YES_PADDING, questionLabel.frame.origin.y + Y_PADDING + questionLabel.frame.size.height, 125, 75)];
     noButton = [[HQYesNo alloc]initWithFrame:CGRectMake(questionLabel.frame.origin.x + NO_PADDING, questionLabel.frame.origin.y + Y_PADDING + questionLabel.frame.size.height, 125, 75)];
@@ -335,12 +340,14 @@
         }
     }
     else if(type == SELECTION_QUESTION){
+        NSMutableArray *lables = [[NSMutableArray alloc]init];
         for(HQCheckBox *cb in checkBoxes){
+            [lables addObject:cb.optionLabel];
             if([answers containsObject:cb.optionLabel]){
                 [self checkPressed:cb];
             }
         }
-        if(![[[checkBoxes lastObject] optionLabel] isEqual:[answers lastObject]]){
+        if(![lables containsObject:[answers lastObject]] && ![[answers objectAtIndex:0] isEqualToString:@"NO"]){
             otherTextField.text = [answers lastObject];
             connectedView.otherTextField.text = [answers lastObject];
         }

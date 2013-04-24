@@ -46,7 +46,32 @@
     pIndexHelper *tmp;
     questionTracker = [[NSMutableArray alloc]init];
     
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_BloodPressure" NextYes:1 NextNo:1];
+    [questionTracker addObject:tmp];
     
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_HeartRate" NextYes:1 NextNo:1];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_RestMin" NextYes:1 NextNo:1];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_OxSat" NextYes:1 NextNo:1];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_Temp" NextYes:1 NextNo:1];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_Height" NextYes:1 NextNo:1];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_Weight" NextYes:1 NextNo:1];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_AwakeOriented" NextYes:1 NextNo:1];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_Done" NextYes:1 NextNo:1];
+    [questionTracker addObject:tmp];
 }
 
 -(NSInteger) getNextType{

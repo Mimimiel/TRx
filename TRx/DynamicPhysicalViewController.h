@@ -7,23 +7,31 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Question.h"
 #import "PQHelper.h"
 #import "PQView.h"
 
-@interface DynamicPhysicalViewController : UIViewController{
+@interface DynamicPhysicalViewController : UIViewController<UITextFieldDelegate>{
     
+    float availableSpace, oMainViewPos, oTransViewPos;
     NSInteger pageCount;
-    float availableSpace;
+    NSString *mainQuestionText;
     
     PQHelper *qHelper;
+    
     PQView *mainQuestion;
     
+    //Arrays of Questions for main storage
+    NSMutableArray *currentPage;
     NSMutableArray *previousPages;
     NSMutableArray *answers;
     
-    IBOutlet UIButton *nextButton, *backButtonl;
+    NSString *answerString;
+    
+    IBOutlet UIButton *backButton, *nextButton;
 }
 
+//IBActions
 -(IBAction)backPressed:(id)sender;
 -(IBAction)nextPressed:(id)sender;
 

@@ -499,7 +499,6 @@ static FMDatabaseQueue *queue;
  NSString of Id
  *---------------------------------------------------------------------------*/
 +(NSString *)localGetPatientId {
-    
     //Get Patient.Id (patient server identifier) from Local for the IsLive PatientRecord
     NSString *query;
     query = [NSString stringWithFormat:

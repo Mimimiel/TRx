@@ -30,7 +30,7 @@
     
     _complaintsArray = [AdminInformation getSurgeryNames];
     
-    //_imageView.image = [UIImage imageNamed:@"PatientPhotoBlank.png"];
+    _imageView.image = [UIImage imageNamed:@"PatientPhotoBlank.png"];
     
 //    firstNameText.delegate = self;
 //    middleNameText.delegate = self;

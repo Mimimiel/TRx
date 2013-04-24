@@ -31,7 +31,6 @@
     NSString *answerString;
     
     IBOutlet UIButton *backButton, *nextButton;
-    
 }
 
 //IBActions

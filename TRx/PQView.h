@@ -7,8 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "PQCheckBox.h"
 #import "PQLabel.h"
 #import "PQTextField.h"
+#import "PQYesNo.h"
 #import "PQHelper.h"
 
 typedef enum{
@@ -35,6 +37,8 @@ typedef enum{
     
     qType type;
     PQLabel *questionLabel;
+    PQYesNo *yesButton;
+    PQYesNo *noButton;
     PQTextField *textEntryField;
     PQTextField *otherTextField;
     
@@ -50,8 +54,20 @@ typedef enum{
 @property(nonatomic, readwrite) PQLabel* questionLabel;
 @property(nonatomic, retain) PQTextField *textEntryField;
 @property(nonatomic, retain) PQTextField *otherTextField;
+@property(nonatomic, retain) PQYesNo *yesButton;
+@property(nonatomic, retain) PQYesNo *noButton;
 @property(nonatomic, retain) NSString *previousTextEntry;
 @property(nonatomic, retain) NSString *answerString;
 @property(nonatomic, retain) NSMutableArray *checkBoxes;
+
+-(void) checkHasAnswer;
+-(void) setQuestionLabelText:(NSString *)text;
+-(void) buildQuestionOfType:(NSInteger)t withHelper:(PQHelper*)h;
+-(void) buildYesNo;
+-(void) buildSingleSelection;
+-(void) buildSelectionWithChoices:(NSArray*)choices;
+-(void) buildTextEntry;
+-(void) restorePreviousAnswers;
+-(void) adjustFrame;
 
 @end

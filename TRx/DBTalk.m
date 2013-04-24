@@ -771,52 +771,112 @@ static DBTalk *singleton;
 }
 
 /*-----------------------------------------------------------------------
-Method: loadDataFromServer withData
-Returns:
-Summary: insert or update rows into any table in the local database
- each row can look like whatever (i.e. don't have to be identical)
- Summary: insert rows into some table in the local database
- //TODO: inserts vs updates? i.e. should this also handle updates
+ Method: loadDataFromServer
+ Returns:
+    void
+    it will pub "loadFromLocal" upon completion (rain or shine)
+ Summary:
+    Prepare the local database for whomeever needs it. In short--
+    If connection, load data from the server into local
+    If no connection, everyone the go ahead to use local
  //TODO: error handling
- -----------------------------------------------------------------------*/
+-----------------------------------------------------------------------*/
 + (void)loadDataFromServer:(NSDictionary *)params {
+    //With Connection:
+    //Call php for [tables] for isLive patient record; this returns [{tablename:[{rows}]}, {tablename:[{rows}]}, etc]
+    //Call setSQLiteTableWithData for all rows in all tables according to syncing method
+    //Syncing method:
+        //Check if SQLite has this id
+        //If it doesn't, add server record and attach appropriately
+        //If it does,
+            //If sqlite lastmod < servermod, replace SQLite
+            //If sqlite lastmod >= servermod, ignore
+    //Pub "loadFromLocal"
     
-    __block typeof(self) this = self;
-    NSURL *url = [NSURL URLWithString:host];
-    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
     /*take tables and pass dictionary of patients info from local instead*/
     /*get patient and patientRecordId from local database if there isn't one, don't call it*/
-    NSDictionary *dbobj;
+    __block typeof(self) this = self;
+    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:[NSURL URLWithString:host]];
+    NSMutableURLRequest *request;
     NSString *patientRecordId = [LocalTalk localGetPatientRecordId];
     NSString *patientId = [LocalTalk localGetPatientId];
-    NSLog(@"the Patient Id is: %@ and the P-Record Id is: %@", patientId, patientRecordId);
+    NSDictionary *dbobj;
     
-    if(patientId != nil && patientRecordId != nil){
-        dbobj = @{@"tableNames" : [params objectForKey:@"tableNames"],
-                  @"patientRecordId" : patientRecordId,
-                  @"patientId" : patientId,
-                  @"location" : [params objectForKey:@"location"] };
-    } else { dbobj = nil; }
+    //TODO: look at whether this should work even if no patientid and patientrecordid--i.e. for ordertemplate, surgery, etc default tables
+    //if(patientId != nil && patientRecordId != nil)
+    //{
+        dbobj = @{@"tableNames": [params objectForKey:@"tableNames"],
+                  @"patientId": patientId,
+                  @"patientRecordId": patientRecordId,
+                  @"location": [params objectForKey:@"location"]};
+    //}
+    //else
+    //{
+    //    dbobj = nil;
+    //}
     
     if(dbobj != nil){
-        NSMutableURLRequest *request = [httpClient requestWithMethod:@"POST" path:@"get/dataFromTables" parameters:dbobj];
+        //Call php for the necessary tables
+        request = [httpClient requestWithMethod:@"POST" path:@"get/dataFromTables" parameters:dbobj];
         [AFJSONRequestOperation addAcceptableContentTypes:[NSSet setWithObject:@"text/html"]];
         AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-            NSLog(@"This was the response: %@", response);
-              [this loadDataintoSQLiteWith:JSON];
-              [[NSNotificationCenter defaultCenter] postNotificationName:@"loadFromLocal" object:this userInfo:params];
+            
+            //[this loadDataintoSQLiteWith:JSON];
+            
+            //Local is now all set up, so pub
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"loadFromLocal" object:this userInfo:params];
         } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
-            NSLog(@"Request Failure Because %@",[error userInfo]);
-              [[NSNotificationCenter defaultCenter] postNotificationName:@"loadFromLocal" object:this userInfo:params];
+            //Local can't be updated after all, so go ahead and pub
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"loadFromLocal" object:this userInfo:params];
         }];
+        //operation.JSONReadingOptions = NSJSONReadingAllowFragments;;
+        operation.JSONReadingOptions = NSJSONReadingMutableContainers;
         
         [operation start];
     } else {
         /*it's a new patient or something went wrong*/
         //TODO: LOCK DOWN OTHER TABS HERE BEFORE WE PUB
-
+        
         [[NSNotificationCenter defaultCenter] postNotificationName:@"loadFromLocal" object:this userInfo:params];
     }
+    
+    //ORIGINAL CODE
+//    /*take tables and pass dictionary of patients info from local instead*/
+//    /*get patient and patientRecordId from local database if there isn't one, don't call it*/
+//    __block typeof(self) this = self;
+//    NSURL *url = [NSURL URLWithString:host];
+//    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+//    NSDictionary *dbobj;
+//    NSString *patientRecordId = [LocalTalk localGetPatientRecordId];
+//    NSString *patientId = [LocalTalk localGetPatientId];
+//    NSLog(@"the Patient Id is: %@ and the P-Record Id is: %@", patientId, patientRecordId);
+//    
+//    if(patientId != nil && patientRecordId != nil){
+//        dbobj = @{@"tableNames" : [params objectForKey:@"tableNames"],
+//                  @"patientRecordId" : patientRecordId,
+//                  @"patientId" : patientId,
+//                  @"location" : [params objectForKey:@"location"] };
+//    } else { dbobj = nil; }
+//    
+//    if(dbobj != nil){
+//        NSMutableURLRequest *request = [httpClient requestWithMethod:@"POST" path:@"get/dataFromTables" parameters:dbobj];
+//        [AFJSONRequestOperation addAcceptableContentTypes:[NSSet setWithObject:@"text/html"]];
+//        AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+//            NSLog(@"This was the response: %@", response);
+//              [this loadDataintoSQLiteWith:JSON];
+//              [[NSNotificationCenter defaultCenter] postNotificationName:@"loadFromLocal" object:this userInfo:params];
+//        } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
+//            NSLog(@"Request Failure Because %@",[error userInfo]);
+//              [[NSNotificationCenter defaultCenter] postNotificationName:@"loadFromLocal" object:this userInfo:params];
+//        }];
+//        
+//        [operation start];
+//    } else {
+//        /*it's a new patient or something went wrong*/
+//        //TODO: LOCK DOWN OTHER TABS HERE BEFORE WE PUB
+//
+//        [[NSNotificationCenter defaultCenter] postNotificationName:@"loadFromLocal" object:this userInfo:params];
+//    }
 }
 
 /***********************************************************************************************************

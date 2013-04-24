@@ -1,14 +1,14 @@
 //
-//  HQYesNo.m
+//  PQYesNo.m
 //  TRx
 //
-//  Created by Mark Bellott on 4/20/13.
+//  Created by Mark Bellott on 4/24/13.
 //  Copyright (c) 2013 Team Ecuador. All rights reserved.
 //
 
-#import "HQYesNo.h"
+#import "PQYesNo.h"
 
-@implementation HQYesNo
+@implementation PQYesNo
 
 @synthesize hasChanged;
 
