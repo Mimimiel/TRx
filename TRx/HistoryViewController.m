@@ -94,7 +94,10 @@
 //    [LocalTalkWrapper addNewPatientAndSynchData];
     
     NSDate * selected = [_birthdayPicker date];
-    newPatient.birthday = [selected description];
+    NSDateFormatter *df = [[NSDateFormatter alloc]init];
+    [df setDateFormat:@"yyyy-MM-dd"];
+    NSString *dateString = [df stringFromDate:selected];
+    newPatient.birthday = dateString;
     
     if (!newPatient.middleName) {
         newPatient.middleName = @"NULL";
