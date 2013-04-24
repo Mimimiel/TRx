@@ -60,6 +60,7 @@
 
 -(void) buildQuestionOfType:(NSInteger)t withHelper:(PQHelper*)h{
     questionIndex = h.currentIndex;
+    questionId = [h getQuestionId];
     
     if(t==0){
         type = YES_NO;
@@ -85,7 +86,7 @@
     }
     
     questionId = [h getQuestionId];
-    //[self restorePreviousAnswers];
+    [self restorePreviousAnswers];
 }
 
 -(void) checkHasAnswer{
@@ -128,7 +129,7 @@
 
 -(void) buildYesNo{
     
-    if([questionId isEqualToString:@"preOp_Done"]){
+    if([questionId isEqualToString:@"phys_Done"]){
         return;
     }
     

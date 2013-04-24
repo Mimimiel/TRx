@@ -70,7 +70,37 @@
     tmp = [[pIndexHelper alloc] initWithID:@"phys_AwakeOriented" NextYes:1 NextNo:1];
     [questionTracker addObject:tmp];
     
-    tmp = [[pIndexHelper alloc] initWithID:@"phys_Done" NextYes:1 NextNo:1];
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_Heent" NextYes:2 NextNo:2];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_HeentSelect" NextYes:0 NextNo:0];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_ChestCTAB" NextYes:1 NextNo:1];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_ChestRRR" NextYes:1 NextNo:1];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_ChestSym" NextYes:1 NextNo:1];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_ChestPulse" NextYes:1 NextNo:1];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_AbSoft" NextYes:1 NextNo:1];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_AbNT" NextYes:1 NextNo:1];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_AbND" NextYes:1 NextNo:1];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_AbBS" NextYes:1 NextNo:1];
+    [questionTracker addObject:tmp];
+    
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_Done" NextYes:0 NextNo:0];
     [questionTracker addObject:tmp];
 }
 

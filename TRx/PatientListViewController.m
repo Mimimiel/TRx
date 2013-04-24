@@ -157,7 +157,7 @@
         NSLog(@"success");
       cell.patientPicture.image = image;
     } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
-        NSLog(@"fail");
+        NSLog(@"fail. error: %@", error);
   }];
     
     return cell;

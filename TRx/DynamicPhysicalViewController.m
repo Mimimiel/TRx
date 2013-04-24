@@ -24,6 +24,10 @@
         [self.navigationController popViewControllerAnimated:YES];
     }
     else{
+        if([[qHelper getQuestionId] isEqualToString:@"phys_Done"]){
+            nextButton.enabled = YES;
+            [nextButton setHidden:NO];
+        }
         [self loadPreviousQuestion];
         pageCount--;
     }
@@ -76,6 +80,7 @@
         if(!mainQuestion.hasAnswer && mainQuestion.type != SELECTION_QUESTION){
             UIAlertView *provideAnswer = [[UIAlertView alloc] initWithTitle:@"Wait!" message:@"Please provide an answer before continuing." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
             [provideAnswer show];
+            pageCount--;
             return;
         }
         

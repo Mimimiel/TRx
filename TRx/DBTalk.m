@@ -18,6 +18,7 @@
 
 static NSString *host = nil;
 static NSString *imageDir = nil;
+static NSString *imageDir2 = nil;
 static NSString *dbPath = nil;
 static BOOL connectivity = false;
 static Reachability *internetReachable = nil;
@@ -34,6 +35,7 @@ static DBTalk *singleton;
     {
         host = @"http://www.teamecuadortrx.com/TRxTalk/index.php/";
         imageDir = @"http://teamecuadortrx.com/TRxTalk/Data/images/";
+        imageDir2 = @"http://teamecuadortrx.com/TRxTalk/PatientData/";
         dbPath = [Utility getDatabasePath];
         
         initialized = true;
@@ -75,6 +77,9 @@ static DBTalk *singleton;
     else if ((patientId && !recordId) || recordUnsynced) {
         [DBTalk addUpdatePatientRecord];
     }
+    else {
+        [DBTalk synchTables];
+    }
     
     //check if each record is unsynced
     //if unsynced,
@@ -84,10 +89,22 @@ static DBTalk *singleton;
     //FIXME this is going to push every time until everything is working and syncing
     //Find a work-around for short-term (only push on own tab?????)
     
+
+    
+    
+    //check if image is unsynced and push if unsynced
+        //calls uploadFileToServer() use "image" and later ?? getOperationTypeRecordName
+    
+    
+    //check if recordId is null
+    NSLog(@"Exiting DBTalk's pushLocalUnsyncedToServer");
+}
+
++(void)synchTables {
     NSMutableArray *array = [LocalTalk localGetUnsyncedRecordsFromTable:@"OperationRecord"];
     
     //FIXME this is only getting the current patient's ID; I need Id for any unsynced image
-    patientId     = [LocalTalk localGetPatientId];
+    NSString *patientId     = [LocalTalk localGetPatientId];
     NSString *recordTypeId, *patientRecordId;
     if (array) {
         for (NSDictionary *dic in array) {
@@ -105,6 +122,8 @@ static DBTalk *singleton;
             if([recordTypeId isEqualToString:@"3"]){
                 NSLog(@"Attempting to add image for patientId: %@", patientId);
                 [DBTalk uploadFileToServer:[LocalTalk localGetPortrait] fileType:@"image" fileName:dic[@"Name"] patientId:patientId];
+                
+                
                 
                 [DBTalk pictureInfoToDatabase:dic];
                 
@@ -276,13 +295,31 @@ static DBTalk *singleton;
             [Utility alertWithMessage:err];
         }
         else {
+            
+            NSMutableArray *array = [[NSMutableArray alloc] init];
+            
+            
+            
+            NSString *appId = [LocalTalk localGetPatientRecordAppId];
+      
+            
+            NSDictionary *dic = @{@"AppId": appId,
+                                  @"Id": retval};
+            array[0] = dic;
+            [LocalTalk setSQLiteTable:@"PatientRecord" withData:array];
+            
+            
             BOOL inserted = [LocalTalk insertRecordId:retval];
             if (!inserted) {
                 NSLog(@"RecordId not inserted into Local. RecordId: %@", retval);
             }
         }
+        
+        
+        
         NSLog(@"%@", [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding]);
         //[[NSNotificationCenter defaultCenter] postNotificationName:@"patientAdded" object:nil];
+        [DBTalk synchTables];
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"AddRecord failed");
@@ -456,6 +493,42 @@ static DBTalk *singleton;
     
     return url;
 }
++(NSURL *)getProfileThumbURLFromServerForPatient:(NSString *)patientId andRecord:(NSString *)patientRecordId {
+    
+    NSString *fileName = [DBTalk getProfilePictureNameForRecord:patientRecordId];
+    if (!fileName) {
+        return nil;
+    }
+    
+    NSString *str = [NSString stringWithFormat:@"%@%@/images/thumbs/%@.jpeg", imageDir2, patientId, fileName];
+    NSURL *url = [NSURL URLWithString:str];
+    return url;
+}
++(NSString *)getProfilePictureNameForRecord:(NSString *)patientRecordId {
+    
+    NSString *encodedString = [NSString stringWithFormat:@"%@get/profileURL/%@", host, patientRecordId];
+    NSLog(@"%@", encodedString);
+    NSData *data = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:encodedString]];
+    
+    if (data) {
+        
+        NSError *jsonError;
+        NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&jsonError];
+        if (jsonArray) {
+            NSLog(@"%@", jsonArray);
+            if (!jsonArray || ![jsonArray count]) {
+                return nil;
+            }
+            NSDictionary *dic = jsonArray[0];
+            NSString *fileName = [dic objectForKey:@"Path"];
+            return fileName;
+        }
+    }
+    NSLog(@"getProfilePictureNameForRecord didn't work: error in PHP");
+    return NULL;
+    
+    
+}
 
 
 /*---------------------------------------------------------------------------
@@ -617,23 +690,23 @@ static DBTalk *singleton;
 //NOTE custom Names are only for internal use. They get stored
 //in the server but do not get used in the file structure.
 
-+(void)uploadFileToServer:(id)file
-               customName:(NSString *)customName
-                 fileType:(NSString *)fileType
-               forPatient:(NSString *)patientId {
-    
-    if ([fileType isEqualToString:@"image"]) {
-        UIImage *image = [[UIImage alloc] initWithData:file];
-        //[DBTalk uploadImageToServer:image fileName:customName forPatient:patientId];
-    }
-    else if ([fileType isEqualToString:@"audio"]) {
-        
-    }
-    else {
-        NSLog(@"No method for file of that type");
-        [Utility alertWithMessage:@"No method for file of that type"];
-    }
-}
+//+(void)uploadFileToServer:(id)file
+//               customName:(NSString *)customName
+//                 fileType:(NSString *)fileType
+//               forPatient:(NSString *)patientId {
+//    
+//    if ([fileType isEqualToString:@"image"]) {
+//        UIImage *image = [[UIImage alloc] initWithData:file];
+//        //[DBTalk uploadImageToServer:image fileName:customName forPatient:patientId];
+//    }
+//    else if ([fileType isEqualToString:@"audio"]) {
+//        
+//    }
+//    else {
+//        NSLog(@"No method for file of that type");
+//        [Utility alertWithMessage:@"No method for file of that type"];
+//    }
+//}
 
 
 
@@ -644,14 +717,14 @@ static DBTalk *singleton;
 
 //FIXME sent picture info to database
 +(NSString *)pictureInfoToDatabase:(NSDictionary *)params {
-    
-    
-    
+  
     NSURL *url = [NSURL URLWithString:host];
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
     
     [httpClient postPath:@"add/picturePathToDatabase" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"Picture path added successfully");
+        NSLog(@"Response: %@", [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding]);
+
         NSError *jsonError;
         NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:responseObject options:kNilOptions error:&jsonError];
         NSDictionary *dic = jsonArray[0];
@@ -664,7 +737,24 @@ static DBTalk *singleton;
         }
         else {
             //update sync
+            NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+            [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+            NSString *now = [dateFormatter stringFromDate:[NSDate date]];
+            
             NSLog(@"It really worked: %@", dic);
+            NSMutableDictionary *myDic = [LocalTalk localGetOperationRecordInfoByName:params[@"Name"]];
+            
+            myDic[@"Id"] = dic[@"@returnValue"];
+            myDic[@"LastSynced"] = now;
+            NSMutableArray *array = [[NSMutableArray alloc] init];
+            
+            array[0] = @{@"AppId" : [NSString stringWithFormat:@"%@", myDic[@"AppId"]],
+                         @"LastSynced" : now,
+                         @"Id" :    dic[@"@returnValue"]};
+            
+            
+            [LocalTalk setSQLiteTable:@"OperationRecord" withData:array];
+            
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Picture path update failed");
