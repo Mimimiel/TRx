@@ -19,21 +19,53 @@
                                     <constraint firstAttribute="height" constant="300" id="jJY-OE-ySJ"/>
                                 </constraints>
                             </imageView>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Name" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2Rc-Ce-lNW">
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Gender" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XGf-ES-1A8">
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Birthday" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OVL-Ub-qwW">
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Surgery" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="A59-51-Z81">
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="A59-51-Z81" firstAttribute="centerX" secondItem="Ltd-Fv-yIX" secondAttribute="centerX" type="default" id="5OD-M0-mDA"/>
                             <constraint firstItem="Ltd-Fv-yIX" firstAttribute="trailing" secondItem="ggv-hz-8d5" secondAttribute="trailing" type="default" id="9o9-kC-BxJ"/>
                             <constraint firstItem="Ltd-Fv-yIX" firstAttribute="top" secondItem="ggv-hz-8d5" secondAttribute="top" type="default" id="KuW-ED-e7m"/>
                             <constraint firstItem="Ltd-Fv-yIX" firstAttribute="bottom" secondItem="ggv-hz-8d5" secondAttribute="bottom" type="default" id="M1b-RL-v4k"/>
-                            <constraint firstItem="8l9-jr-IwV" firstAttribute="top" secondItem="ggv-hz-8d5" secondAttribute="top" constant="20" symbolic="YES" type="default" id="MU0-M5-c0T"/>
+                            <constraint firstItem="XGf-ES-1A8" firstAttribute="top" secondItem="ggv-hz-8d5" secondAttribute="top" constant="406" id="Mia-nb-JQG"/>
+                            <constraint firstAttribute="bottom" secondItem="A59-51-Z81" secondAttribute="bottom" constant="408" id="Rpx-b0-nKO"/>
+                            <constraint firstItem="OVL-Ub-qwW" firstAttribute="centerY" secondItem="Ltd-Fv-yIX" secondAttribute="centerY" type="default" id="a5K-Un-dlO"/>
                             <constraint firstItem="Ltd-Fv-yIX" firstAttribute="leading" secondItem="ggv-hz-8d5" secondAttribute="leading" type="default" id="foV-K2-YqO"/>
-                            <constraint firstItem="8l9-jr-IwV" firstAttribute="leading" secondItem="ggv-hz-8d5" secondAttribute="leading" constant="20" symbolic="YES" type="default" id="zxz-hI-2RP"/>
+                            <constraint firstItem="8l9-jr-IwV" firstAttribute="leading" secondItem="ggv-hz-8d5" secondAttribute="leading" constant="229" id="na5-g3-0i5"/>
+                            <constraint firstItem="2Rc-Ce-lNW" firstAttribute="top" secondItem="ggv-hz-8d5" secondAttribute="top" constant="361" id="nfY-CM-ztL"/>
+                            <constraint firstItem="8l9-jr-IwV" firstAttribute="top" secondItem="ggv-hz-8d5" secondAttribute="top" constant="20" symbolic="YES" type="default" id="qJX-g7-Ibh"/>
+                            <constraint firstItem="2Rc-Ce-lNW" firstAttribute="centerX" secondItem="8l9-jr-IwV" secondAttribute="centerX" type="default" id="qUl-Wp-pvO"/>
+                            <constraint firstItem="2Rc-Ce-lNW" firstAttribute="centerX" secondItem="XGf-ES-1A8" secondAttribute="centerX" type="default" id="qud-WX-VWH"/>
+                            <constraint firstItem="OVL-Ub-qwW" firstAttribute="centerX" secondItem="XGf-ES-1A8" secondAttribute="centerX" type="default" id="sSv-07-b9Y"/>
                         </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="Summary" image="0012.png" id="H8t-PY-ncK"/>
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics"/>
                     <connections>
-                        <outlet property="patientPicture" destination="8l9-jr-IwV" id="hkk-gg-Ruf"/>
+                        <outlet property="pBirthday" destination="OVL-Ub-qwW" id="kQF-ws-Hrg"/>
+                        <outlet property="pGender" destination="XGf-ES-1A8" id="ddd-ud-NCG"/>
+                        <outlet property="pName" destination="2Rc-Ce-lNW" id="gYG-qd-0Ol"/>
+                        <outlet property="pSurgery" destination="A59-51-Z81" id="u6s-9t-0zI"/>
+                        <outlet property="patientPicture" destination="8l9-jr-IwV" id="soH-tt-Ny5"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="S54-Yy-RKe" userLabel="First Responder" sceneMemberID="firstResponder"/>

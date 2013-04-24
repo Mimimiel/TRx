@@ -12,6 +12,7 @@
 #import "NZURLConnection.h"
 #import "Utility.h"
 #import "LocalTalk.h"
+#import "Base64.h"
 #import <UIKit/UIKit.h>
 
 @implementation DBTalk
@@ -39,7 +40,7 @@ static DBTalk *singleton;
         dbPath = [Utility getDatabasePath];
         
         initialized = true;
-        singleton = [[DBTalk alloc] init]; 
+        singleton = [[DBTalk alloc] init];
     }
 }
 
@@ -133,6 +134,14 @@ static DBTalk *singleton;
             }
         }
     }
+    
+    
+    //check if image is unsynced and push if unsynced
+    //calls uploadFileToServer() use "image" and later ?? getOperationTypeRecordName
+    
+    
+    //check if recordId is null
+    NSLog(@"Exiting DBTalk's pushLocalUnsyncedToServer");
 }
 
 
@@ -199,6 +208,8 @@ static DBTalk *singleton;
     else {
         //successfully returned patient
         
+        //        BOOL success = [LocalTalk insertPatientId:retval forFirstName:[jsonDic objectForKey:@"FirstName"]
+        //                          lastName:[jsonDic objectForKey:@"LastName"] birthday:[jsonDic objectForKey:@"Birthday"]];
         NSMutableArray *array = [[NSMutableArray alloc] init];
         NSMutableArray *retArray = [[NSMutableArray alloc] init];
         NSString *appId = [LocalTalk localGetPatientAppId];
@@ -216,37 +227,37 @@ static DBTalk *singleton;
     
     
     
-//
-//    
-//    NSURL *url =  [[NSURL alloc] initWithString:host];
-//    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
-//    
-//    [httpClient postPath:@"add/patient" parameters:patientTableValues success:^(AFHTTPRequestOperation *operation, id responseObject) {
-//        NSLog(@"AddPatient successful");
-//        
-//        
-//        NSError *jsonError;
-//        NSDictionary *jsonDic = [NSJSONSerialization JSONObjectWithData:responseObject options:kNilOptions error:&jsonError];
-//        NSDictionary *dic = jsonDic;
-//        NSString *retval = [dic objectForKey:@"@returnValue"];
-//        if ([retval isEqualToString:@"0"]) {
-//            NSString *err = [dic objectForKey:@"error"];
-//            [Utility alertWithMessage:err];
-//            NSLog(@"error getting addPatient retval: %@", err);
-//        }
-//        else {
-//            BOOL success = [LocalTalk insertPatientId:retval forFirstName:[dic objectForKey:@"FirstName"]
-//                                             lastName:[dic objectForKey:@"LastName"] birthday:[dic objectForKey:@"Birthday"]];
-//            if (!success) {
-//                NSLog(@"Error adding patientId: %@", retval);
-//            }
-//        }
-//        [DBTalk addUpdatePatientRecord];
-//        
-//    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-//        NSLog(@"AddPatient failed");
-//        NSLog(@"AddPatient error: %@", error);
-//    }];
+    //
+    //
+    //    NSURL *url =  [[NSURL alloc] initWithString:host];
+    //    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+    //
+    //    [httpClient postPath:@"add/patient" parameters:patientTableValues success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    //        NSLog(@"AddPatient successful");
+    //
+    //
+    //        NSError *jsonError;
+    //        NSDictionary *jsonDic = [NSJSONSerialization JSONObjectWithData:responseObject options:kNilOptions error:&jsonError];
+    //        NSDictionary *dic = jsonDic;
+    //        NSString *retval = [dic objectForKey:@"@returnValue"];
+    //        if ([retval isEqualToString:@"0"]) {
+    //            NSString *err = [dic objectForKey:@"error"];
+    //            [Utility alertWithMessage:err];
+    //            NSLog(@"error getting addPatient retval: %@", err);
+    //        }
+    //        else {
+    //            BOOL success = [LocalTalk insertPatientId:retval forFirstName:[dic objectForKey:@"FirstName"]
+    //                                             lastName:[dic objectForKey:@"LastName"] birthday:[dic objectForKey:@"Birthday"]];
+    //            if (!success) {
+    //                NSLog(@"Error adding patientId: %@", retval);
+    //            }
+    //        }
+    //        [DBTalk addUpdatePatientRecord];
+    //
+    //    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+    //        NSLog(@"AddPatient failed");
+    //        NSLog(@"AddPatient error: %@", error);
+    //    }];
     NSLog(@"Exiting addUpdatePatient");
     return;
 }
@@ -404,7 +415,7 @@ static DBTalk *singleton;
         return nil;
     }
     
-   // pictureId = [self addPictureInfoToDatabase:patientId fileName:fileName isProfile:isProfile];
+    // pictureId = [self addPictureInfoToDatabase:patientId fileName:fileName isProfile:isProfile];
     NSLog(@"value of pictureId: %@", pictureId);
     return pictureId;
 }
@@ -635,8 +646,8 @@ static DBTalk *singleton;
  *---------------------------------------------------------------------------*/
 +(BOOL)uploadFileToServer:(id)file
                  fileType:(NSString *)fileType
-                    fileName:(NSString *)fileName
-                   patientId:(NSString *)patientId {
+                 fileName:(NSString *)fileName
+                patientId:(NSString *)patientId {
     
     NSString *fNameWithSuffix;
     NSData *uploadData;
@@ -752,28 +763,28 @@ static DBTalk *singleton;
     
     
     
-//    NSString *encodedString = [NSString stringWithFormat:@"%@add/picturePathToDatabase/%@/%@/%@/%@/%@", host,
-//                               picId, patientId, fileName, customName, isProfile];
-//    NSLog(@"picturePathURL: %@", encodedString);
-//    
-//    /* THIS LINE IS THE PROBLEM */
-//    //NSData *data = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:encodedString]];
-//    
-//    /* Using Ziebart's code for kicks */
-//    [NZURLConnection getAsynchronousResponseFromURL:encodedString withTimeout:5 completionHandler:^(NSData *response, NSError *error, BOOL timedOut) {
-//        if (response) {
-//            NSLog(@"%@", response);
-//            NSError *jsonError;
-//            NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:response options:kNilOptions error:&jsonError];
-//            NSDictionary *dic = jsonArray[0];
-//            NSString *retval = [dic objectForKey:@"@returnValue"];
-//            NSLog(@"addPicture returned %@", retval);
-//        }
-//        else {
-//            NSLog(@"AddPicturePathToDatabase not getting proper response");
-//        }
-//    }];
-//    
+    //    NSString *encodedString = [NSString stringWithFormat:@"%@add/picturePathToDatabase/%@/%@/%@/%@/%@", host,
+    //                               picId, patientId, fileName, customName, isProfile];
+    //    NSLog(@"picturePathURL: %@", encodedString);
+    //
+    //    /* THIS LINE IS THE PROBLEM */
+    //    //NSData *data = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:encodedString]];
+    //
+    //    /* Using Ziebart's code for kicks */
+    //    [NZURLConnection getAsynchronousResponseFromURL:encodedString withTimeout:5 completionHandler:^(NSData *response, NSError *error, BOOL timedOut) {
+    //        if (response) {
+    //            NSLog(@"%@", response);
+    //            NSError *jsonError;
+    //            NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:response options:kNilOptions error:&jsonError];
+    //            NSDictionary *dic = jsonArray[0];
+    //            NSString *retval = [dic objectForKey:@"@returnValue"];
+    //            NSLog(@"addPicture returned %@", retval);
+    //        }
+    //        else {
+    //            NSLog(@"AddPicturePathToDatabase not getting proper response");
+    //        }
+    //    }];
+    //
     
     //NSLog(@"Error adding picturePath to Database");
     return NULL;
@@ -824,24 +835,24 @@ static DBTalk *singleton;
 /*-----------------------------------------------------------------------
  Method: loadDataFromServer
  Returns:
-    void
-    it will pub "loadFromLocal" upon completion (rain or shine)
+ void
+ it will pub "loadFromLocal" upon completion (rain or shine)
  Summary:
-    Prepare the local database for whomeever needs it. In short--
-    If connection, load data from the server into local
-    If no connection, everyone the go ahead to use local
+ Prepare the local database for whomeever needs it. In short--
+ If connection, load data from the server into local
+ If no connection, everyone the go ahead to use local
  //TODO: error handling
------------------------------------------------------------------------*/
+ -----------------------------------------------------------------------*/
 + (void)loadDataFromServer:(NSDictionary *)params {
     //With Connection:
     //Call php for [tables] for isLive patient record; this returns [{tablename:[{rows}]}, {tablename:[{rows}]}, etc]
     //Call setSQLiteTableWithData for all rows in all tables according to syncing method
     //Syncing method:
-        //Check if SQLite has this id
-        //If it doesn't, add server record and attach appropriately
-        //If it does,
-            //If sqlite lastmod < servermod, replace SQLite
-            //If sqlite lastmod >= servermod, ignore
+    //Check if SQLite has this id
+    //If it doesn't, add server record and attach appropriately
+    //If it does,
+    //If sqlite lastmod < servermod, replace SQLite
+    //If sqlite lastmod >= servermod, ignore
     //Pub "loadFromLocal"
     
     /*take tables and pass dictionary of patients info from local instead*/
@@ -872,7 +883,7 @@ static DBTalk *singleton;
         [AFJSONRequestOperation addAcceptableContentTypes:[NSSet setWithObject:@"text/html"]];
         AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
             
-            //[this loadDataintoSQLiteWith:JSON];
+            [this loadDataintoSQLiteWith:JSON];
             
             //Local is now all set up, so pub
             [[NSNotificationCenter defaultCenter] postNotificationName:@"loadFromLocal" object:this userInfo:params];
@@ -880,7 +891,6 @@ static DBTalk *singleton;
             //Local can't be updated after all, so go ahead and pub
             [[NSNotificationCenter defaultCenter] postNotificationName:@"loadFromLocal" object:this userInfo:params];
         }];
-        //operation.JSONReadingOptions = NSJSONReadingAllowFragments;;
         operation.JSONReadingOptions = NSJSONReadingMutableContainers;
         
         [operation start];
@@ -897,57 +907,179 @@ static DBTalk *singleton;
  Objective: fill the local database with whatever is passed to it
  Returns: void
  Parameters:
-    (id) JSON: the data to put into the local database, 
-                of the form array[0]->dictionary { tableName1 : {table data }, tableName2 : {table data} }
-***********************************************************************************************************/
-+(void)loadDataintoSQLiteWith:(id) JSON{
+ (id) JSON: the data to put into the local database,
+ of the form array[0]->dictionary { tableName1 : {table data }, tableName2 : {table data} }
+ //TODO: it would be really nice to just have an enum of table names
+ //TODO: error handling
+ //TODO: have John not pack this as an array of dictionaries of arrays of dictionaries but instead as a
+ dictionary where keys are table names with arrays of row dictionaries
+ ***********************************************************************************************************/
++(void)loadDataintoSQLiteWith:(id)tableData{
     /*UPDATE Table1 SET (...) WHERE Column1='SomeValue'
      IF @@ROWCOUNT=0
      INSERT INTO Table1 VALUES (...)*/
     
     //mischa: not sure if i agree...thinking
     //for each table if the ID exists in that table update the row, otherwise insert the data into that table.
-    NSError *error = nil;
-    NSDictionary *parsedData = [NSJSONSerialization JSONObjectWithData:JSON options:kNilOptions error:&error];
-    for(NSString *key in parsedData){
-        NSLog(@"%@", key);
+    BOOL success = true;
+    NSString *patientId;
+    NSString *patientRecordId;
+    NSString *patientRecordAppId;
+    NSString *patientAppId;
+    NSMutableArray *returnIDs = [[NSMutableArray alloc] init];
+    NSMutableArray *json = [[NSMutableArray alloc] init];
+    NSMutableDictionary *tables = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *tmp = [[NSMutableDictionary alloc] init];
+    NSMutableArray *tmpArray = [[NSMutableArray alloc] init];
+    NSArray *defaults = @[@"Doctor", @"SurgeryType", @"RecordType", @"OrderType", @"OrderTemplate"];
+    
+    [json addObjectsFromArray:tableData];
+    for(NSDictionary *table in json){
+        [tables addEntriesFromDictionary:table];
     }
     
-    BOOL success = 1;
     //check if it's Doctor, surgery type, or patient and if it is those have special keys
     //otherwise, use patient record id
     //to insert (if it doesn't exist or update if it does
     
-    //TODO: it would be really nice to just have an enum of table names
     
     //TODO: inserts vs updates
     //Try to insert patient
-    if(parsedData[@"Patient"] != nil){
-        //success = [LocalTalk addTableToLocal:@"Patient" withData:parsedData[@"Patient"]];
-        if(!success){
-            //TODO: upon failure, do what? (besides not trying to further add records etc)
+    patientId = [LocalTalk localGetPatientId];
+    patientAppId = [LocalTalk localGetPatientAppId];
+    patientRecordAppId = [LocalTalk localGetPatientRecordAppId];
+    patientRecordId = [LocalTalk localGetPatientRecordId];
+    
+    @try
+    {
+        
+        //INSERT or UPDATE Patient
+        if([tables objectForKey:@"Patient"] != nil){
+            //TODO: don't really know if this check is necessary...seems like a good idea right now though
+            if([tables[@"Patient"][0][@"Id"] isEqualToString:patientId] && patientAppId != nil && ![patientAppId isEqualToString:@"0"]){
+                [tmp removeAllObjects];
+                [tmpArray removeAllObjects];
+                [tmp addEntriesFromDictionary:tables[@"Patient"][0]];
+                tmp[@"AppId"] = patientAppId;
+                [tmpArray addObject:tmp];
+                returnIDs = [LocalTalk setSQLiteTable:@"Patient" withData:tmpArray];
+            }
+            else{
+                returnIDs = [LocalTalk setSQLiteTable:@"Patient" withData:tables[@"Patient"]];
+            }
+            
+            for(NSString *returnId in returnIDs){
+                if([returnId integerValue] == 0){
+                    success = false;
+                    //TODO: upon failure, do what? (besides not trying to further add records etc)
+                }
+            }
+        }
+        
+        //INSERT or UPDATE PatientRecord
+        //TODO: really should be using a table name variable
+        if(success && [tables objectForKey:@"PatientRecord"] != nil){
+            //TODO: don't really know if this check is necessary...seems like a good idea right now though
+            if([tables[@"PatientRecord"][0][@"Id"] isEqualToString:patientRecordId] && patientRecordAppId != nil && ![patientRecordAppId isEqualToString:@"0"]){
+                [tmp removeAllObjects];
+                [tmpArray removeAllObjects];
+                [tmp addEntriesFromDictionary:tables[@"PatientRecord"][0]];
+                tmp[@"AppId"] = patientRecordAppId;
+                [tmpArray addObject:tmp];
+                returnIDs = [LocalTalk setSQLiteTable:@"PatientRecord" withData:tmpArray];
+            }
+            else{
+                returnIDs = [LocalTalk setSQLiteTable:@"PatientRecord" withData:tables[@"PatientRecord"]];
+            }
+            
+            for(NSString *returnId in returnIDs){
+                if([returnId integerValue] == 0){
+                    success = false;
+                    //TODO: upon failure, do what? (besides not trying to further add records etc)
+                }
+            }
+        }
+        
+        //INSERT or UPDATE OperationRecord
+        //TODO: really should be using a table name variable
+        //TODO: there are probably some times we should instead update
+        //TODO: for now this only works with type PICTURE, and it is hardcoded to boot
+        if(success && [tables objectForKey:@"OperationRecord"] != nil){
+            [tmp removeAllObjects];
+            [tmpArray removeAllObjects];
+            for(NSDictionary *row in tables[@"OperationRecord"]){
+                if([row[@"RecordTypeId"] isEqualToString:@"3"]){
+                    tmp = [[NSMutableDictionary alloc] init];
+                    [tmp addEntriesFromDictionary:row];
+                    [tmp removeObjectForKey:@"PatientRecordId"];
+                    tmp[@"AppPatientRecordId"] = patientRecordAppId;
+                    
+                    NSURL *url = [DBTalk getProfileThumbURLFromServerForPatient:patientId andRecord:patientRecordId];
+                    NSData *imageData = [NSData dataWithContentsOfURL:url];
+                    NSString *imageText;
+                    imageText = [Base64 encode:imageData];
+                    tmp[@"Data"] = imageText;
+                    
+                    [tmpArray addObject:tmp];
+                }
+            }
+            returnIDs = [LocalTalk setSQLiteTable:@"OperationRecord" withData:tmpArray];
+            for(NSString *returnId in returnIDs){
+                if([returnId integerValue] == 0){
+                    success = false;
+                    //TODO: upon failure, do what? (besides not trying to further add records etc)
+                }
+            }
+        }
+        
+        //INSERT or UPDATE All other non-default tables
+        for(NSString *key in tables){
+            [tmp removeAllObjects];
+            [tmpArray removeAllObjects];
+            [returnIDs removeAllObjects];
+            
+            if(success && [defaults containsObject:key]){
+                for(NSDictionary *row in tables[key]){
+                    //TODO: this could maybe be condensed...
+                    tmp = [[NSMutableDictionary alloc] init];
+                    [tmp addEntriesFromDictionary:row];
+                    [tmpArray addObject:tmp];
+                }
+                returnIDs = [LocalTalk setSQLiteTable:key withData:tmpArray];
+            }
+            else if(success && ![key isEqualToString:@"Patient"] && ![key isEqualToString:@"PatientRecord"] && ![key isEqualToString:@"OperationRecord"]){
+                for(NSDictionary *row in tables[key]){
+                    tmp = [[NSMutableDictionary alloc] init];
+                    [tmp addEntriesFromDictionary:row];
+                    [tmp removeObjectForKey:@"PatientRecordId"];
+                    tmp[@"AppPatientRecordId"] = patientRecordAppId;
+                    [tmpArray addObject:tmp];
+                }
+                returnIDs = [LocalTalk setSQLiteTable:key withData:tmpArray];
+            }
+            
+            for(NSString *returnId in returnIDs){
+                if([returnId integerValue] == 0){
+                    success = false;
+                }
+            }
         }
     }
     
-    //Try to insert patient record
-    if(success && parsedData[@"PatientRecod"] != nil){
-        //success = [LocalTalk addTableToLocal:@"PatientRecord" withData:parsedData[@"PatientRecord"]];
-        if(!success){
-            //TODO: upon failure, do what? (besides not trying to further add records etc)
-        }
-    }
+    @catch (NSException *e) {
         
-//    for(NSString *tableName in parsedData){
-//        
-//        if([tableName isEqualToString:@"Patient"]){
-//            success = [LocalTalk addTableToLocal:tableName withData:parsedData[tableName]];
-//        }
-//        else if([tableName isEqualToString:@"Doctor"] || [tableName isEqualToString:@"SurgeryType"]) {
-//            
-//        }
-//        else {
-//            
-//        }
+    }
+    //    for(NSString *tableName in parsedData){
+    //
+    //        if([tableName isEqualToString:@"Patient"]){
+    //            success = [LocalTalk addTableToLocal:tableName withData:parsedData[tableName]];
+    //        }
+    //        else if([tableName isEqualToString:@"Doctor"] || [tableName isEqualToString:@"SurgeryType"]) {
+    //
+    //        }
+    //        else {
+    //            
+    //        }
     
 }
 /*+(NSDictionary *)getValuesFromLocal:(NSDictionary *)dic {
