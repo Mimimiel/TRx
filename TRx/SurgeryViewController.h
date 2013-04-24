@@ -21,7 +21,7 @@
     NSMutableDictionary *files;
     NSMutableArray *audioCellsArray;
     UIButton *tmp;
-    MPMoviePlayerController *player;
+    MPMoviePlayerController *mplayer;
     IBOutlet UIView *videoView;
 
 }

@@ -66,7 +66,7 @@
     [filesTable setDataSource:self];
     _playButton.enabled = NO;
     fileNameText.delegate = self;
-    [self playVideo];
+    //[self playVideo];
     // Do any additional setup after loading the view.
 }
 
@@ -96,23 +96,24 @@
 
 - (void) playVideo
 {
-   
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center addObserver:self selector:@selector(movieFinishedCallback:) name:@"movieDone" object:nil];
     NSURL *url = [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"MyMovie" ofType:@"mov"]];
-    player = [[MPMoviePlayerController alloc] initWithContentURL:url];
-    player.view.frame = self.view.bounds;
-    [self.view addSubview:player.view];
-    player.controlStyle = MPMovieControlStyleEmbedded;
-    [player.view setFrame:CGRectMake(370, 30, (self.view.frame.size.width)-400 , 300)];
-    player.scalingMode = MPMovieScalingModeAspectFit;
-    player.shouldAutoplay = NO;
-    [player prepareToPlay];
+    mplayer = [[MPMoviePlayerController alloc] initWithContentURL:url];
+    mplayer.view.frame = self.view.bounds;
+    [self.view addSubview:mplayer.view];
+    mplayer.controlStyle = MPMovieControlStyleEmbedded;
+    [mplayer.view setFrame:CGRectMake(370, 30, (self.view.frame.size.width)-400 , 300)];
+    mplayer.scalingMode = MPMovieScalingModeAspectFit;
+    mplayer.shouldAutoplay = NO;
+    [mplayer prepareToPlay];
 
 }
 
 // The call back
 - (void) movieFinishedCallback:(NSNotification*) aNotification {
    
-    MPMoviePlayerController *player = [aNotification object];
+  //  MPMoviePlayerController *player = [aNotification object];
     /*[[NSNotificationCenter defaultCenter]
      removeObserver:self
      name:MPMoviePlayerPlaybackDidFinishNotification
@@ -120,7 +121,7 @@
     
     //player.initialPlaybackTime = -1;
     //[player pause];
-    [player stop];
+   // [player stop];
     
     //[player.view removeFromSuperview];
     
@@ -238,7 +239,7 @@
 - (IBAction)saveRecord:(id)sender{
     [_audioRecorder stop];
     NSError *error;
-    NSData *audioData = [NSData dataWithContentsOfFile:[soundFileURL path] options: 0 error:&error];
+    NSData *audioData = [NSData dataWithContentsOfFile:[soundFileURL path] options:0 error:&error];
     NSString *audioDataAsText = [Base64 encode:audioData];
     if (error)
     {
@@ -369,10 +370,12 @@
     cell.playButton.tag = [indexPath row];
     [cell.playButton setBackgroundColor:[UIColor greenColor]];
     NSLog(@"%d", cell.playButton.tag);
+    
     NSString *selectedAudioFileAsString = [audioFileInformation objectForKey:@"Data"];
     NSData *selectedAudioFile = [Base64 decode:selectedAudioFileAsString];
     NSError *error;
     _audioPlayerForButton = [[AVAudioPlayer alloc] initWithData:selectedAudioFile error:&error];
+    
     NSString *length = [self getDurationLabelString:_audioPlayerForButton];
     cell.audioFileLength.text = length;
         
