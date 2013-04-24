@@ -1036,7 +1036,13 @@ static FMDatabaseQueue *queue;
 
 
 +(NSMutableArray *)localGetUnsyncedRecordsFromTable:(NSString *)table {
-    NSString *query = [NSString stringWithFormat:@"Select * FROM %@ WHERE LastModified > LastSynced", table];
+    NSString *query;
+    if (![table isEqualToString:@"Patient"] && ![table isEqualToString:@"PatientRecord"]) {
+        query = [NSString stringWithFormat:@"Select t.*, p.Id AS PatientId, r.Id AS PatientRecordId FROM %@ t, Patient p, PatientRecord r WHERE t.LastModified > t.LastSynced and t.AppPatientRecordId = r.AppId and r.AppPatientId = p.AppId", table];
+    }
+    else {
+        query = [NSString stringWithFormat:@"Select * FROM %@ WHERE LastModified > LastSynced", table];
+    }
     NSMutableArray *array = [[NSMutableArray alloc] init];
     FMResultSet *results = [db executeQuery:query];
     if (!results) {

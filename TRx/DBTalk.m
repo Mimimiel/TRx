@@ -88,13 +88,29 @@ static DBTalk *singleton;
     
     //FIXME this is only getting the current patient's ID; I need Id for any unsynced image
     patientId     = [LocalTalk localGetPatientId];
-    NSString *recordTypeId;
+    NSString *recordTypeId, *patientRecordId;
     if (array) {
         for (NSDictionary *dic in array) {
             recordTypeId = [NSString stringWithFormat:@"%@", dic[@"RecordTypeId"]];
+            patientId = dic[@"PatientId"];
+            patientRecordId = dic[@"PatientRecordId"];
+            
+            if (!patientId || !patientRecordId) {
+                NSLog(@"Skipping sync picture");
+                continue;
+            }
+            //need to get patient ID for each person
+            //need to get picture for each person
+            
             if([recordTypeId isEqualToString:@"3"]){
-                NSLog(@"Attempting to add image: ");
+                NSLog(@"Attempting to add image for patientId: %@", patientId);
                 [DBTalk uploadFileToServer:[LocalTalk localGetPortrait] fileType:@"image" fileName:dic[@"Name"] patientId:patientId];
+                
+                [DBTalk pictureInfoToDatabase:dic];
+                
+                //[DBTalk call Mischa's method'];
+                
+                //need to set synced on return
             }
         }
     }
@@ -361,7 +377,7 @@ static DBTalk *singleton;
         return nil;
     }
     
-    pictureId = [self addPictureInfoToDatabase:patientId fileName:fileName isProfile:isProfile];
+   // pictureId = [self addPictureInfoToDatabase:patientId fileName:fileName isProfile:isProfile];
     NSLog(@"value of pictureId: %@", pictureId);
     return pictureId;
 }
@@ -582,6 +598,8 @@ static DBTalk *singleton;
     NSDictionary *dic = [[NSDictionary alloc] initWithObjectsAndKeys:patientId, @"patientId",
                          fileType, @"fileType", nil];
     
+    
+    
     NSMutableURLRequest *request = [httpClient multipartFormRequestWithMethod:@"POST" path:@"upload.php" parameters:dic constructingBodyWithBlock: ^(id <AFMultipartFormData>formData) {
         [formData appendPartWithFileData:uploadData name:@"file" fileName:fNameWithSuffix mimeType:@"image/jpeg"];
     }];
@@ -595,12 +613,6 @@ static DBTalk *singleton;
     return true;
 }
 
-+(void)addUpdateOperationRecord {
-    //select * from operationRecord & get a dictionary of params
-    
-    //fill up params and call operationRecord with POST
-    
-}
 
 //NOTE custom Names are only for internal use. They get stored
 //in the server but do not get used in the file structure.
@@ -612,7 +624,7 @@ static DBTalk *singleton;
     
     if ([fileType isEqualToString:@"image"]) {
         UIImage *image = [[UIImage alloc] initWithData:file];
-        [DBTalk uploadImageToServer:image fileName:customName forPatient:patientId];
+        //[DBTalk uploadImageToServer:image fileName:customName forPatient:patientId];
     }
     else if ([fileType isEqualToString:@"audio"]) {
         
@@ -623,79 +635,65 @@ static DBTalk *singleton;
     }
 }
 
-+(void)uploadImageToServer:(UIImage *)image
-                  fileName:(NSString *)customName
-                forPatient:(NSString *)patientId {
-    
-    //getPicturePath -- the Number of picture it is for that patient
-    //upload picture
-    //add picture info to database
-    
-    
-}
-
-
-
-
-
-/*---------------------------------------------------------------------------
- * Updates a picture path in the database. Need to pass in a pictureId
- *
- *---------------------------------------------------------------------------*/
-
-+(NSString *)updatePictureInfoInDatabase:(NSString *)pictureId
-                               patientId:(NSString *)patientId
-                                 newPath:(NSString *)newPath
-                              customName:(NSString *)customName
-                               isProfile:(NSString *)isProfile {
-    return [self pictureInfoToDatabase:pictureId patientId:patientId fileName:newPath
-                            customName:customName isProfile:isProfile];
-}
-/*---------------------------------------------------------------------------
- * Adds a picture path to the database. Path is just a filename right now
- *
- *---------------------------------------------------------------------------*/
-
-+(NSString *)addPictureInfoToDatabase:(NSString *)patientId
-                             fileName:(NSString *)fileName
-                            isProfile:(NSString *)isProfile {
-    return [self pictureInfoToDatabase:@"NULL" patientId:patientId fileName:fileName
-                            customName:fileName isProfile:isProfile];
-}
 
 
 /*---------------------------------------------------------------------------
  * base method for addPicturePathToDatabase and updatePathToDatabase
  *
  *---------------------------------------------------------------------------*/
-+(NSString *)pictureInfoToDatabase:(NSString *)picId
-                         patientId:(NSString *)patientId
-                          fileName:(NSString *)fileName
-                        customName:(NSString *)customName
-                         isProfile:(NSString *)isProfile {
+
+//FIXME sent picture info to database
++(NSString *)pictureInfoToDatabase:(NSDictionary *)params {
     
-    NSString *encodedString = [NSString stringWithFormat:@"%@add/picturePathToDatabase/%@/%@/%@/%@/%@", host,
-                               picId, patientId, fileName, customName, isProfile];
-    NSLog(@"picturePathURL: %@", encodedString);
     
-    /* THIS LINE IS THE PROBLEM */
-    //NSData *data = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:encodedString]];
     
-    /* Using Ziebart's code for kicks */
-    [NZURLConnection getAsynchronousResponseFromURL:encodedString withTimeout:5 completionHandler:^(NSData *response, NSError *error, BOOL timedOut) {
-        if (response) {
-            NSLog(@"%@", response);
-            NSError *jsonError;
-            NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:response options:kNilOptions error:&jsonError];
-            NSDictionary *dic = jsonArray[0];
-            NSString *retval = [dic objectForKey:@"@returnValue"];
-            NSLog(@"addPicture returned %@", retval);
+    NSURL *url = [NSURL URLWithString:host];
+    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+    
+    [httpClient postPath:@"add/picturePathToDatabase" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"Picture path added successfully");
+        NSError *jsonError;
+        NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:responseObject options:kNilOptions error:&jsonError];
+        NSDictionary *dic = jsonArray[0];
+        NSString *retval = [dic objectForKey:@"@returnValue"];
+        if ([retval isEqualToString:@"0"]) {
+            NSString *err = [dic objectForKey:@"error"];
+            [Utility alertWithMessage:err];
+            NSLog(@"error: %@", err);
+            
         }
         else {
-            NSLog(@"AddPicturePathToDatabase not getting proper response");
+            //update sync
+            NSLog(@"It really worked: %@", dic);
         }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Picture path update failed");
     }];
     
+    
+    
+//    NSString *encodedString = [NSString stringWithFormat:@"%@add/picturePathToDatabase/%@/%@/%@/%@/%@", host,
+//                               picId, patientId, fileName, customName, isProfile];
+//    NSLog(@"picturePathURL: %@", encodedString);
+//    
+//    /* THIS LINE IS THE PROBLEM */
+//    //NSData *data = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:encodedString]];
+//    
+//    /* Using Ziebart's code for kicks */
+//    [NZURLConnection getAsynchronousResponseFromURL:encodedString withTimeout:5 completionHandler:^(NSData *response, NSError *error, BOOL timedOut) {
+//        if (response) {
+//            NSLog(@"%@", response);
+//            NSError *jsonError;
+//            NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:response options:kNilOptions error:&jsonError];
+//            NSDictionary *dic = jsonArray[0];
+//            NSString *retval = [dic objectForKey:@"@returnValue"];
+//            NSLog(@"addPicture returned %@", retval);
+//        }
+//        else {
+//            NSLog(@"AddPicturePathToDatabase not getting proper response");
+//        }
+//    }];
+//    
     
     //NSLog(@"Error adding picturePath to Database");
     return NULL;

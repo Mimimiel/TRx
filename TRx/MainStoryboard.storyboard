@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="3084" systemVersion="12D78" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" initialViewController="7jt-WL-d61">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="3084" systemVersion="11G63b" targetRuntime="iOS.CocoaTouch.iPad" propertyAccessControl="none" useAutolayout="YES" initialViewController="7jt-WL-d61">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="2083"/>
     </dependencies>
@@ -457,12 +457,32 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" showsHorizontalScrollIndicator="NO" editable="NO" usesAttributedText="YES" translatesAutoresizingMaskIntoConstraints="NO" id="2X0-Nw-JhN">
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="422" id="TQw-Q7-okm"/>
+                                    <constraint firstAttribute="height" constant="418" id="W54-kF-gLg"/>
                                     <constraint firstAttribute="width" constant="360" id="Z5t-qR-4Qq"/>
                                 </constraints>
                                 <attributedString key="attributedText">
                                     <fragment>
-                                        <string key="content">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                                        <string key="content">SURGEON PRE-OP ORDERS
+Principal Diagnosis:
+ 
+1. Obtain consent for: 
+ 
+2. Diet NPO after 24 hours
+ 
+3. Consult Anesthesia
+ 
+4. Anesthesia Protocol for IV access and fluids
+ 
+5. Pre-Op antibiotics
+  a.) Skin/Soft Tissue/Hernia Repair (check one):
+        Cefazolin 2 grams IVPB x 1 dose
+  b.) Hepatobiliary/Gastroduodenal Procedures (check one):
+        Cefoxitin 2 grams IVPB x 1 dose
+                 
+6. Complete the pre-printed order set "Venous
+   Thromboembolism Prophylaxis Orders (Adult)
+ 
+7. PAS Hose</string>
                                         <attributes>
                                             <font key="NSFont" size="14" name="Helvetica"/>
                                             <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
@@ -475,7 +495,17 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <attributedString key="attributedText">
                                     <fragment>
-                                        <string key="content">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                                        <string key="content">ANESTHESIOLOGIST PRE-OP ORDERS
+1. IV Access
+   Start IV LR@KVO
+ 
+2. Blood Glucose
+   Check Chemstrip if patient diabetic on insulin / Oral Rx
+ 
+3. Pregnancy Test
+   Check urine BHCG per criteria.
+ 
+4. Other</string>
                                         <attributes>
                                             <font key="NSFont" size="14" name="Helvetica"/>
                                             <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
@@ -488,7 +518,36 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <attributedString key="attributedText">
                                     <fragment>
-                                        <string key="content">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                                        <string key="content">SURGEON POST-OP ORDERS
+1. Anesthesia orders for PACU analgesia and
+   antiemetics
+ 
+2. Discharge at 3 p.m.
+ 
+3. May bathe/shower on the next day
+ 
+4. Wound/Dressing Care: Replace bandages
+ 
+5. Restrictions: Don't operate any vehicles for a week 
+</string>
+                                        <attributes>
+                                            <font key="NSFont" size="14" name="Helvetica"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
+                                        </attributes>
+                                    </fragment>
+                                    <fragment>
+                                        <string key="content" base64-UTF8="YES">
+Cg
+</string>
+                                        <attributes>
+                                            <font key="NSFont" size="14" name="Helvetica"/>
+                                            <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
+                                        </attributes>
+                                    </fragment>
+                                    <fragment>
+                                        <string key="content">6. Prescriptions: Tylenol
+ 
+</string>
                                         <attributes>
                                             <font key="NSFont" size="14" name="Helvetica"/>
                                             <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
@@ -501,7 +560,25 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <attributedString key="attributedText">
                                     <fragment>
-                                        <string key="content">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                                        <string key="content">ANESTHESIOLOGIST POST-OP ORDERS
+1. Oxygen
+   Administer 02 by Cannula PRN Sa02 less than 94%
+   Other
+ 
+2. Analgesics (Max Dose)
+ Fentanyl       mcg IV q 5 minutes PRN  
+ 
+3. Antlemetics
+ Ondansetron _____ mg IV PRN x _____
+ 
+4. Antihypertensives
+ Labetolol ___________ mg IV x ___________ q ___________ minutes for:
+  BP greater than ___________/___________
+ Hydralazine ___________ mg IV x ___________ q ___________ minutes for:
+  BP greater than ___________/___________
+ 
+5. Discharge Criteria
+   Staff MD Anesthesiologist note mandatory</string>
                                         <attributes>
                                             <font key="NSFont" size="14" name="Helvetica"/>
                                             <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
@@ -513,18 +590,18 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="E7N-KM-k5u" firstAttribute="top" secondItem="z5r-q7-WGJ" secondAttribute="top" type="default" id="9vo-MD-X95"/>
                             <constraint firstItem="dfb-yc-7jD" firstAttribute="top" secondItem="IXb-Al-1NM" secondAttribute="top" constant="20" symbolic="YES" type="default" id="FGa-HN-vjR"/>
                             <constraint firstItem="Nft-as-VgA" firstAttribute="trailing" secondItem="IXb-Al-1NM" secondAttribute="trailing" type="default" id="G8z-EC-msR"/>
                             <constraint firstItem="z5r-q7-WGJ" firstAttribute="leading" secondItem="IXb-Al-1NM" secondAttribute="leading" constant="20" symbolic="YES" type="default" id="HeY-6c-UNZ"/>
                             <constraint firstItem="2X0-Nw-JhN" firstAttribute="top" secondItem="IXb-Al-1NM" secondAttribute="top" constant="20" symbolic="YES" type="default" id="Jsf-LH-P6d"/>
-                            <constraint firstItem="E7N-KM-k5u" firstAttribute="top" secondItem="dfb-yc-7jD" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="Ohm-6N-zDQ"/>
                             <constraint firstItem="dfb-yc-7jD" firstAttribute="leading" secondItem="2X0-Nw-JhN" secondAttribute="trailing" constant="8" symbolic="YES" type="default" id="Okc-o2-cgR"/>
                             <constraint firstAttribute="bottom" secondItem="E7N-KM-k5u" secondAttribute="bottom" constant="20" symbolic="YES" type="default" id="PlM-kv-no5"/>
+                            <constraint firstItem="E7N-KM-k5u" firstAttribute="top" secondItem="dfb-yc-7jD" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="R2v-WS-i5X"/>
                             <constraint firstItem="2X0-Nw-JhN" firstAttribute="leading" secondItem="IXb-Al-1NM" secondAttribute="leading" constant="20" symbolic="YES" type="default" id="TzJ-y5-fpV"/>
                             <constraint firstAttribute="trailing" secondItem="E7N-KM-k5u" secondAttribute="trailing" constant="20" symbolic="YES" type="default" id="ZbK-j2-A5s"/>
-                            <constraint firstItem="E7N-KM-k5u" firstAttribute="top" secondItem="z5r-q7-WGJ" secondAttribute="top" type="default" id="a3h-lY-vck"/>
                             <constraint firstAttribute="bottom" secondItem="z5r-q7-WGJ" secondAttribute="bottom" constant="20" symbolic="YES" type="default" id="bSn-Zl-S1e"/>
-                            <constraint firstItem="z5r-q7-WGJ" firstAttribute="top" secondItem="2X0-Nw-JhN" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="eJh-zM-dRd"/>
+                            <constraint firstItem="z5r-q7-WGJ" firstAttribute="top" secondItem="2X0-Nw-JhN" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="hQ4-mz-KDT"/>
                             <constraint firstItem="E7N-KM-k5u" firstAttribute="leading" secondItem="z5r-q7-WGJ" secondAttribute="trailing" constant="8" symbolic="YES" type="default" id="joj-K3-3iB"/>
                             <constraint firstAttribute="trailing" secondItem="dfb-yc-7jD" secondAttribute="trailing" constant="20" symbolic="YES" type="default" id="kW3-AU-tRh"/>
                             <constraint firstItem="Nft-as-VgA" firstAttribute="leading" secondItem="IXb-Al-1NM" secondAttribute="leading" type="default" id="pkk-BS-Ueu"/>
