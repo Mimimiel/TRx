@@ -1,12 +1,12 @@
 //
-//  HQView.m
+//  PQView.m
 //  TRx
 //
-//  Created by Mark Bellott on 4/7/13.
+//  Created by Mark Bellott on 4/23/13.
 //  Copyright (c) 2013 Team Ecuador. All rights reserved.
 //
 
-#import "HQView.h"
+#import "PQView.h"
 
 #define FONT_SIZE 20
 
@@ -17,28 +17,25 @@
 #define MAX_Y 50.0f
 #define MID_Y 256.f
 #define MIN_Y 500.0f
-#define ENG_X 50.0f
-#define TRANS_X 550.0f
+#define MAIN_X 250.0f
 #define SELECT_OFFSET 50.0f
 
 #define CONST_WIDTH 425.0f
 #define SELECT_WIDTH 375.0f
 
-@implementation HQView
+@implementation PQView
 
-@synthesize questionIndex, hasAnswer, isEnglish, shouldBranch, questionLabel, type, textEntryField, otherTextField, yesButton, noButton, previousTextEntry, answerString, checkBoxes, connectedView;
+@synthesize questionIndex, hasAnswer, shouldBranch, questionLabel, type, yesButton, noButton, textEntryField, otherTextField, previousTextEntry, answerString, checkBoxes;
 
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {
-        
         self.frame = CGRectMake(0, 0, CONST_WIDTH, 100);
         
         questionIndex = -1;
         
         hasAnswer = NO;
-        isEnglish = YES;
         shouldBranch = NO;
         
         totalHeight = 0;
@@ -48,13 +45,11 @@
         checkBoxes = [[NSMutableArray alloc]init];
         questionUnion = [[NSMutableArray alloc]init];
         
-        questionLabel = [[HQLabel alloc] init];
+        questionLabel = [[PQLabel alloc] init];
         [questionLabel setFont:[UIFont fontWithName:@"HelveticaNeue" size:FONT_SIZE]];
         [questionLabel setTextColor:[UIColor blackColor]];
         [questionUnion addObject:questionLabel];
         [self addSubview:questionLabel];
-        
-        
     }
     return self;
 }
@@ -63,7 +58,7 @@
     questionLabel.text = text;
 }
 
--(void) buildQuestionOfType:(NSInteger)t withHelper:(HQHelper*)h{
+-(void) buildQuestionOfType:(NSInteger)t withHelper:(PQHelper*)h{
     questionIndex = h.currentIndex;
     questionId = [h getQuestionId];
     
@@ -73,12 +68,7 @@
     }
     else if(t==1){
         type = SELECTION_QUESTION;
-        if(isEnglish){
-            [self buildSelectionWithChoices:[h getEnglishChoices]];
-        }
-        else{
-            [self buildSelectionWithChoices:[h getTransChoices]];
-        }
+        [self buildSelectionWithChoices:[h getEnglishChoices]];
     }
     else if(t==2){
         type = SELECTION_CHOICES;
@@ -87,7 +77,7 @@
         type = TEXT_ENTRY;
         [self buildTextEntry];
     }
-    else if(t==4){
+    if(t==4){
         type = TEXT_SELECTION;
         [self buildTextSelection];
     }
@@ -118,7 +108,7 @@
     }
     else if(type == SELECTION_QUESTION){
         BOOL checked = NO;
-        for(HQCheckBox *cb in checkBoxes){
+        for(PQCheckBox *cb in checkBoxes){
             if(cb.selected){
                 checked = YES;
             }
@@ -139,14 +129,13 @@
 
 -(void) buildYesNo{
     
-    if([questionId isEqualToString:@"preOp_Done"]){
+    if([questionId isEqualToString:@"phys_Done"]){
         return;
     }
     
-    yesButton = [[HQYesNo alloc]initWithFrame:CGRectMake(questionLabel.frame.origin.x + YES_PADDING, questionLabel.frame.origin.y + Y_PADDING + questionLabel.frame.size.height, 125, 75)];
-    noButton = [[HQYesNo alloc]initWithFrame:CGRectMake(questionLabel.frame.origin.x + NO_PADDING, questionLabel.frame.origin.y + Y_PADDING + questionLabel.frame.size.height, 125, 75)];
-    if(isEnglish)   [yesButton setTitle:@"Yes" forState:UIControlStateNormal];
-    else            [yesButton setTitle:@"Si" forState:UIControlStateNormal];
+    yesButton = [[PQYesNo alloc]initWithFrame:CGRectMake(questionLabel.frame.origin.x + YES_PADDING, questionLabel.frame.origin.y + Y_PADDING + questionLabel.frame.size.height, 125, 75)];
+    noButton = [[PQYesNo alloc]initWithFrame:CGRectMake(questionLabel.frame.origin.x + NO_PADDING, questionLabel.frame.origin.y + Y_PADDING + questionLabel.frame.size.height, 125, 75)];
+    [yesButton setTitle:@"Yes" forState:UIControlStateNormal];
     [noButton setTitle:@"No" forState:UIControlStateNormal];
     [yesButton addTarget:self action:@selector(yesPressed) forControlEvents:UIControlEventTouchDown];
     [noButton addTarget:self action:@selector(noPressed) forControlEvents:UIControlEventTouchDown];
@@ -168,12 +157,6 @@
         [noButton setBackgroundColor:[UIColor whiteColor]];
         [yesButton setSelected:YES];
         [yesButton setBackgroundColor:[UIColor grayColor]];
-        
-        [connectedView.noButton setSelected:NO];
-        [connectedView.noButton setBackgroundColor:[UIColor whiteColor]];
-        [connectedView.yesButton setSelected:YES];
-        [connectedView.yesButton setBackgroundColor:[UIColor grayColor]];
-        
     }
     
 }
@@ -186,11 +169,6 @@
         [yesButton setBackgroundColor:[UIColor whiteColor]];
         [noButton setSelected:YES];
         [noButton setBackgroundColor:[UIColor grayColor]];
-        
-        [connectedView.yesButton setSelected:NO];
-        [connectedView.yesButton setBackgroundColor:[UIColor whiteColor]];
-        [connectedView.noButton setSelected:YES];
-        [connectedView.noButton setBackgroundColor:[UIColor grayColor]];
     }
 }
 
@@ -209,11 +187,11 @@
                                                                              error:nil];
     
     for(NSString *s in choices){
-        HQLabel *tmp = [[HQLabel alloc]init];
-        HQLabel *lastLabel = [[HQLabel alloc]init];
-        HQCheckBox *box = [HQCheckBox buttonWithType:UIButtonTypeCustom];
-        HQCheckBox *lastBox = [HQCheckBox buttonWithType:UIButtonTypeCustom];
-        otherTextField = [[HQTextField alloc] init];
+        PQLabel *tmp = [[PQLabel alloc]init];
+        PQLabel *lastLabel = [[PQLabel alloc]init];
+        PQCheckBox *box = [PQCheckBox buttonWithType:UIButtonTypeCustom];
+        PQCheckBox *lastBox = [PQCheckBox buttonWithType:UIButtonTypeCustom];
+        otherTextField = [[PQTextField alloc] init];
         
         tmp.constrainedWidth = 375;
         [tmp setText:s];
@@ -273,29 +251,22 @@
 }
 
 -(void) checkPressed:(id)sender{
-    HQCheckBox *cb = (HQCheckBox*)sender;
+    PQCheckBox *cb = (PQCheckBox*)sender;
     
     if(cb.selected){
         [cb setSelected:NO];
         [cb setBackgroundColor:[UIColor whiteColor]];
-        
-        [[connectedView.checkBoxes objectAtIndex:cb.arrayIndex] setSelected:NO];
-        [[connectedView.checkBoxes objectAtIndex:cb.arrayIndex] setBackgroundColor:[UIColor whiteColor]];
-        
     }
     else{
         [cb setSelected:YES];
         [cb setBackgroundColor:[UIColor blackColor]];
-        
-        [[connectedView.checkBoxes objectAtIndex:cb.arrayIndex] setSelected:YES];
-        [[connectedView.checkBoxes objectAtIndex:cb.arrayIndex] setBackgroundColor:[UIColor blackColor]];
     }
 }
 
 
 -(void) buildTextEntry{
     
-    textEntryField = [[HQTextField alloc] init];
+    textEntryField = [[PQTextField alloc] init];
     textEntryField.borderStyle = UITextBorderStyleBezel;
     textEntryField.keyboardType = UIKeyboardTypeDefault;
     textEntryField.autocorrectionType = UITextAutocorrectionTypeNo;
@@ -328,7 +299,6 @@
     if(type == TEXT_ENTRY){
         if([answers containsObject:@"YES"] && [answers count] > 1){
             textEntryField.text = [answers objectAtIndex:1];
-            connectedView.textEntryField.text = [answers objectAtIndex:1];
         }
     }
     else if (type == YES_NO){
@@ -341,7 +311,7 @@
     }
     else if(type == SELECTION_QUESTION){
         NSMutableArray *lables = [[NSMutableArray alloc]init];
-        for(HQCheckBox *cb in checkBoxes){
+        for(PQCheckBox *cb in checkBoxes){
             [lables addObject:cb.optionLabel];
             if([answers containsObject:cb.optionLabel]){
                 [self checkPressed:cb];
@@ -349,7 +319,6 @@
         }
         if(![lables containsObject:[answers lastObject]] && ![[answers objectAtIndex:0] isEqualToString:@"NO"]){
             otherTextField.text = [answers lastObject];
-            connectedView.otherTextField.text = [answers lastObject];
         }
     }
 }

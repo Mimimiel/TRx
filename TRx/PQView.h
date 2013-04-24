@@ -1,17 +1,17 @@
 //
-//  HQView.h
+//  PQView.h
 //  TRx
 //
-//  Created by Mark Bellott on 4/7/13.
+//  Created by Mark Bellott on 4/23/13.
 //  Copyright (c) 2013 Team Ecuador. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
-#import "HQCheckBox.h"
-#import "HQLabel.h"
-#import "HQTextField.h"
-#import "HQYesNo.h"
-#import "HQHelper.h"
+#import "PQCheckBox.h"
+#import "PQLabel.h"
+#import "PQTextField.h"
+#import "PQYesNo.h"
+#import "PQHelper.h"
 
 typedef enum{
     YES_NO,
@@ -21,9 +21,9 @@ typedef enum{
     TEXT_SELECTION
 }qType;
 
-@interface HQView : UIView <UITextFieldDelegate>{
+@interface PQView : UIView<UITextFieldDelegate>{
     
-    BOOL hasAnswer, isEnglish, shouldBranch;
+    BOOL hasAnswer, shouldBranch;
     
     NSInteger questionIndex;
     
@@ -36,37 +36,33 @@ typedef enum{
     
     
     qType type;
-    HQLabel *questionLabel;
-    HQYesNo *yesButton;
-    HQYesNo *noButton;
-    HQTextField *textEntryField;
-    HQTextField *otherTextField;
+    PQLabel *questionLabel;
+    PQYesNo *yesButton;
+    PQYesNo *noButton;
+    PQTextField *textEntryField;
+    PQTextField *otherTextField;
     
     NSMutableArray *response;
     NSMutableArray *checkBoxes;
     NSMutableArray *questionUnion;
-    
-    HQView *connectedView;
 }
 
 @property(nonatomic, readwrite) NSInteger questionIndex;
 @property(nonatomic, readwrite) BOOL hasAnswer;
-@property(nonatomic, readwrite) BOOL isEnglish;
 @property(nonatomic, readwrite) BOOL shouldBranch;
 @property(nonatomic, readwrite) qType type;
-@property(nonatomic, readwrite) HQLabel* questionLabel;
-@property(nonatomic, retain) HQTextField *textEntryField;
-@property(nonatomic, retain) HQTextField *otherTextField;
-@property(nonatomic, retain) HQYesNo *yesButton;
-@property(nonatomic, retain) HQYesNo *noButton;
+@property(nonatomic, readwrite) PQLabel* questionLabel;
+@property(nonatomic, retain) PQTextField *textEntryField;
+@property(nonatomic, retain) PQTextField *otherTextField;
+@property(nonatomic, retain) PQYesNo *yesButton;
+@property(nonatomic, retain) PQYesNo *noButton;
 @property(nonatomic, retain) NSString *previousTextEntry;
 @property(nonatomic, retain) NSString *answerString;
 @property(nonatomic, retain) NSMutableArray *checkBoxes;
-@property(nonatomic, retain) HQView *connectedView;
 
 -(void) checkHasAnswer;
 -(void) setQuestionLabelText:(NSString *)text;
--(void) buildQuestionOfType:(NSInteger)t withHelper:(HQHelper*)h;
+-(void) buildQuestionOfType:(NSInteger)t withHelper:(PQHelper*)h;
 -(void) buildYesNo;
 -(void) buildSingleSelection;
 -(void) buildSelectionWithChoices:(NSArray*)choices;

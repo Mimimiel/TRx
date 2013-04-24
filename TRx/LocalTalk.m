@@ -104,10 +104,10 @@ static FMDatabaseQueue *queue;
         }
         
         if(useSelector){
-            query = [NSString stringWithFormat: @"SELECT * FROM  %@ WHERE %@ = %@", table, selectorType, selectorValue];
+            query = [NSString stringWithFormat: @"SELECT * FROM  `%@` WHERE `%@` = '%@'", table, selectorType, selectorValue];
             NSLog(@"The query we're trying to use in useSelector is: %@", query);
         } else {
-            query = [NSString stringWithFormat:@"SELECT * FROM %@", table];
+            query = [NSString stringWithFormat:@"SELECT * FROM `%@`", table];
             NSLog(@"The query we're trying to use in !useSelector is: %@", query);
         }
         FMResultSet *retval = [db executeQuery:query];
@@ -278,7 +278,10 @@ static FMDatabaseQueue *queue;
         //use date as image name and path
         NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
         [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-        NSString *now = [dateFormatter stringFromDate:[NSDate date]];
+        //NSString *now = [dateFormatter stringFromDate:[NSDate date]];
+        
+        CFAbsoluteTime time = CFAbsoluteTimeGetCurrent();
+        NSString *now = [NSString stringWithFormat:@"%f", time];
         
         imageDic[@"Name"]               = now;
         imageDic[@"Path"]               = now;
@@ -398,12 +401,12 @@ static FMDatabaseQueue *queue;
             //UPDATE non-default table
             for(NSString* key in row){
                 if(![key isEqualToString:@"AppId"]){
-                    sql = [NSMutableString stringWithFormat: @"%@ = '%@'", key, row[key]];
+                    sql = [NSMutableString stringWithFormat: @"`%@` = '%@'", key, row[key]];
                     [updateSQL addObject:sql];
                 }
             }
             
-            sql = [NSMutableString stringWithFormat:@"UPDATE %@ SET %@ WHERE AppId = '%@'",
+            sql = [NSMutableString stringWithFormat:@"UPDATE `%@` SET %@ WHERE AppId = '%@'",
                    tableName,
                    [updateSQL componentsJoinedByString:@", "],
                    appID];
@@ -414,20 +417,19 @@ static FMDatabaseQueue *queue;
             }
         }
         else{
-            if(defaultFlag){
-                //go ahead and try to UPDATE default table, it's alright if it fails
-                sql = [NSMutableString stringWithFormat:@"SELECT EXISTS(SELECT 1 FROM %@ WHERE Id = '%@' LIMIT 1);", tableName, row[@"Id"]];
+            //go ahead and try to UPDATE default table, it's alright if it fails
+                sql = [NSMutableString stringWithFormat:@"SELECT EXISTS(SELECT 1 FROM `%@` WHERE Id = '%@' LIMIT 1);", tableName, row[@"Id"]];
                 exists = [db executeQuery:sql];
                 [exists next];
                 if([[exists stringForColumnIndex:0] isEqualToString:@"1"]){
                     for(NSString* key in row){
                         if(![key isEqualToString:@"Id"]){
-                            sql = [NSMutableString stringWithFormat: @"%@ = '%@'", key, row[key]];
+                            sql = [NSMutableString stringWithFormat: @"`%@` = '%@'", key, row[key]];
                             [updateSQL addObject:sql];
                         }
                     }
                     
-                    sql = [NSMutableString stringWithFormat:@"UPDATE %@ SET %@ WHERE Id = '%@'",
+                    sql = [NSMutableString stringWithFormat:@"UPDATE `%@` SET %@ WHERE Id = '%@'",
                            tableName,
                            [updateSQL componentsJoinedByString:@", "],
                            row[@"Id"]];
@@ -437,7 +439,6 @@ static FMDatabaseQueue *queue;
                         affectedID = [row[@"Id"] integerValue];
                     }
                 }
-            }
             
             if(!success){
                 //INSERT
@@ -446,7 +447,7 @@ static FMDatabaseQueue *queue;
                 
                 for(NSString* key in row){
                     if(![key isEqualToString:@"AppId"]){
-                        sql = [NSMutableString stringWithFormat: @"%@", key];
+                        sql = [NSMutableString stringWithFormat: @"`%@`", key];
                         [insertSQL addObject:sql];
                         
                         sql = [NSMutableString stringWithFormat: @"%@", row[key] ];
@@ -454,7 +455,7 @@ static FMDatabaseQueue *queue;
                     }
                 }
                 
-                sql = [NSMutableString stringWithFormat:@"INSERT INTO %@ (%@) VALUES ('%@')",
+                sql = [NSMutableString stringWithFormat:@"INSERT INTO `%@` (%@) VALUES ('%@')",
                        tableName,
                        [insertSQL componentsJoinedByString:@", "],
                        [updateSQL componentsJoinedByString:@"', '"]];
@@ -469,12 +470,15 @@ static FMDatabaseQueue *queue;
         [returnIDs addObject:[NSNumber numberWithInteger:affectedID]];
     }
     
+    /*
     if([tableName isEqualToString:@"Doctor"]){
         sql = [NSMutableString stringWithFormat: @"SELECT * FROM Doctor WHERE FirstName = 'David'"];
         FMResultSet *retval = [db executeQuery:sql];
         [retval next];
         NSLog([NSString stringWithFormat:@"%@", [retval stringForColumn:@"FirstName"]]);
     }
+     */
+    
     return returnIDs;
 }
 
@@ -499,7 +503,6 @@ static FMDatabaseQueue *queue;
  NSString of Id
  *---------------------------------------------------------------------------*/
 +(NSString *)localGetPatientId {
-    
     //Get Patient.Id (patient server identifier) from Local for the IsLive PatientRecord
     NSString *query;
     query = [NSString stringWithFormat:
@@ -660,7 +663,7 @@ static FMDatabaseQueue *queue;
     
     
 
-        NSString *query = [NSString stringWithFormat:@"UPDATE Patient SET Id = \"%@\" WHERE FirstName = \"%@\" and LastName = \"%@\" and Birthday = \"%@\"", patientId, firstName, lastName, birthday];
+        NSString *query = [NSString stringWithFormat:@"UPDATE Patient SET Id = %@ WHERE FirstName = \"%@\" and LastName = \"%@\" and Birthday = \"%@\"", patientId, firstName, lastName, birthday];
         
         NSLog(@"QUERY: %@", query);
         
@@ -819,13 +822,14 @@ static FMDatabaseQueue *queue;
             complaint   = [AdminInformation getSurgeryNameById:complaint];
             imageId     = [NSString stringWithFormat:@"%@n000", patientId];
             PatientRecordAppId = nil;
-            pictureURL = [DBTalk getThumbFromServer:imageId];
+            pictureURL =  [DBTalk getProfileThumbURLFromServerForPatient:patientId andRecord:recordId]; //[DBTalk getThumbFromServer:imageId];
             
             Patient *obj = [[Patient alloc] initWithPatientId:patientId currentRecordId:recordId patientRecordAppId:PatientRecordAppId firstName:firstName MiddleName:middleName LastName:lastName birthday:birthday ChiefComplaint:complaint PhotoID:picture PhotoURL:pictureURL];
             
             obj.patientId = patientId;
             NSLog(@"%@", picture);
             NSLog(@"%@", imageId);
+            NSLog(@"pictureUrl: %@", pictureURL);
             [patients addObject:obj];
         }
         
@@ -880,6 +884,23 @@ static FMDatabaseQueue *queue;
     }
     
     return retval;
+}
+
++(NSMutableDictionary *)localGetOperationRecordInfoByName:(NSString *)name {
+    NSString *query = [NSString stringWithFormat:@"SELECT * FROM OperationRecord WHERE Name = \"%@\"", name];
+    NSDictionary *dict;
+    FMResultSet *results = [db executeQuery:query];
+    if (!results) {
+        NSLog(@"The query in localGetPatientListFromSQLite didn't return anything good :(");
+        NSLog(@"%@", [db lastErrorMessage]);
+    }
+    while([results next]){
+        dict = [results resultDictionary];
+    }
+    
+    NSMutableDictionary *retDic = [[NSMutableDictionary alloc] initWithDictionary:dict];
+    
+    return retDic;
 }
 
 
@@ -1036,7 +1057,13 @@ static FMDatabaseQueue *queue;
 
 
 +(NSMutableArray *)localGetUnsyncedRecordsFromTable:(NSString *)table {
-    NSString *query = [NSString stringWithFormat:@"Select * FROM %@ WHERE LastModified > LastSynced", table];
+    NSString *query;
+    if (![table isEqualToString:@"Patient"] && ![table isEqualToString:@"PatientRecord"]) {
+        query = [NSString stringWithFormat:@"Select t.*, p.Id AS PatientId, r.Id AS PatientRecordId FROM %@ t, Patient p, PatientRecord r WHERE t.LastModified > t.LastSynced and t.AppPatientRecordId = r.AppId and r.AppPatientId = p.AppId", table];
+    }
+    else {
+        query = [NSString stringWithFormat:@"Select * FROM %@ WHERE LastModified > LastSynced", table];
+    }
     NSMutableArray *array = [[NSMutableArray alloc] init];
     FMResultSet *results = [db executeQuery:query];
     if (!results) {

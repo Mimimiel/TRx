@@ -1,14 +1,13 @@
 //
-//  HQHelper.m
+//  PQHelper.m
 //  TRx
 //
-//  Created by Mark Bellott on 4/5/13.
+//  Created by Mark Bellott on 4/23/13.
 //  Copyright (c) 2013 Team Ecuador. All rights reserved.
 //
 
-#import "HQHelper.h"
-
-@implementation indexHelper
+#import "PQHelper.h"
+@implementation pIndexHelper
 @synthesize questionId, nextYes, nextNo;
 
 -(id) initWithID:(NSString*)q NextYes:(NSInteger)ny NextNo:(NSInteger)nn{
@@ -29,7 +28,7 @@
 
 @end
 
-@implementation HQHelper
+@implementation PQHelper
 
 @synthesize currentIndex, nextIndex, questionKeys;
 
@@ -44,112 +43,69 @@
 }
 
 -(void)initializeQuestionTracker{
-    indexHelper *tmp;
+    pIndexHelper *tmp;
     questionTracker = [[NSMutableArray alloc]init];
     
-    tmp = [[indexHelper alloc] initWithID:@"preOp_HowLong" NextYes:1 NextNo:1];
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_BloodPressure" NextYes:1 NextNo:1];
     [questionTracker addObject:tmp];
     
-    tmp = [[indexHelper alloc] initWithID:@"preOp_PreventWorking" NextYes:1 NextNo:1];
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_HeartRate" NextYes:1 NextNo:1];
     [questionTracker addObject:tmp];
     
-    tmp = [[indexHelper alloc] initWithID:@"preOp_GettingWorse" NextYes:1 NextNo:1];
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_RestMin" NextYes:1 NextNo:1];
     [questionTracker addObject:tmp];
     
-    tmp = [[indexHelper alloc] initWithID:@"preOp_HaveMedicalProblems" NextYes:2 NextNo:4];
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_OxSat" NextYes:1 NextNo:1];
     [questionTracker addObject:tmp];
     
-    tmp = [[indexHelper alloc] initWithID:@"preOp_MedicalProblemsLike" NextYes:0 NextNo:0];
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_Temp" NextYes:1 NextNo:1];
     [questionTracker addObject:tmp];
     
-    tmp = [[indexHelper alloc] initWithID:@"preOp_HaveInfections" NextYes:2 NextNo:2];
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_Height" NextYes:1 NextNo:1];
     [questionTracker addObject:tmp];
     
-    tmp = [[indexHelper alloc] initWithID:@"preOp_InfectionsLike" NextYes:0 NextNo:0];
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_Weight" NextYes:1 NextNo:1];
     [questionTracker addObject:tmp];
     
-    tmp = [[indexHelper alloc] initWithID:@"preOp_BeenHospital" NextYes:1 NextNo:2];
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_AwakeOriented" NextYes:1 NextNo:1];
     [questionTracker addObject:tmp];
     
-    tmp = [[indexHelper alloc] initWithID:@"preOp_HospitalFor" NextYes:1 NextNo:1];
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_Heent" NextYes:2 NextNo:2];
     [questionTracker addObject:tmp];
     
-    tmp = [[indexHelper alloc] initWithID:@"preOp_EyeProblems" NextYes:1 NextNo:1];
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_HeentSelect" NextYes:0 NextNo:0];
     [questionTracker addObject:tmp];
     
-    tmp = [[indexHelper alloc] initWithID:@"preOp_HearingProblems" NextYes:1 NextNo:1];
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_ChestCTAB" NextYes:1 NextNo:1];
     [questionTracker addObject:tmp];
     
-    tmp = [[indexHelper alloc] initWithID:@"preOp_HeartburnSwallowing" NextYes:1 NextNo:1];
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_ChestRRR" NextYes:1 NextNo:1];
     [questionTracker addObject:tmp];
     
-    tmp = [[indexHelper alloc] initWithID:@"preOp_HeartProblems" NextYes:2 NextNo:2];
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_ChestSym" NextYes:1 NextNo:1];
     [questionTracker addObject:tmp];
     
-    tmp = [[indexHelper alloc] initWithID:@"preOp_HeartProblemsLike" NextYes:0 NextNo:0];
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_ChestPulse" NextYes:1 NextNo:1];
     [questionTracker addObject:tmp];
     
-    tmp = [[indexHelper alloc] initWithID:@"preOp_LungProblems" NextYes:2 NextNo:2];
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_AbSoft" NextYes:1 NextNo:1];
     [questionTracker addObject:tmp];
     
-    tmp = [[indexHelper alloc] initWithID:@"preOp_LungProblemsLike" NextYes:0 NextNo:0];
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_AbNT" NextYes:1 NextNo:1];
     [questionTracker addObject:tmp];
     
-    tmp = [[indexHelper alloc] initWithID:@"preOp_GiProblems" NextYes:2 NextNo:2];
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_AbND" NextYes:1 NextNo:1];
     [questionTracker addObject:tmp];
     
-    tmp = [[indexHelper alloc] initWithID:@"preOp_GiProblemsLike" NextYes:0 NextNo:0];
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_AbBS" NextYes:1 NextNo:1];
     [questionTracker addObject:tmp];
     
-    tmp = [[indexHelper alloc] initWithID:@"preOp_NeurologicProblems" NextYes:2 NextNo:2];
+    tmp = [[pIndexHelper alloc] initWithID:@"phys_Done" NextYes:0 NextNo:0];
     [questionTracker addObject:tmp];
-    
-    tmp = [[indexHelper alloc] initWithID:@"preOp_NeurologicProblemsLike" NextYes:0 NextNo:0];
-    [questionTracker addObject:tmp];
-    
-    tmp = [[indexHelper alloc] initWithID:@"preOp_SurgeriesBefore" NextYes:2 NextNo:2];
-    [questionTracker addObject:tmp];
-    
-    tmp = [[indexHelper alloc] initWithID:@"preOp_SurgeriesLike" NextYes:0 NextNo:0];
-    [questionTracker addObject:tmp];
-    
-    tmp = [[indexHelper alloc] initWithID:@"preOp_AnesthesiaProblems" NextYes:2 NextNo:2];
-    [questionTracker addObject:tmp];
-    
-    tmp = [[indexHelper alloc] initWithID:@"preOp_AnesthesiaLike" NextYes:0 NextNo:0];
-    [questionTracker addObject:tmp];
-    
-    tmp = [[indexHelper alloc] initWithID:@"preOp_TakeMedications" NextYes:1 NextNo:2];
-    [questionTracker addObject:tmp];
-    
-    tmp = [[indexHelper alloc] initWithID:@"preOp_ListMedications" NextYes:1 NextNo:1];
-    [questionTracker addObject:tmp];
-    
-    tmp = [[indexHelper alloc] initWithID:@"preOp_AllergicFoodMedicine" NextYes:1 NextNo:2];
-    [questionTracker addObject:tmp];
-    
-    tmp = [[indexHelper alloc] initWithID:@"preOp_ListAllergies" NextYes:1 NextNo:1];
-    [questionTracker addObject:tmp];
-    
-    tmp = [[indexHelper alloc] initWithID:@"preOp_DoSmoke" NextYes:1 NextNo:2];
-    [questionTracker addObject:tmp];
-    
-    tmp = [[indexHelper alloc] initWithID:@"preOp_PacksDay" NextYes:1 NextNo:1];
-    [questionTracker addObject:tmp];
-    
-    tmp = [[indexHelper alloc] initWithID:@"preOp_DoDrink" NextYes:1 NextNo:2];
-    [questionTracker addObject:tmp];
-    
-    tmp = [[indexHelper alloc] initWithID:@"preOp_DrinksDay" NextYes:1 NextNo:1];
-    [questionTracker addObject:tmp];
-    
-    tmp = [[indexHelper alloc] initWithID:@"preOp_Done" NextYes:0 NextNo:0];
-    [questionTracker addObject:tmp];
-
 }
 
 -(NSInteger) getNextType{
-    indexHelper* qKey = [questionTracker objectAtIndex:currentIndex];
+    pIndexHelper* qKey = [questionTracker objectAtIndex:currentIndex];
     NSString *typeString = [Question getQuestionType:qKey.questionId];
     return [typeString integerValue];
     
@@ -160,12 +116,12 @@
 }
 
 -(NSString*) getNextEnglishLabel{
-    indexHelper* qKey = [questionTracker objectAtIndex:currentIndex];
+    pIndexHelper* qKey = [questionTracker objectAtIndex:currentIndex];
     return [Question getEnglishLabel:qKey.questionId];
 }
 
 -(NSString*) getNextTranslatedLabel{
-    indexHelper* qKey = [questionTracker objectAtIndex:currentIndex];
+    pIndexHelper* qKey = [questionTracker objectAtIndex:currentIndex];
     return [Question getTranslatedLabel:qKey.questionId];
 }
 

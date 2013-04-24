@@ -1,17 +1,17 @@
 //
-//  HQLabel.m
+//  PQLabel.m
 //  TRx
 //
-//  Created by Mark Bellott on 4/5/13.
+//  Created by Mark Bellott on 4/23/13.
 //  Copyright (c) 2013 Team Ecuador. All rights reserved.
 //
 
 #define MIN_HEIGHT 10.0f
 #define CONST_WIDTH 425.0f
 
-#import "HQLabel.h"
+#import "PQLabel.h"
 
-@implementation HQLabel
+@implementation PQLabel
 
 @synthesize minHeight, constrainedWidth;
 

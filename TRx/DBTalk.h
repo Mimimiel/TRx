@@ -29,6 +29,7 @@
 
 +(UIImage *)getPortraitFromServer:(NSString *)fileName;
 +(NSURL *)getThumbFromServer:(NSString *)fileName;
++(NSURL *)getProfileThumbURLFromServerForPatient:(NSString *)patientId andRecord:(NSString *)patientRecordId;
 +(UIImage *)getProfilePictureFromServer:(NSString *)patientId;
 
 +(NSString *)addProfilePicture:(UIImage *)picture
@@ -77,6 +78,9 @@
 +(BOOL)getConnectivity;
 +(void)loadDataFromServer:(NSDictionary *)params;
 -(void)pushLocalUnsyncedToServer;
+
++(NSString *)pictureInfoToDatabase:(NSDictionary *)params;
+
 +(BOOL)uploadFileToServer:(id)file
                  fileType:(NSString *)fileType
                  fileName:(NSString *)fileName

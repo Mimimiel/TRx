@@ -1,28 +1,26 @@
 //
-//  DynamicHistoryViewController.h
+//  DynamicPhysicalViewController.h
 //  TRx
 //
-//  Created by Mark Bellott on 4/2/13.
+//  Created by Mark Bellott on 4/23/13.
 //  Copyright (c) 2013 Team Ecuador. All rights reserved.
-// 
+//
 
 #import <UIKit/UIKit.h>
 #import "Question.h"
-#import "HQHelper.h"
-#import "HQView.h"
+#import "PQHelper.h"
+#import "PQView.h"
 
-@interface DynamicHistoryViewController : UIViewController<UITextFieldDelegate>{
+@interface DynamicPhysicalViewController : UIViewController<UITextFieldDelegate>{
     
     float availableSpace, oMainViewPos, oTransViewPos;
     NSInteger pageCount;
     NSString *mainQuestionText;
-    NSString *transQuestionText;
     
-    HQHelper *qHelper;
+    PQHelper *qHelper;
     
-    HQView *mainQuestion;
-    HQView *transQuestion;
-              
+    PQView *mainQuestion;
+    
     //Arrays of Questions for main storage
     NSMutableArray *currentPage;
     NSMutableArray *previousPages;
@@ -34,8 +32,7 @@
 }
 
 //IBActions
--(IBAction)nextPressed:(id)sender;
 -(IBAction)backPressed:(id)sender;
-
+-(IBAction)nextPressed:(id)sender;
 
 @end
