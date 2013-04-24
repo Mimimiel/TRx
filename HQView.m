@@ -65,6 +65,7 @@
 
 -(void) buildQuestionOfType:(NSInteger)t withHelper:(HQHelper*)h{
     questionIndex = h.currentIndex;
+    questionId = [h getQuestionId];
     
     if(t==0){
         type = YES_NO;
@@ -137,6 +138,10 @@
 #pragma mark - Yes No Methods
 
 -(void) buildYesNo{
+    
+    if([questionId isEqualToString:@"preOp_Done"]){
+        return;
+    }
     
     yesButton = [[HQYesNo alloc]initWithFrame:CGRectMake(questionLabel.frame.origin.x + YES_PADDING, questionLabel.frame.origin.y + Y_PADDING + questionLabel.frame.size.height, 125, 75)];
     noButton = [[HQYesNo alloc]initWithFrame:CGRectMake(questionLabel.frame.origin.x + NO_PADDING, questionLabel.frame.origin.y + Y_PADDING + questionLabel.frame.size.height, 125, 75)];
