@@ -529,23 +529,8 @@ Principal Diagnosis:
 4. Wound/Dressing Care: Replace bandages
  
 5. Restrictions: Don't operate any vehicles for a week 
-</string>
-                                        <attributes>
-                                            <font key="NSFont" size="14" name="Helvetica"/>
-                                            <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
-                                        </attributes>
-                                    </fragment>
-                                    <fragment>
-                                        <string key="content" base64-UTF8="YES">
-Cg
-</string>
-                                        <attributes>
-                                            <font key="NSFont" size="14" name="Helvetica"/>
-                                            <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
-                                        </attributes>
-                                    </fragment>
-                                    <fragment>
-                                        <string key="content">6. Prescriptions: Tylenol
+
+6. Prescriptions: Tylenol
  
 </string>
                                         <attributes>
@@ -1075,124 +1060,6 @@ Cg
         <image name="DefaultBackgroundPortrait@2x.png" width="1536" height="2048"/>
         <image name="HistoryBackgroundLandscape.png" width="1024" height="768"/>
     </resources>
-    <classes>
-        <class className="DynamicHistoryViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/DynamicHistoryViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="backPressed:"/>
-                <relationship kind="action" name="nextPressed:"/>
-                <relationship kind="outlet" name="backButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="nextButton" candidateClass="UIButton"/>
-            </relationships>
-        </class>
-        <class className="DynamicPhysicalViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/DynamicPhysicalViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="backPressed:"/>
-                <relationship kind="action" name="nextPressed:"/>
-                <relationship kind="outlet" name="backButtonl" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="nextButton" candidateClass="UIButton"/>
-            </relationships>
-        </class>
-        <class className="HistoryNavigationController" superclassName="UINavigationController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/HistoryNavigationController.h"/>
-        </class>
-        <class className="HistoryViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/HistoryViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="addPatient:"/>
-                <relationship kind="action" name="nextView:"/>
-                <relationship kind="action" name="useCamera:"/>
-                <relationship kind="outlet" name="birthdayPicker" candidateClass="UIDatePicker"/>
-                <relationship kind="outlet" name="complaintPicker" candidateClass="UIPickerView"/>
-                <relationship kind="outlet" name="firstNameText" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="imageView" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="lastNameText" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="middleNameText" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="next" candidateClass="UIButton"/>
-            </relationships>
-        </class>
-        <class className="NSLayoutConstraint" superclassName="NSObject">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/NSLayoutConstraint.h"/>
-        </class>
-        <class className="OrdersViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/OrdersViewController.h"/>
-            <relationships>
-                <relationship kind="outlet" name="ordersTextViewBl" candidateClass="UITextView"/>
-                <relationship kind="outlet" name="ordersTextViewBr" candidateClass="UITextView"/>
-                <relationship kind="outlet" name="ordersTextViewTl" candidateClass="UITextView"/>
-                <relationship kind="outlet" name="ordersTextViewTr" candidateClass="UITextView"/>
-            </relationships>
-        </class>
-        <class className="PACUViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/PACUViewController.h"/>
-            <relationships>
-                <relationship kind="outlet" name="patientName" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="patientSurgery" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="patientThumbnail" candidateClass="UIImageView"/>
-            </relationships>
-        </class>
-        <class className="PatientListViewCell" superclassName="UITableViewCell">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/PatientListViewCell.h"/>
-            <relationships>
-                <relationship kind="outlet" name="chiefComplaint" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="patientName" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="patientPicture" candidateClass="UIImageView"/>
-            </relationships>
-        </class>
-        <class className="PatientListViewController" superclassName="UITableViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/PatientListViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="addPatients:"/>
-                <relationship kind="action" name="refreshPatients:"/>
-                <relationship kind="outlet" name="addPatientsButton" candidateClass="UIBarButtonItem"/>
-                <relationship kind="outlet" name="refreshButton" candidateClass="UIBarButtonItem"/>
-            </relationships>
-        </class>
-        <class className="PhysicalNavigationController" superclassName="UINavigationController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/PhysicalNavigationController.h"/>
-        </class>
-        <class className="PhysicalViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/PhysicalViewController.h"/>
-        </class>
-        <class className="PrimaryNavigationController" superclassName="UINavigationController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/PrimaryNavigationController.h"/>
-        </class>
-        <class className="PrimaryTabBarController" superclassName="UITabBarController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/PrimaryTabBarController.h"/>
-        </class>
-        <class className="SummaryViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/SummaryViewController.h"/>
-            <relationships>
-                <relationship kind="outlet" name="patientPicture" candidateClass="UIImageView"/>
-            </relationships>
-        </class>
-        <class className="SurgeryListViewCell" superclassName="UITableViewCell">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/SurgeryListViewCell.h"/>
-            <relationships>
-                <relationship kind="outlet" name="audioFileLength" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="fileIcon" candidateClass="UIImageView"/>
-                <relationship kind="outlet" name="fileName" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="playButton" candidateClass="UIButton"/>
-            </relationships>
-        </class>
-        <class className="SurgeryViewController" superclassName="UIViewController">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/SurgeryViewController.h"/>
-            <relationships>
-                <relationship kind="action" name="playAudio:"/>
-                <relationship kind="action" name="recordAudio:"/>
-                <relationship kind="action" name="saveRecord:"/>
-                <relationship kind="action" name="useCamera:"/>
-                <relationship kind="action" name="useSelectedFile:"/>
-                <relationship kind="outlet" name="fileNameText" candidateClass="UITextField"/>
-                <relationship kind="outlet" name="filesTable" candidateClass="UITableView"/>
-                <relationship kind="outlet" name="playButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="recordButton" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="saveRecording" candidateClass="UIButton"/>
-                <relationship kind="outlet" name="videoView" candidateClass="UIView"/>
-            </relationships>
-        </class>
-    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar" statusBarStyle="blackTranslucent"/>
         <simulatedOrientationMetrics key="orientation"/>
