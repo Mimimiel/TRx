@@ -113,7 +113,7 @@ static DBTalk *singleton;
             patientId = dic[@"PatientId"];
             patientRecordId = dic[@"PatientRecordId"];
             
-            if (!patientId || !patientRecordId) {
+            if (!patientId || !patientRecordId || ![LocalTalk localGetPatientId]) {  //only upload for current patient
                 NSLog(@"Skipping sync picture");
                 continue;
             }

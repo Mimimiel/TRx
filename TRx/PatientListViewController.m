@@ -152,7 +152,6 @@
     cell.patientName.text = name;
     cell.chiefComplaint.text = (NSString*)[[patients objectAtIndex:row] chiefComplaint];
   
- 
     [cell.patientPicture setImageWithURLRequest:[NSURLRequest requestWithURL:url] placeholderImage:NULL success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
         NSLog(@"success");
       cell.patientPicture.image = image;

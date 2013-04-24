@@ -10,5 +10,10 @@
 
 @interface SummaryViewController : UIViewController
 
-@property (strong, nonatomic) IBOutlet UIImageView *patientPicture;
+@property(strong, nonatomic) IBOutlet UIImageView *patientPicture;
+@property(strong, nonatomic) IBOutlet UILabel *pName;
+@property(strong, nonatomic) IBOutlet UILabel *pGender;
+@property(strong, nonatomic) IBOutlet UILabel *pBirthday;
+@property(strong, nonatomic) IBOutlet UILabel *pSurgery;
+
 @end
