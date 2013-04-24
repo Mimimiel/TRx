@@ -96,7 +96,7 @@
     }
     
     questionId = [h getQuestionId];
-    //[self restorePreviousAnswers];
+    [self restorePreviousAnswers];
 }
 
 -(void) checkHasAnswer{
@@ -139,7 +139,7 @@
 
 -(void) buildYesNo{
     
-    if([questionId isEqualToString:@"phys_Done"]){
+    if([questionId isEqualToString:@"preOp_Done"]){
         return;
     }
     

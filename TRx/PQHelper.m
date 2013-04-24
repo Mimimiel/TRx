@@ -102,7 +102,6 @@
     
     tmp = [[pIndexHelper alloc] initWithID:@"phys_Done" NextYes:0 NextNo:0];
     [questionTracker addObject:tmp];
-    
 }
 
 -(NSInteger) getNextType{

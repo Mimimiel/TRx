@@ -77,14 +77,14 @@
                                     <action selector="useCamera:" destination="XVs-Rn-8gv" eventType="touchUpInside" id="frN-KD-6Md"/>
                                 </connections>
                             </button>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="bezel" placeholder="Last" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="0ub-4a-2Ic">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="bezel" placeholder="Last/Apellido" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="0ub-4a-2Ic">
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="1zE-CJ-pgr"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="bezel" placeholder="First" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="8Le-TB-Ibr">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="bezel" placeholder="First/Primero" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="8Le-TB-Ibr">
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="bfJ-t5-1Hf"/>
                                     <constraint firstAttribute="width" constant="306" id="bly-He-kXl"/>
@@ -93,7 +93,7 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="bezel" placeholder="Middle" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="sei-8R-3Go">
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="bezel" placeholder="Middle/Segundo" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="sei-8R-3Go">
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="dMG-OG-LJf"/>
                                 </constraints>
@@ -167,17 +167,26 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
 </data>
                                 </timeZone>
                             </datePicker>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Chief Complaint" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eeG-gI-EHu">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Chief Complaint/Queja Principal" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eeG-gI-EHu">
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="257" id="jQK-ak-oBB"/>
+                                </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Birthday" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KTc-1m-v0X">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Birthday/Cumpleaños" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KTc-1m-v0X">
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="170" id="4kN-WR-6cY"/>
+                                </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Sex" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="a2I-Py-ss1">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Gender/Género" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="a2I-Py-ss1">
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="123" id="nM1-Oo-B1P"/>
+                                </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
@@ -1059,6 +1068,124 @@ Principal Diagnosis:
         <image name="DefaultBackgroundPortrait@2x.png" width="1536" height="2048"/>
         <image name="HistoryBackgroundLandscape.png" width="1024" height="768"/>
     </resources>
+    <classes>
+        <class className="DynamicHistoryViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/DynamicHistoryViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="backPressed:"/>
+                <relationship kind="action" name="nextPressed:"/>
+                <relationship kind="outlet" name="backButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="nextButton" candidateClass="UIButton"/>
+            </relationships>
+        </class>
+        <class className="DynamicPhysicalViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/DynamicPhysicalViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="backPressed:"/>
+                <relationship kind="action" name="nextPressed:"/>
+                <relationship kind="outlet" name="backButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="nextButton" candidateClass="UIButton"/>
+            </relationships>
+        </class>
+        <class className="HistoryNavigationController" superclassName="UINavigationController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/HistoryNavigationController.h"/>
+        </class>
+        <class className="HistoryViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/HistoryViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="addPatient:"/>
+                <relationship kind="action" name="nextView:"/>
+                <relationship kind="action" name="useCamera:"/>
+                <relationship kind="outlet" name="birthdayPicker" candidateClass="UIDatePicker"/>
+                <relationship kind="outlet" name="complaintPicker" candidateClass="UIPickerView"/>
+                <relationship kind="outlet" name="firstNameText" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="imageView" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="lastNameText" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="middleNameText" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="next" candidateClass="UIButton"/>
+            </relationships>
+        </class>
+        <class className="NSLayoutConstraint" superclassName="NSObject">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/NSLayoutConstraint.h"/>
+        </class>
+        <class className="OrdersViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/OrdersViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="ordersTextViewBl" candidateClass="UITextView"/>
+                <relationship kind="outlet" name="ordersTextViewBr" candidateClass="UITextView"/>
+                <relationship kind="outlet" name="ordersTextViewTl" candidateClass="UITextView"/>
+                <relationship kind="outlet" name="ordersTextViewTr" candidateClass="UITextView"/>
+            </relationships>
+        </class>
+        <class className="PACUViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/PACUViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="patientName" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="patientSurgery" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="patientThumbnail" candidateClass="UIImageView"/>
+            </relationships>
+        </class>
+        <class className="PatientListViewCell" superclassName="UITableViewCell">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/PatientListViewCell.h"/>
+            <relationships>
+                <relationship kind="outlet" name="chiefComplaint" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="patientName" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="patientPicture" candidateClass="UIImageView"/>
+            </relationships>
+        </class>
+        <class className="PatientListViewController" superclassName="UITableViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/PatientListViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="addPatients:"/>
+                <relationship kind="action" name="refreshPatients:"/>
+                <relationship kind="outlet" name="addPatientsButton" candidateClass="UIBarButtonItem"/>
+                <relationship kind="outlet" name="refreshButton" candidateClass="UIBarButtonItem"/>
+            </relationships>
+        </class>
+        <class className="PhysicalNavigationController" superclassName="UINavigationController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/PhysicalNavigationController.h"/>
+        </class>
+        <class className="PhysicalViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/PhysicalViewController.h"/>
+        </class>
+        <class className="PrimaryNavigationController" superclassName="UINavigationController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/PrimaryNavigationController.h"/>
+        </class>
+        <class className="PrimaryTabBarController" superclassName="UITabBarController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/PrimaryTabBarController.h"/>
+        </class>
+        <class className="SummaryViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/SummaryViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="patientPicture" candidateClass="UIImageView"/>
+            </relationships>
+        </class>
+        <class className="SurgeryListViewCell" superclassName="UITableViewCell">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/SurgeryListViewCell.h"/>
+            <relationships>
+                <relationship kind="outlet" name="audioFileLength" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="fileIcon" candidateClass="UIImageView"/>
+                <relationship kind="outlet" name="fileName" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="playButton" candidateClass="UIButton"/>
+            </relationships>
+        </class>
+        <class className="SurgeryViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/SurgeryViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="playAudio:"/>
+                <relationship kind="action" name="recordAudio:"/>
+                <relationship kind="action" name="saveRecord:"/>
+                <relationship kind="action" name="useCamera:"/>
+                <relationship kind="action" name="useSelectedFile:"/>
+                <relationship kind="outlet" name="fileNameText" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="filesTable" candidateClass="UITableView"/>
+                <relationship kind="outlet" name="playButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="recordButton" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="saveRecording" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="videoView" candidateClass="UIView"/>
+            </relationships>
+        </class>
+    </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar" statusBarStyle="blackTranslucent"/>
         <simulatedOrientationMetrics key="orientation"/>
