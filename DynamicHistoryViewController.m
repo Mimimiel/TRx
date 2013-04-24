@@ -29,6 +29,7 @@
     else{
         if([[qHelper getQuestionId] isEqualToString:@"preOp_Done"]){
             nextButton.enabled = YES;
+            [nextButton setHidden:NO];
         }
         [self loadPreviousQuestion];
         pageCount--;
@@ -116,6 +117,7 @@
     
     if([[qHelper getQuestionId] isEqualToString:@"preOp_Done"]){
         nextButton.enabled = NO;
+        [nextButton setHidden:YES];
     }
     
     if(newMainQuestion.type == TEXT_ENTRY){
