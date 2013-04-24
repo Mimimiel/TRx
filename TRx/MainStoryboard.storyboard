@@ -393,7 +393,7 @@ AQABAAEAAQAB//+dkAEA//+PgAAE//+dkAEI//+dkAEMUERUAFBTVABQV1QAUFBUAAAAAAEAAAABA
                     <navigationItem key="navigationItem" id="Y1O-V2-elU"/>
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics"/>
                     <connections>
-                        <outlet property="backButtonl" destination="UG0-zh-HcD" id="m2U-qB-3xL"/>
+                        <outlet property="backButton" destination="UG0-zh-HcD" id="Hbz-g9-1Kl"/>
                         <outlet property="nextButton" destination="7Q6-Ik-Iil" id="l9m-ST-0w6"/>
                     </connections>
                 </viewController>
@@ -1075,7 +1075,7 @@ Principal Diagnosis:
             <relationships>
                 <relationship kind="action" name="backPressed:"/>
                 <relationship kind="action" name="nextPressed:"/>
-                <relationship kind="outlet" name="backButtonl" candidateClass="UIButton"/>
+                <relationship kind="outlet" name="backButton" candidateClass="UIButton"/>
                 <relationship kind="outlet" name="nextButton" candidateClass="UIButton"/>
             </relationships>
         </class>
