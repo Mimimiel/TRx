@@ -75,6 +75,9 @@ static DBTalk *singleton;
     else if ((patientId && !recordId) || recordUnsynced) {
         [DBTalk addUpdatePatientRecord];
     }
+    else {
+        [DBTalk synchTables];
+    }
     
     //check if each record is unsynced
     //if unsynced,
@@ -84,10 +87,22 @@ static DBTalk *singleton;
     //FIXME this is going to push every time until everything is working and syncing
     //Find a work-around for short-term (only push on own tab?????)
     
+
+    
+    
+    //check if image is unsynced and push if unsynced
+        //calls uploadFileToServer() use "image" and later ?? getOperationTypeRecordName
+    
+    
+    //check if recordId is null
+    NSLog(@"Exiting DBTalk's pushLocalUnsyncedToServer");
+}
+
++(void)synchTables {
     NSMutableArray *array = [LocalTalk localGetUnsyncedRecordsFromTable:@"OperationRecord"];
     
     //FIXME this is only getting the current patient's ID; I need Id for any unsynced image
-    patientId     = [LocalTalk localGetPatientId];
+    NSString *patientId     = [LocalTalk localGetPatientId];
     NSString *recordTypeId, *patientRecordId;
     if (array) {
         for (NSDictionary *dic in array) {
@@ -106,6 +121,8 @@ static DBTalk *singleton;
                 NSLog(@"Attempting to add image for patientId: %@", patientId);
                 [DBTalk uploadFileToServer:[LocalTalk localGetPortrait] fileType:@"image" fileName:dic[@"Name"] patientId:patientId];
                 
+                
+                
                 [DBTalk pictureInfoToDatabase:dic];
                 
                 //[DBTalk call Mischa's method'];
@@ -114,14 +131,6 @@ static DBTalk *singleton;
             }
         }
     }
-    
-    
-    //check if image is unsynced and push if unsynced
-        //calls uploadFileToServer() use "image" and later ?? getOperationTypeRecordName
-    
-    
-    //check if recordId is null
-    NSLog(@"Exiting DBTalk's pushLocalUnsyncedToServer");
 }
 
 
@@ -276,13 +285,31 @@ static DBTalk *singleton;
             [Utility alertWithMessage:err];
         }
         else {
+            
+            NSMutableArray *array = [[NSMutableArray alloc] init];
+            
+            
+            
+            NSString *appId = [LocalTalk localGetPatientRecordAppId];
+      
+            
+            NSDictionary *dic = @{@"AppId": appId,
+                                  @"Id": retval};
+            array[0] = dic;
+            [LocalTalk setSQLiteTable:@"PatientRecord" withData:array];
+            
+            
             BOOL inserted = [LocalTalk insertRecordId:retval];
             if (!inserted) {
                 NSLog(@"RecordId not inserted into Local. RecordId: %@", retval);
             }
         }
+        
+        
+        
         NSLog(@"%@", [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding]);
         //[[NSNotificationCenter defaultCenter] postNotificationName:@"patientAdded" object:nil];
+        [DBTalk synchTables];
         
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"AddRecord failed");
@@ -652,20 +679,22 @@ static DBTalk *singleton;
     
     [httpClient postPath:@"add/picturePathToDatabase" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
         NSLog(@"Picture path added successfully");
-        NSError *jsonError;
-        NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:responseObject options:kNilOptions error:&jsonError];
-        NSDictionary *dic = jsonArray[0];
-        NSString *retval = [dic objectForKey:@"@returnValue"];
-        if ([retval isEqualToString:@"0"]) {
-            NSString *err = [dic objectForKey:@"error"];
-            [Utility alertWithMessage:err];
-            NSLog(@"error: %@", err);
-            
-        }
-        else {
-            //update sync
-            NSLog(@"It really worked: %@", dic);
-        }
+        NSLog(@"Response: %@", [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding]);
+//        NSError *jsonError;
+//        NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:responseObject options:kNilOptions error:&jsonError];
+//        NSDictionary *dic = jsonArray[0];
+//        NSString *retval = [dic objectForKey:@"@returnValue"];
+//        if ([retval isEqualToString:@"0"]) {
+//            NSString *err = [dic objectForKey:@"error"];
+//            [Utility alertWithMessage:err];
+//            NSLog(@"error: %@", err);
+//            
+//        }
+//        else {
+//            //update sync
+//            NSLog(@"Response: %@", [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding]);
+//            NSLog(@"It really worked: %@", dic);
+//        }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Picture path update failed");
     }];
@@ -774,17 +803,17 @@ static DBTalk *singleton;
     NSDictionary *dbobj;
     
     //TODO: look at whether this should work even if no patientid and patientrecordid--i.e. for ordertemplate, surgery, etc default tables
-    //if(patientId != nil && patientRecordId != nil)
-    //{
+    if(patientId != nil && patientRecordId != nil)
+    {
         dbobj = @{@"tableNames": [params objectForKey:@"tableNames"],
                   @"patientId": patientId,
                   @"patientRecordId": patientRecordId,
                   @"location": [params objectForKey:@"location"]};
-    //}
-    //else
-    //{
-    //    dbobj = nil;
-    //}
+    }
+    else
+    {
+        dbobj = nil;
+    }
     
     if(dbobj != nil){
         //Call php for the necessary tables
@@ -810,44 +839,6 @@ static DBTalk *singleton;
         
         [[NSNotificationCenter defaultCenter] postNotificationName:@"loadFromLocal" object:this userInfo:params];
     }
-    
-    //ORIGINAL CODE
-//    /*take tables and pass dictionary of patients info from local instead*/
-//    /*get patient and patientRecordId from local database if there isn't one, don't call it*/
-//    __block typeof(self) this = self;
-//    NSURL *url = [NSURL URLWithString:host];
-//    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
-//    NSDictionary *dbobj;
-//    NSString *patientRecordId = [LocalTalk localGetPatientRecordId];
-//    NSString *patientId = [LocalTalk localGetPatientId];
-//    NSLog(@"the Patient Id is: %@ and the P-Record Id is: %@", patientId, patientRecordId);
-//    
-//    if(patientId != nil && patientRecordId != nil){
-//        dbobj = @{@"tableNames" : [params objectForKey:@"tableNames"],
-//                  @"patientRecordId" : patientRecordId,
-//                  @"patientId" : patientId,
-//                  @"location" : [params objectForKey:@"location"] };
-//    } else { dbobj = nil; }
-//    
-//    if(dbobj != nil){
-//        NSMutableURLRequest *request = [httpClient requestWithMethod:@"POST" path:@"get/dataFromTables" parameters:dbobj];
-//        [AFJSONRequestOperation addAcceptableContentTypes:[NSSet setWithObject:@"text/html"]];
-//        AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-//            NSLog(@"This was the response: %@", response);
-//              [this loadDataintoSQLiteWith:JSON];
-//              [[NSNotificationCenter defaultCenter] postNotificationName:@"loadFromLocal" object:this userInfo:params];
-//        } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error, id JSON) {
-//            NSLog(@"Request Failure Because %@",[error userInfo]);
-//              [[NSNotificationCenter defaultCenter] postNotificationName:@"loadFromLocal" object:this userInfo:params];
-//        }];
-//        
-//        [operation start];
-//    } else {
-//        /*it's a new patient or something went wrong*/
-//        //TODO: LOCK DOWN OTHER TABS HERE BEFORE WE PUB
-//
-//        [[NSNotificationCenter defaultCenter] postNotificationName:@"loadFromLocal" object:this userInfo:params];
-//    }
 }
 
 /***********************************************************************************************************
