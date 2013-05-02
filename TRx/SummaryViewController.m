@@ -51,7 +51,7 @@
 //        [_patientPicture setImage:[LocalTalk localGetPortrait]];
 //    }
     
-    //TODO: MISCHAPICTURE
+/*    //TODO: MISCHAPICTURE
     NSURL *pictureURL = [NSURL fileURLWithPath:@"MISCHAPICTURE"];
     //NSURL *pictureURL = [DBTalk getProfileThumbURLFromServerForPatient:[LocalTalk localGetPatientId] andRecord:[LocalTalk localGetPatientRecordId]];
     NSData *imageData = [NSData dataWithContentsOfURL:pictureURL];
@@ -89,7 +89,7 @@
     NSString *surgery;
     surgery = @"Surgery: Cataracts";
     //surgery = [surgery stringByAppendingString:[dict objectForKey:@"Surgery"]];
-    _pSurgery.text = surgery;
+    _pSurgery.text = surgery;*/
 }
 
 -(void)updatedDataListener:(NSNotification *)notification {

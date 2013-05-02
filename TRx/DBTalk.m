@@ -72,18 +72,19 @@ static DBTalk *singleton;
     NSString *patientId     = [LocalTalk localGetPatientId];
     NSString *recordId      = [LocalTalk localGetPatientRecordId];
     
+    //TODO: all of these if statements need to super change
     //TODO:
     //If this is asynchronous, this won't work
     //Right now, make it work synchronously
-    if (!patientId || patientUnsynced) {
+    if (!patientId || [patientId isEqualToString:@"0"]) {
         [DBTalk addUpdatePatient];            //needs to call addRecord in callback
         patientId = [LocalTalk localGetPatientId];
     }
-    if ((patientId && !recordId) || recordUnsynced) {
+    if (patientId && ![patientId isEqualToString:@"0"] && (!recordId || [recordId isEqualToString:@"0"])) {
         [DBTalk addUpdatePatientRecord];
         recordId = [LocalTalk localGetPatientRecordId];
     }
-    if (patientId && recordId){
+    if (patientId && ![patientId isEqualToString:@"0"] && recordId && ![recordId isEqualToString:@"0"]){
         [DBTalk synchTables];
     }
     
