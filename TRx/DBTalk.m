@@ -378,7 +378,8 @@ static DBTalk *singleton;
         NSLog(@"Error in request: %@", err);
     }
     NSError *jsonError;
-    NSDictionary *jsonDic = [NSJSONSerialization JSONObjectWithData:responseData options:kNilOptions error:&jsonError];
+    NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:responseData options:kNilOptions error:&jsonError];
+    NSDictionary *jsonDic = jsonArray[0];
     if (jsonError) {
         NSLog(@"JsonError: %@", jsonError);
     }
