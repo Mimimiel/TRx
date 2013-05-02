@@ -314,6 +314,7 @@ static FMDatabaseQueue *queue;
         CFAbsoluteTime time = CFAbsoluteTimeGetCurrent();
         NSString *now = [NSString stringWithFormat:@"%f", time];
         
+        
         imageDic[@"Name"]               = now;
         imageDic[@"Path"]               = now;
         imageDic[@"IsProfile"]          = @"1";
@@ -834,7 +835,7 @@ static FMDatabaseQueue *queue;
     
     NSArray *patientsArrayFromDB;
     NSMutableArray *patients = [[NSMutableArray alloc] init];
-    NSString *firstName, *lastName, *patientId, *imageId, *middleName, *recordId, *birthday, *complaint, *PatientRecordAppId;
+    NSString *firstName, *lastName, *patientId, *imageId, *middleName, *recordId, *birthday, *complaint, *PatientRecordAppId, *opId;
     UIImage *picture;
     NSString *text;
     NSData *data;
@@ -858,9 +859,8 @@ static FMDatabaseQueue *queue;
             complaint   = [item objectForKey:@"SurgeryTypeId"];
             complaint   = [AdminInformation getSurgeryNameById:complaint];
             imageId     = [NSString stringWithFormat:@"%@n000", patientId];
+            opId = [item objectForKey:@"OperationRecordId"];
             PatientRecordAppId = nil;
-            
-            
             
             text = [item objectForKey:@"Data"];
             NSInteger test = text.length;
@@ -870,7 +870,7 @@ static FMDatabaseQueue *queue;
             //data = [text dataUsingEncoding:NSUTF8StringEncoding];
             picture = [UIImage imageWithData:data];
             
-            Patient *obj = [[Patient alloc] initWithPatientId:patientId currentRecordId:recordId patientRecordAppId:PatientRecordAppId firstName:firstName MiddleName:middleName LastName:lastName birthday:birthday ChiefComplaint:complaint PhotoID:picture];
+            Patient *obj = [[Patient alloc] initWithPatientId:patientId currentRecordId:recordId patientRecordAppId:PatientRecordAppId firstName:firstName MiddleName:middleName LastName:lastName birthday:birthday ChiefComplaint:complaint PhotoID:picture OperationRecordId:opId];
             
             obj.patientId = patientId;
             NSLog(@"%@", picture);
@@ -896,12 +896,12 @@ static FMDatabaseQueue *queue;
             birthday    = [item objectForKey:@"Birthday"];  //does this exist?
             complaint   = [item objectForKey:@"Name"];
             imageId     = [NSString stringWithFormat:@"%@n000", patientId];
-            
+            opId = [item objectForKey: @"OperationRecordId"];
             text = [item objectForKey:@"Data"];
             data = [Base64 decode:text];
             picture = [UIImage imageWithData:data];
             
-            Patient *obj = [[Patient alloc] initWithPatientId:patientId currentRecordId:recordId patientRecordAppId:PatientRecordAppId firstName:firstName MiddleName:middleName LastName:lastName birthday:birthday ChiefComplaint:complaint PhotoID:picture];
+            Patient *obj = [[Patient alloc] initWithPatientId:patientId currentRecordId:recordId patientRecordAppId:PatientRecordAppId firstName:firstName MiddleName:middleName LastName:lastName birthday:birthday ChiefComplaint:complaint PhotoID:picture OperationRecordId:opId];
             
             obj.patientId = patientId;
             NSLog(@"%@", picture);
@@ -919,7 +919,7 @@ static FMDatabaseQueue *queue;
 
 +(NSMutableArray *)localGetPatientListFromSQLite {
     NSMutableArray *retval = [[NSMutableArray alloc] init];
-    NSString *query = [NSString stringWithFormat: @"SELECT a.Id, a.FirstName, a.MiddleName, a.LastName, a.Birthday, b.AppId as PatientRecordAppId, b.Id as RecordId, b.SurgeryTypeId, b.DoctorId, b.IsLive, b.IsCurrent, c.Name, d.Data FROM patient as a JOIN patientRecord as b ON b.apppatientid = a.appid JOIN surgeryType as c on b.SurgeryTypeId = c.id JOIN operationRecord as d on d.AppPatientRecordId = a.AppId WHERE d.IsProfile = 1"];
+    NSString *query = [NSString stringWithFormat: @"SELECT d.Id as OperationRecordId, a.Id, a.FirstName, a.MiddleName, a.LastName, a.Birthday, b.AppId as PatientRecordAppId, b.Id as RecordId, b.SurgeryTypeId, b.DoctorId, b.IsLive, b.IsCurrent, c.Name, d.Data FROM patient as a JOIN patientRecord as b ON b.apppatientid = a.appid JOIN surgeryType as c on b.SurgeryTypeId = c.id JOIN operationRecord as d on d.AppPatientRecordId = a.AppId WHERE d.IsProfile = 1"];
     
     //TODO: MISCHAPICTURE -- need to make sure this sql actually works
     FMResultSet *result = [db executeQuery:query];

@@ -72,15 +72,15 @@
     
     
     /* exits method if no patient data in local database */
-    if ([retval count] == 0) {
-        return;
-    }
+//    if ([retval count] == 0) {
+//        return;
+//    }
     
     
     
     
-    NSDictionary *dict = retval[0];
-    
+//    NSDictionary *dict = retval[0];
+    /*
     NSString *name;
     NSString *lname;
     name = @"Name: ";
