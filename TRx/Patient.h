@@ -26,11 +26,16 @@
 @property(nonatomic, readwrite) NSString *currentRecordId;
 @property(nonatomic, readwrite) NSString *patientRecordAppId;
 @property(nonatomic, retain) UIImage *photoID;
-@property(nonatomic, retain) NSURL *photoURL;
+//@property(nonatomic, retain) NSURL *photoURL;
 
 -(id)initWithFirstName:(NSString *)fn MiddleName:(NSString*) mn LastName:(NSString*)ln ChiefComplaint:(NSString *)c PhotoID:(UIImage*)p;
 
+//-(id)initWithPatientId:(NSString *)patId currentRecordId:(NSString *)currRecordId
+//    patientRecordAppId:(NSString *)PatientRecordAppId firstName:(NSString *)fn MiddleName:(NSString*) mn LastName:(NSString*)ln
+//birthday:(NSString *)bDay ChiefComplaint:(NSString *)c PhotoID:(UIImage*)p PhotoURL:(NSURL*)photoURL;
+
 -(id)initWithPatientId:(NSString *)patId currentRecordId:(NSString *)currRecordId
     patientRecordAppId:(NSString *)PatientRecordAppId firstName:(NSString *)fn MiddleName:(NSString*) mn LastName:(NSString*)ln
-birthday:(NSString *)bDay ChiefComplaint:(NSString *)c PhotoID:(UIImage*)p PhotoURL:(NSURL*)photoURL;
+              birthday:(NSString *)bDay ChiefComplaint:(NSString *)c PhotoID:(UIImage*)p;
+
 @end

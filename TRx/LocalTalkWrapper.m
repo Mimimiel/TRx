@@ -41,29 +41,31 @@
     }
 }
 
-/*---------------------------------------------------------------------------
- Summary:
-    Attempts to add new patient, new patient's record
-    Then synchs data
- Details:
-    First checks if patientId and recordId are temporary
-    if temporary && there is a server connection
-    call addPatient and addPatientRecord
-    then synchronize Patient data and set Patient.Synched to true
- Notes:
-    AddPatient and AddRecord run Synchronously. Others, asynchronously.
- Returns:
-    true if no catastrophic error. false on failure
- TODO:
-    Check if connected to internet. If not, cache.
-    Double check that Data is synched asynchronously
- ----------------------------------------------------------------------------*/
-+(BOOL)addNewPatientAndSynchData {
-    return [SynchData addPatientToDatabaseAndSyncData];
-}
+//TODO MISCHAPICTURE
+///*---------------------------------------------------------------------------
+// Summary:
+//    Attempts to add new patient, new patient's record
+//    Then synchs data
+// Details:
+//    First checks if patientId and recordId are temporary
+//    if temporary && there is a server connection
+//    call addPatient and addPatientRecord
+//    then synchronize Patient data and set Patient.Synched to true
+// Notes:
+//    AddPatient and AddRecord run Synchronously. Others, asynchronously.
+// Returns:
+//    true if no catastrophic error. false on failure
+// TODO:
+//    Check if connected to internet. If not, cache.
+//    Double check that Data is synched asynchronously
+// ----------------------------------------------------------------------------*/
+//+(BOOL)addNewPatientAndSynchData {
+//    return [SynchData addPatientToDatabaseAndSyncData];
+//}
 
-+(Patient *)initPatientFromLocal {
-    return [SynchData initPatientFromLocal];
-}
+//TODO MISCHAPICTURE
+//+(Patient *)initPatientFromLocal {
+//    return [SynchData initPatientFromLocal];
+//}
 
 @end

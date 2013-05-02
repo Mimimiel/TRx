@@ -51,7 +51,9 @@
 //        [_patientPicture setImage:[LocalTalk localGetPortrait]];
 //    }
     
-    NSURL *pictureURL = [DBTalk getProfileThumbURLFromServerForPatient:[LocalTalk localGetPatientId] andRecord:[LocalTalk localGetPatientRecordId]];
+    //TODO: MISCHAPICTURE
+    NSURL *pictureURL = [NSURL fileURLWithPath:@"MISCHAPICTURE"];
+    //NSURL *pictureURL = [DBTalk getProfileThumbURLFromServerForPatient:[LocalTalk localGetPatientId] andRecord:[LocalTalk localGetPatientRecordId]];
     NSData *imageData = [NSData dataWithContentsOfURL:pictureURL];
     UIImage *image = [UIImage imageWithData:imageData];
     if(image) {

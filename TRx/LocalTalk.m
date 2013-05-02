@@ -225,8 +225,6 @@ static FMDatabaseQueue *queue;
 
 
 -(BOOL)localStoreFromViewsToLocal:(NSNotification *)notification {
-    
-    
     NSDictionary *params = [notification userInfo];
     NSMutableArray* paramsArray, *returnArray;
     NSMutableDictionary *mutableParams;
@@ -287,7 +285,7 @@ static FMDatabaseQueue *queue;
         imageDic[@"Path"]               = now;
         imageDic[@"IsProfile"]          = @"1";
         //TODO: commenting data out as quick fix, because of where we comment it out in sending params, but really all this will change
-        //imageDic[@"Data"]               = params[@"Data"];
+        imageDic[@"Data"]               = params[@"Data"];
         imageDic[@"AppPatientRecordId"] = [returnArray objectAtIndex:0];
         imageDic[@"RecordTypeId"]       = [AdminInformation getOperationRecordTypeIdByName:@"Picture"];
         
@@ -295,9 +293,13 @@ static FMDatabaseQueue *queue;
         
         
         returnArray = [LocalTalk setSQLiteTable:@"OperationRecord" withData:paramsArray];
-        if (!returnArray) {
-            [Utility alertWithMessage:@"Unable to add image to OperationRecords"];
-            NSLog(@"Unable to add image to OperationRecords");
+        
+        //TODO: error handling below
+        for(NSNumber *returnID in returnArray) {
+            if(returnID == 0){
+                [Utility alertWithMessage:@"Unable to add image to OperationRecords"];
+                NSLog(@"Unable to add image to OperationRecords");
+            }
         }
     }
     else if ([[params objectForKey:@"viewName"] isEqualToString:@"summaryViewController"]) {
@@ -800,8 +802,9 @@ static FMDatabaseQueue *queue;
     NSArray *patientsArrayFromDB;
     NSMutableArray *patients = [[NSMutableArray alloc] init];
     NSString *firstName, *lastName, *patientId, *imageId, *middleName, *recordId, *birthday, *complaint, *PatientRecordAppId;
-    NSURL *pictureURL;
     UIImage *picture;
+    NSString *text;
+    NSData *data;
     
     //check for connectivity to the Server
     BOOL connectivity = [self checkConnectivity];
@@ -823,14 +826,17 @@ static FMDatabaseQueue *queue;
             complaint   = [AdminInformation getSurgeryNameById:complaint];
             imageId     = [NSString stringWithFormat:@"%@n000", patientId];
             PatientRecordAppId = nil;
-            pictureURL =  [DBTalk getProfileThumbURLFromServerForPatient:patientId andRecord:recordId]; //[DBTalk getThumbFromServer:imageId];
             
-            Patient *obj = [[Patient alloc] initWithPatientId:patientId currentRecordId:recordId patientRecordAppId:PatientRecordAppId firstName:firstName MiddleName:middleName LastName:lastName birthday:birthday ChiefComplaint:complaint PhotoID:picture PhotoURL:pictureURL];
+            text = [item objectForKey:@"Data"];
+            data = [Base64 decode:text];
+            picture = [UIImage imageWithData:data];
+            
+            Patient *obj = [[Patient alloc] initWithPatientId:patientId currentRecordId:recordId patientRecordAppId:PatientRecordAppId firstName:firstName MiddleName:middleName LastName:lastName birthday:birthday ChiefComplaint:complaint PhotoID:picture];
             
             obj.patientId = patientId;
             NSLog(@"%@", picture);
             NSLog(@"%@", imageId);
-            NSLog(@"pictureUrl: %@", pictureURL);
+            //NSLog(@"pictureUrl: %@", pictureURL);
             [patients addObject:obj];
         }
         
@@ -851,9 +857,12 @@ static FMDatabaseQueue *queue;
             birthday    = [item objectForKey:@"Birthday"];  //does this exist?
             complaint   = [item objectForKey:@"Name"];
             imageId     = [NSString stringWithFormat:@"%@n000", patientId];
-            pictureURL = [DBTalk getThumbFromServer:imageId];
             
-            Patient *obj = [[Patient alloc] initWithPatientId:patientId currentRecordId:recordId patientRecordAppId:PatientRecordAppId firstName:firstName MiddleName:middleName LastName:lastName birthday:birthday ChiefComplaint:complaint PhotoID:picture PhotoURL:pictureURL];
+            text = [item objectForKey:@"Data"];
+            data = [Base64 decode:text];
+            picture = [UIImage imageWithData:data];
+            
+            Patient *obj = [[Patient alloc] initWithPatientId:patientId currentRecordId:recordId patientRecordAppId:PatientRecordAppId firstName:firstName MiddleName:middleName LastName:lastName birthday:birthday ChiefComplaint:complaint PhotoID:picture];
             
             obj.patientId = patientId;
             NSLog(@"%@", picture);
@@ -871,8 +880,9 @@ static FMDatabaseQueue *queue;
 
 +(NSMutableArray *)localGetPatientListFromSQLite {
     NSMutableArray *retval = [[NSMutableArray alloc] init];
-    NSString *query = [NSString stringWithFormat: @"SELECT a.Id, a.FirstName, a.MiddleName, a.LastName, a.Birthday, b.AppId as PatientRecordAppId, b.Id as RecordId, b.SurgeryTypeId, b.DoctorId, b.IsLive, b.IsCurrent, c.Name FROM patient as a JOIN patientRecord as b ON b.apppatientid = a.appid JOIN surgeryType as c on b.SurgeryTypeId = c.id"];
+    NSString *query = [NSString stringWithFormat: @"SELECT a.Id, a.FirstName, a.MiddleName, a.LastName, a.Birthday, b.AppId as PatientRecordAppId, b.Id as RecordId, b.SurgeryTypeId, b.DoctorId, b.IsLive, b.IsCurrent, c.Name, d.Data FROM patient as a JOIN patientRecord as b ON b.apppatientid = a.appid JOIN surgeryType as c on b.SurgeryTypeId = c.id JOIN operationRecord as d on d.AppPatientRecordId = a.AppId WHERE d.IsProfile = 1"];
     
+    //TODO: MISCHAPICTURE -- need to make sure this sql actually works
     FMResultSet *result = [db executeQuery:query];
     
     if (!result) {
@@ -905,37 +915,37 @@ static FMDatabaseQueue *queue;
 }
 
 
-/*---------------------------------------------------------------------------
- Summary:
- Retrieves a portrait of current patient from the Images table of local database
- Details:
- 
- Returns:
- nil - on failure to retrieve image
- UIImage of current patient otherwise
- *---------------------------------------------------------------------------*/
-+(UIImage *)localGetPortrait {
-
-    
-    NSString *query = [NSString stringWithFormat:@"Select op.Data from OperationRecord op JOIN PatientRecord pr ON op.AppPatientRecordId = pr.AppId WHERE pr.IsLive = 1"];
-    
-    FMResultSet *results = [db executeQuery:query];
-    if (!results) {
-        NSLog(@"Error retrieving image\n");
-        NSLog(@"%@", [db lastErrorMessage]);
-        return nil;
-    }
-    [results next];
-    NSString *dataStr = [results stringForColumnIndex:0];
-    NSData *data = [Base64 decode:dataStr];
-    
-    UIImage *image = [UIImage imageWithData:data];
-    if (!image) {
-        NSLog(@"In localGetPortrait: image is NULL");
-        return nil;
-    }
-    return image;
-}
+///*---------------------------------------------------------------------------
+// Summary:
+// Retrieves a portrait of current patient from the Images table of local database
+// Details:
+// 
+// Returns:
+// nil - on failure to retrieve image
+// UIImage of current patient otherwise
+// *---------------------------------------------------------------------------*/
+//+(UIImage *)localGetPortrait {
+//
+//    
+//    NSString *query = [NSString stringWithFormat:@"Select op.Data from OperationRecord op JOIN PatientRecord pr ON op.AppPatientRecordId = pr.AppId WHERE pr.IsLive = 1"];
+//    
+//    FMResultSet *results = [db executeQuery:query];
+//    if (!results) {
+//        NSLog(@"Error retrieving image\n");
+//        NSLog(@"%@", [db lastErrorMessage]);
+//        return nil;
+//    }
+//    [results next];
+//    NSString *dataStr = [results stringForColumnIndex:0];
+//    NSData *data = [Base64 decode:dataStr];
+//    
+//    UIImage *image = [UIImage imageWithData:data];
+//    if (!image) {
+//        NSLog(@"In localGetPortrait: image is NULL");
+//        return nil;
+//    }
+//    return image;
+//}
 
 
 +(NSData*)localGetAudio:(NSString *)fileName {
@@ -1034,7 +1044,9 @@ static FMDatabaseQueue *queue;
  *---------------------------------------------------------------------------*/
 
 +(BOOL)loadPortraitImageIntoLocal:(NSString *)patientId {
-    UIImage *image = [DBTalk getPortraitFromServer:patientId];
+    //TODO: MISCHAPICTURE
+    UIImage *image;
+    //UIImage *image = [DBTalk getPortraitFromServer:patientId];
     if (!image) {
         NSLog(@"Error loading Portrait Image");
         return false;

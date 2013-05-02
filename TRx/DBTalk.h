@@ -27,24 +27,24 @@
 +(NSArray *)getDoctorList;
 +(NSArray *)getOperationRecordTypesList;
 
-+(UIImage *)getPortraitFromServer:(NSString *)fileName;
-+(NSURL *)getThumbFromServer:(NSString *)fileName;
-+(NSURL *)getProfileThumbURLFromServerForPatient:(NSString *)patientId andRecord:(NSString *)patientRecordId;
-+(UIImage *)getProfilePictureFromServer:(NSString *)patientId;
+//+(UIImage *)getPortraitFromServer:(NSString *)fileName;
+//+(NSURL *)getThumbFromServer:(NSString *)fileName;
+//+(NSURL *)getProfileThumbURLFromServerForPatient:(NSString *)patientId andRecord:(NSString *)patientRecordId;
+//+(UIImage *)getProfilePictureFromServer:(NSString *)patientId;
 
-+(NSString *)addProfilePicture:(UIImage *)picture
-                     patientId:(NSString *)patientId;
+//+(NSString *)addProfilePicture:(UIImage *)picture
+//                     patientId:(NSString *)patientId;
+//
+//
+//+(NSString *)addPicture:(UIImage  *)picture
+//              patientId:(NSString *)patientId
+//      customPictureName:(NSString *)customPictureName
+//              isProfile:(NSString *)isProfile
+//              directory:(NSString *)directory;
 
-
-+(NSString *)addPicture:(UIImage  *)picture
-              patientId:(NSString *)patientId
-      customPictureName:(NSString *)customPictureName
-              isProfile:(NSString *)isProfile
-              directory:(NSString *)directory;
-
-+(BOOL)uploadPictureToServer:(UIImage *)picture
-                    fileName:(NSString *)fileName
-                   directory:(NSString *)directory;
+//+(BOOL)uploadPictureToServer:(UIImage *)picture
+//                    fileName:(NSString *)fileName
+//                   directory:(NSString *)directory;
 
 
 
@@ -79,11 +79,11 @@
 +(void)loadDataFromServer:(NSDictionary *)params;
 -(void)pushLocalUnsyncedToServer;
 
-+(NSString *)pictureInfoToDatabase:(NSDictionary *)params;
+//+(NSString *)pictureInfoToDatabase:(NSDictionary *)params;
 
-+(BOOL)uploadFileToServer:(id)file
-                 fileType:(NSString *)fileType
-                 fileName:(NSString *)fileName
-                patientId:(NSString *)patientId;
+//+(BOOL)uploadFileToServer:(id)file
+//                 fileType:(NSString *)fileType
+//                 fileName:(NSString *)fileName
+//                patientId:(NSString *)patientId;
 
 @end
