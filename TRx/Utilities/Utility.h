@@ -10,5 +10,6 @@
 +(NSString *) getDatabasePath; 
 +(void)alertWithMessage:(NSString *)message;
 +(NSString *) urlEncodeData:(NSString *)str;
++(NSString *) urlDecodeData:(NSString *)str;
 +(NSMutableArray *)repackDictionaryForSetSQLiteTable:(NSDictionary *)dic keyList:(NSArray *)keyList;
 @end

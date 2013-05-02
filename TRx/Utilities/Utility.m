@@ -41,6 +41,10 @@ static NSString *databasePath;
     return encodedString;
 }
 
++(NSString *) urlDecodeData:(NSString *)str {
+    return (__bridge NSString *)CFURLCreateStringByReplacingPercentEscapesUsingEncoding(NULL, (__bridge CFStringRef) str, CFSTR("!*'();:@&=+$,/?%#[]"), kCFStringEncodingUTF8);
+}
+
 +(NSMutableArray *)repackDictionaryForSetSQLiteTable:(NSDictionary *)dic keyList:(NSArray *)keyList {
     NSMutableArray* arr = [[NSMutableArray alloc] init];
     NSMutableDictionary *retDic = [[NSMutableDictionary alloc] init];

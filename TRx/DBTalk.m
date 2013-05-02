@@ -147,13 +147,13 @@ static DBTalk *singleton;
                 NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
                 request.HTTPMethod = @"POST";
                 
-                NSString *operationRecordId = [dic objectForKey:@"Id"];
-                NSString *oname    = [dic objectForKey:@"Name"];
-                NSString *operationRecordData  = [dic objectForKey:@"Data"];
-                NSString *opatientRecordId     = [dic objectForKey:@"PatientRecordId"];
-                NSString *orecordTypeId      = [dic objectForKey:@"RecordTypeId"];
-                NSString *oisProfile      = [dic objectForKey:@"IsProfile"];
-                
+                NSString *operationRecordId     = [dic objectForKey:@"Id"];
+                NSString *oname                 = [dic objectForKey:@"Name"];
+                NSString *operationRecordData   = [dic objectForKey:@"Data"];
+                NSString *opatientRecordId      = [dic objectForKey:@"PatientRecordId"];
+                NSString *orecordTypeId         = [dic objectForKey:@"RecordTypeId"];
+                NSString *oisProfile            = [dic objectForKey:@"IsProfile"];
+                NSInteger test = operationRecordData.length;
                 //into this string params thing pass each parameter my stored proc is expecting
                 //pass id as NULL
                 NSString *params = [NSString stringWithFormat:
@@ -161,7 +161,13 @@ static DBTalk *singleton;
                 
                 //leave all this alone
                 //TODO: encode params later
+                                
                 NSData *data = [params dataUsingEncoding:NSUTF8StringEncoding];
+                
+                
+                
+                
+                
                 [request addValue:@"8bit" forHTTPHeaderField:@"Content-Transfer-Encoding"];
                 [request addValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
                 [request addValue:[NSString stringWithFormat:@"%i", [data length]] forHTTPHeaderField:@"Content-Length"];
@@ -178,7 +184,11 @@ static DBTalk *singleton;
                     NSLog(@"Error in request: %@", err);
                 }
                 NSError *jsonError;
-                NSDictionary *jsonDic = [NSJSONSerialization JSONObjectWithData:responseData options:kNilOptions error:&jsonError];
+                
+                /* testing return from PHP */
+                
+                NSArray *jsonArr = [NSJSONSerialization JSONObjectWithData:responseData options:kNilOptions error:&jsonError];
+                NSDictionary *jsonDic = jsonArr[0];
                 if (jsonError) {
                     NSLog(@"JsonError: %@", jsonError);
                 }
@@ -196,12 +206,13 @@ static DBTalk *singleton;
                     NSMutableArray *retnArray = [[NSMutableArray alloc] init];
                     NSString* appId = [dic objectForKey:@"AppId"];
                     //NSString *appId = [LocalTalk localGetPatientAppId];
-                    NSDictionary *ndic = @{@"AppId": appId,
+                    NSDictionary *ndic = @{@"AppId": [NSString stringWithFormat:@"%@", appId],
                                           @"Id": retval};
                     narray[0] = ndic;
+                    
                     retnArray = [LocalTalk setSQLiteTable:@"OperationRecord" withData:narray];
                 }
-        }
+            }
         }
     }
     
@@ -287,11 +298,11 @@ static DBTalk *singleton;
         array[0] = dic;
         retArray = [LocalTalk setSQLiteTable:@"Patient" withData:array];
         
-        //successfully stored patient?
-        if ([appId isEqualToString:[NSString stringWithFormat:@"%@", retArray[0]]]) {
-            [DBTalk addUpdatePatientRecord];
-        }
-        
+//        //successfully stored patient?
+//        if ([appId isEqualToString:[NSString stringWithFormat:@"%@", retArray[0]]]) {
+//            [DBTalk addUpdatePatientRecord];
+//        }
+//        
     }
     
     
@@ -394,7 +405,7 @@ static DBTalk *singleton;
 
         NSMutableArray *array = [[NSMutableArray alloc] init];
         NSMutableArray *retArray = [[NSMutableArray alloc] init];
-        NSString *appId = [LocalTalk localGetPatientAppId];
+        NSString *appId = [LocalTalk localGetPatientRecordAppId];
         NSDictionary *dic = @{@"AppId": appId,
                               @"Id": retval};
         array[0] = dic;

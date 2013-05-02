@@ -827,8 +827,14 @@ static FMDatabaseQueue *queue;
             imageId     = [NSString stringWithFormat:@"%@n000", patientId];
             PatientRecordAppId = nil;
             
+            
+            
             text = [item objectForKey:@"Data"];
-            data = [Base64 decode:text];
+            NSInteger test = text.length;
+            NSString *text2 = [Utility urlDecodeData:text];
+            //[text stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+            data = [Base64 decode:text2];
+            //data = [text dataUsingEncoding:NSUTF8StringEncoding];
             picture = [UIImage imageWithData:data];
             
             Patient *obj = [[Patient alloc] initWithPatientId:patientId currentRecordId:recordId patientRecordAppId:PatientRecordAppId firstName:firstName MiddleName:middleName LastName:lastName birthday:birthday ChiefComplaint:complaint PhotoID:picture];
