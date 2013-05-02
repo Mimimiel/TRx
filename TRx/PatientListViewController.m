@@ -226,7 +226,7 @@
         patientRecordAppId = [[patients objectAtIndex:row] patientRecordAppId];
     }
     
-    NSDictionary *params = @{@"viewName"    : @"summaryViewController",
+    NSDictionary *params = @{@"viewName"    : @"patientListViewController",
                              @"FirstName"   :  [[patients objectAtIndex:row] firstName],
                              @"MiddleName"  : [[patients objectAtIndex:row] middleName],
                              @"LastName"    : [[patients objectAtIndex:row] lastName],

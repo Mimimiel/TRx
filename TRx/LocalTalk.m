@@ -233,7 +233,7 @@ static FMDatabaseQueue *queue;
     NSArray *fields;
     paramsArray = [[NSMutableArray alloc] init];
     NSLog(@"In localStoreEverything");
-    if ([[params objectForKey:@"viewName"] isEqualToString:@"historyViewController"]) {
+    if ([[params objectForKey:@"viewName"] isEqualToString:@"historyViewController"] || [[params objectForKey:@"viewName"] isEqualToString:@"patientListViewController"]) {
         
         NSLog(@"attempting to add Patient to Local");
         /*
@@ -286,7 +286,8 @@ static FMDatabaseQueue *queue;
         imageDic[@"Name"]               = now;
         imageDic[@"Path"]               = now;
         imageDic[@"IsProfile"]          = @"1";
-        imageDic[@"Data"]               = params[@"Data"];
+        //TODO: commenting data out as quick fix, because of where we comment it out in sending params, but really all this will change
+        //imageDic[@"Data"]               = params[@"Data"];
         imageDic[@"AppPatientRecordId"] = [returnArray objectAtIndex:0];
         imageDic[@"RecordTypeId"]       = [AdminInformation getOperationRecordTypeIdByName:@"Picture"];
         
