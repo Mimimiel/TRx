@@ -18,7 +18,7 @@
 
 
 //+(BOOL)syncProfilePicture:(NSString *)patientId {
-//    //TODO: MISCHAPICTURE: REALLY THIS WHOLE THING...
+//    //TODO: MISCHAPICTURE: RE ALLY THIS WHOLE THING...
 //    FMResultSet *toSynch;
 //    FMDatabase *db = [FMDatabase databaseWithPath:[Utility getDatabasePath]];
 //    [db open];

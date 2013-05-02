@@ -295,55 +295,98 @@ static DBTalk *singleton;
         [Utility alertWithMessage:@"Error adding PatientRecord: No PatientId in Local database"];
         NSLog(@"Error adding PatientRecord: No PatientId in Local database");
     }
-    NSLog(@"Printing patinetId in addUpdatePatientRecord: %@", patientId);
     
-    [recordTableValues setValue:patientId forKey:@"PatientId"];
-    //NSLog(@"%@", recordTableValues);
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@add/record", host]];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+    request.HTTPMethod = @"POST";
     
-    NSURL *url = [NSURL URLWithString:host];
-    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+    NSString *surgeryTypeId     = [recordTableValues objectForKey:@"SurgeryTypeId"];
+    NSString *doctorId          = [recordTableValues objectForKey:@"DoctorId"];
+    NSString *isCurrent         = [recordTableValues objectForKey:@"IsCurrent"];
+    NSString *hasTimeout        = [recordTableValues objectForKey:@"HasTimeout"];
+    NSString *patientRecordId   = @"NULL";
     
-    [httpClient postPath:@"add/patientRecord" parameters:recordTableValues success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"AddRecord successful");
+    NSString *params = [NSString stringWithFormat:
+                        @"SurgeryTypeId=%@&DoctorId=%@&IsCurrent=%@&HasTimeout=%@&Id=%@&PatientId=%@", surgeryTypeId, doctorId, isCurrent, hasTimeout, patientRecordId, patientId];
+    NSLog(@"params: %@", params);
+    //encode params later
+    NSData *data = [params dataUsingEncoding:NSUTF8StringEncoding];
+    [request addValue:@"8bit" forHTTPHeaderField:@"Content-Transfer-Encoding"];
+    [request addValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+    [request addValue:[NSString stringWithFormat:@"%i", [data length]] forHTTPHeaderField:@"Content-Length"];
+    [request setHTTPBody:data];
+    //[[NSURLConnection alloc] initWithRequest:request delegate:self];
+    NSError *err = nil;
+    NSURLResponse *response = nil;
+    
+    //This really should be thrown off into its own thread
+    NSData *responseData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&err];
+    if (!responseData) {
+        NSLog(@"Adding patient record failed");
+    }
+    if (err) {
+        NSLog(@"Error in request: %@", err);
+    }
+    NSError *jsonError;
+    NSDictionary *jsonDic = [NSJSONSerialization JSONObjectWithData:responseData options:kNilOptions error:&jsonError];
+    if (jsonError) {
+        NSLog(@"JsonError: %@", jsonError);
+    }
+    NSString *retval = [jsonDic objectForKey:@"@returnValue"];
+    NSLog(@"retval: %@", retval);
+    if ([retval isEqual:@"0"]) {
+        NSString *dbErr = [jsonDic objectForKey:@"@error"];
+        NSLog(@"Error from DB: %@", dbErr);
+    }
+    else {
+        //successfully returned patient
+
+        NSMutableArray *array = [[NSMutableArray alloc] init];
+        NSMutableArray *retArray = [[NSMutableArray alloc] init];
+        NSString *appId = [LocalTalk localGetPatientAppId];
+        NSDictionary *dic = @{@"AppId": appId,
+                              @"Id": retval};
+        array[0] = dic;
+        retArray = [LocalTalk setSQLiteTable:@"PatientRecord" withData:array];
         
-        NSError *jsonError;
-        NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:responseObject options:kNilOptions error:&jsonError];
-        NSDictionary *dic = jsonArray[0];
-        NSString *retval = [dic objectForKey:@"@returnValue"];
-        if ([retval isEqualToString:@"0"]) {
-            NSString *err = [dic objectForKey:@"error"];
-            [Utility alertWithMessage:err];
-        }
-        else {
-            
-            NSMutableArray *array = [[NSMutableArray alloc] init];
-            
-            
-            
-            NSString *appId = [LocalTalk localGetPatientRecordAppId];
-      
-            
-            NSDictionary *dic = @{@"AppId": appId,
-                                  @"Id": retval};
-            array[0] = dic;
-            [LocalTalk setSQLiteTable:@"PatientRecord" withData:array];
-            
-            
-            BOOL inserted = [LocalTalk insertRecordId:retval];
-            if (!inserted) {
-                NSLog(@"RecordId not inserted into Local. RecordId: %@", retval);
-            }
-        }
-        
-        
-        
-        NSLog(@"%@", [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding]);
-        //[[NSNotificationCenter defaultCenter] postNotificationName:@"patientAdded" object:nil];
-        [DBTalk synchTables];
-        
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"AddRecord failed");
-    }];
+    }
+
+    NSLog(@"Exiting addUpdatePatientRecord");
+    return;
+    
+    /* Async addUpdatePatientRecord */
+//    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+//    [httpClient postPath:@"add/patientRecord" parameters:recordTableValues success:^(AFHTTPRequestOperation *operation, id responseObject) {
+//        NSLog(@"AddRecord successful");
+//        
+//        NSError *jsonError;
+//        NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData:responseObject options:kNilOptions error:&jsonError];
+//        NSDictionary *dic = jsonArray[0];
+//        NSString *retval = [dic objectForKey:@"@returnValue"];
+//        if ([retval isEqualToString:@"0"]) {
+//            NSString *err = [dic objectForKey:@"error"];
+//            [Utility alertWithMessage:err];
+//        }
+//        else {
+//            NSMutableArray *array = [[NSMutableArray alloc] init];
+//            
+//            NSString *appId = [LocalTalk localGetPatientRecordAppId];
+//            NSDictionary *dic = @{@"AppId": appId,
+//                                  @"Id": retval};
+//            array[0] = dic;
+//            [LocalTalk setSQLiteTable:@"PatientRecord" withData:array];
+//            BOOL inserted = [LocalTalk insertRecordId:retval];
+//            if (!inserted) {
+//                NSLog(@"RecordId not inserted into Local. RecordId: %@", retval);
+//            }
+//        }
+//        NSLog(@"%@", [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding]);
+//        //[[NSNotificationCenter defaultCenter] postNotificationName:@"patientAdded" object:nil];
+//        [DBTalk synchTables];
+//        
+//    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+//        NSLog(@"AddRecord failed");
+//    }];
 }
 
 
