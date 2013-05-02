@@ -61,7 +61,7 @@
     }
     
     NSArray *tables = @[@"Patient"];
-    NSDictionary *params = @{@"tableNames" : tables,@"location" : @"PACUViewController"};
+    NSDictionary *params = @{@"tableNames" : tables,@"location" : @"summaryViewController"};
     NSMutableArray *retval;
     NSMutableDictionary *data = [LocalTalk getData:params];
     for(NSString *key in data){
@@ -69,6 +69,15 @@
             retval = [data objectForKey:key];
         }
     }
+    
+    
+    /* exits method if no patient data in local database */
+    if ([retval count] == 0) {
+        return;
+    }
+    
+    
+    
     
     NSDictionary *dict = retval[0];
     

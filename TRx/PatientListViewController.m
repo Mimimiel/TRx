@@ -215,7 +215,14 @@
      NSString *mn = [[patients objectAtIndex:row] middleName];
      NSString *ln = [[patients objectAtIndex:row] lastName];
      NSURL *url = [[patients objectAtIndex:row] photoURL];*/
-    NSString *patientRecordId, *patientRecordAppId;
+    NSString *patientRecordId, *patientRecordAppId, *patientId;
+    
+    if(![[patients objectAtIndex:row] patientId]) {
+        patientId = @"0";
+    } else {
+        patientId = [[patients objectAtIndex:row] patientId];
+    }
+    
     if(![[patients objectAtIndex:row] currentRecordId]){
         patientRecordId = @"0";
     } else {
@@ -235,6 +242,7 @@
                              @"Birthday"    : [[patients objectAtIndex:row] birthday],
                              @"Data"        : [[patients objectAtIndex:row] photoID],
                              @"SurgeryTypeId":[[patients objectAtIndex:row] chiefComplaint],
+                             @"PatientId"   : patientId,
                              @"PatientRecordId" : patientRecordId,
                              @"PatientRecordAppId" : patientRecordAppId,
                              @"DoctorId"    : @"1",
@@ -242,6 +250,9 @@
                              @"IsLive"      : @"1",
                              @"IsCurrent"   : @"1"
                              };
+    
+    
+    
     if(connection){
         //TODO: maybe set islive inside of nextpressed/localstoreviewstolocal or something named like that
         NSString *patientRecordId = [[patients objectAtIndex:row] currentRecordId];

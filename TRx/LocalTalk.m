@@ -237,8 +237,27 @@ static FMDatabaseQueue *queue;
         /*
          * Add a patient
          */
-        fields = [NSArray arrayWithObjects:@"FirstName", @"MiddleName", @"LastName", @"Birthday", nil];
+        
+        //add patientId, patientRecordId if we have it. will be "0" if we don't.. can I just add 0 anyway???
+        
+        fields = [NSArray arrayWithObjects:@"FirstName", @"MiddleName", @"LastName", @"Birthday", @"PatientId", nil];
         paramsArray = [Utility repackDictionaryForSetSQLiteTable:params keyList:fields];
+        
+        NSMutableDictionary *tmpDic = paramsArray[0];
+        NSString *patId = [tmpDic objectForKey:@"PatientId"];
+        if (patId) {
+            if ([patId isEqualToString:@"0"]) {
+                [tmpDic removeObjectForKey:@"PatientId"];
+            }
+            else {
+                tmpDic[@"Id"] = [params objectForKey:@"PatientId"];
+                [tmpDic removeObjectForKey:@"PatientId"];
+            }
+            paramsArray[0] = tmpDic;
+        }
+        
+
+        
         returnArray = [LocalTalk setSQLiteTable:@"Patient" withData:paramsArray];
         
         if (!returnArray || [[[returnArray objectAtIndex:0] stringValue] isEqualToString:@"0"]) {
@@ -253,8 +272,22 @@ static FMDatabaseQueue *queue;
         mutableParams = [NSMutableDictionary dictionaryWithDictionary:params];
         [mutableParams setObject:[returnArray objectAtIndex:0] forKey:@"AppPatientId"];
         
-        fields = [NSArray arrayWithObjects:@"SurgeryTypeId", @"DoctorId", @"HasTimeout", @"IsCurrent", @"IsLive", @"Id", @"AppPatientId", nil];
+        fields = [NSArray arrayWithObjects:@"SurgeryTypeId", @"DoctorId", @"HasTimeout", @"IsCurrent", @"IsLive", @"PatientRecordId", @"AppPatientId", nil];
         paramsArray = [Utility repackDictionaryForSetSQLiteTable:mutableParams keyList:fields];
+        
+        tmpDic = paramsArray[0];
+        
+        if ([tmpDic objectForKey:@"PatientRecordId"]) {
+            if ([[tmpDic objectForKey:@"PatientRecordId"] isEqualToString:@"0"]) {
+                [tmpDic removeObjectForKey:@"PatientRecordId"];
+            }
+            else {
+                tmpDic[@"Id"] = [params objectForKey:@"PatientRecordId"];
+                [tmpDic removeObjectForKey:@"PatientRecordId"];
+            }
+            paramsArray[0] = tmpDic;
+        }
+
         
         
         NSLog(@"attempting to add Record to Local");
