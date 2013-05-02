@@ -130,90 +130,88 @@ static DBTalk *singleton;
     
     if (array) {
         for (NSDictionary *dic in array) {
-            if(!dic[@"OperationRecordId"] || ![dic[@"OperationRecordId"] isEqualToString:@"0"]){
-                recordTypeId = [NSString stringWithFormat:@"%@", dic[@"RecordTypeId"]];
-                patientId = dic[@"PatientId"];
-                patientRecordId = dic[@"PatientRecordId"];
+            recordTypeId = [NSString stringWithFormat:@"%@", dic[@"RecordTypeId"]];
+            patientId = dic[@"PatientId"];
+            patientRecordId = dic[@"PatientRecordId"];
+            
+            if (!patientId || !patientRecordId || ![LocalTalk localGetPatientId]) {  //only upload for current patient
+                NSLog(@"Skipping sync picture");
+                continue;
+            }
+            //need to get patient ID for each person
+            //need to get picture for each person
+            
+            if([recordTypeId isEqualToString:@"3"]){
+                //TODO: should make this handle multiple...etc...
+                //TODO: eventually asynchronous
+                NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@add/operationRecord", host]];
+                NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+                request.HTTPMethod = @"POST";
                 
-                if (!patientId || !patientRecordId || ![LocalTalk localGetPatientId]) {  //only upload for current patient
-                    NSLog(@"Skipping sync picture");
-                    continue;
+                NSString *operationRecordId     = [dic objectForKey:@"Id"];
+                NSString *oname                 = [dic objectForKey:@"Name"];
+                NSString *operationRecordData   = [dic objectForKey:@"Data"];
+                NSString *opatientRecordId      = [dic objectForKey:@"PatientRecordId"];
+                NSString *orecordTypeId         = [dic objectForKey:@"RecordTypeId"];
+                NSString *oisProfile            = [dic objectForKey:@"IsProfile"];
+                NSInteger test = operationRecordData.length;
+                //into this string params thing pass each parameter my stored proc is expecting
+                //pass id as NULL
+                NSString *params = [NSString stringWithFormat:
+                                    @"Id=%@&Name=%@&Data=%@&PatientRecordId=%@&RecordTypeId=%@&IsProfile=%@", operationRecordId, oname, operationRecordData, opatientRecordId, orecordTypeId, oisProfile];
+                
+                //leave all this alone
+                //TODO: encode params later
+                                
+                NSData *data = [params dataUsingEncoding:NSUTF8StringEncoding];
+                
+                
+                
+                
+                
+                [request addValue:@"8bit" forHTTPHeaderField:@"Content-Transfer-Encoding"];
+                [request addValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+                [request addValue:[NSString stringWithFormat:@"%i", [data length]] forHTTPHeaderField:@"Content-Length"];
+                [request setHTTPBody:data];
+                NSError *err = nil;
+                NSURLResponse *response = nil;
+                
+                //This really should be thrown off into its own thread
+                NSData *responseData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&err];
+                if (!responseData) {
+                    NSLog(@"Adding operation record failed");
                 }
-                //need to get patient ID for each person
-                //need to get picture for each person
+                if (err) {
+                    NSLog(@"Error in request: %@", err);
+                }
+                NSError *jsonError;
                 
-                if([recordTypeId isEqualToString:@"3"]){
-                    //TODO: should make this handle multiple...etc...
-                    //TODO: eventually asynchronous
-                    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@add/operationRecord", host]];
-                    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
-                    request.HTTPMethod = @"POST";
+                /* testing return from PHP */
+                
+                NSArray *jsonArr = [NSJSONSerialization JSONObjectWithData:responseData options:kNilOptions error:&jsonError];
+                NSDictionary *jsonDic = jsonArr[0];
+                if (jsonError) {
+                    NSLog(@"JsonError: %@", jsonError);
+                }
+                NSString *retval = [jsonDic objectForKey:@"@returnValue"];
+                NSLog(@"retval: %@", retval);
+                if ([retval isEqual:@"0"]) {
+                    NSString *dbErr = [jsonDic objectForKey:@"@error"];
+                    NSLog(@"Error from DB: %@", dbErr);
+                }
+                else {
+                    //successfully returned operation record
+                    //update local talk
                     
-                    NSString *operationRecordId     = [dic objectForKey:@"Id"];
-                    NSString *oname                 = [dic objectForKey:@"Name"];
-                    NSString *operationRecordData   = [dic objectForKey:@"Data"];
-                    NSString *opatientRecordId      = [dic objectForKey:@"PatientRecordId"];
-                    NSString *orecordTypeId         = [dic objectForKey:@"RecordTypeId"];
-                    NSString *oisProfile            = [dic objectForKey:@"IsProfile"];
-                    NSInteger test = operationRecordData.length;
-                    //into this string params thing pass each parameter my stored proc is expecting
-                    //pass id as NULL
-                    NSString *params = [NSString stringWithFormat:
-                                        @"Id=%@&Name=%@&Data=%@&PatientRecordId=%@&RecordTypeId=%@&IsProfile=%@", operationRecordId, oname, operationRecordData, opatientRecordId, orecordTypeId, oisProfile];
+                    NSMutableArray *narray = [[NSMutableArray alloc] init];
+                    NSMutableArray *retnArray = [[NSMutableArray alloc] init];
+                    NSString* appId = [dic objectForKey:@"AppId"];
+                    //NSString *appId = [LocalTalk localGetPatientAppId];
+                    NSDictionary *ndic = @{@"AppId": [NSString stringWithFormat:@"%@", appId],
+                                          @"Id": retval};
+                    narray[0] = ndic;
                     
-                    //leave all this alone
-                    //TODO: encode params later
-                    
-                    NSData *data = [params dataUsingEncoding:NSUTF8StringEncoding];
-                    
-                    
-                    
-                    
-                    
-                    [request addValue:@"8bit" forHTTPHeaderField:@"Content-Transfer-Encoding"];
-                    [request addValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
-                    [request addValue:[NSString stringWithFormat:@"%i", [data length]] forHTTPHeaderField:@"Content-Length"];
-                    [request setHTTPBody:data];
-                    NSError *err = nil;
-                    NSURLResponse *response = nil;
-                    
-                    //This really should be thrown off into its own thread
-                    NSData *responseData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&err];
-                    if (!responseData) {
-                        NSLog(@"Adding operation record failed");
-                    }
-                    if (err) {
-                        NSLog(@"Error in request: %@", err);
-                    }
-                    NSError *jsonError;
-                    
-                    /* testing return from PHP */
-                    
-                    NSArray *jsonArr = [NSJSONSerialization JSONObjectWithData:responseData options:kNilOptions error:&jsonError];
-                    NSDictionary *jsonDic = jsonArr[0];
-                    if (jsonError) {
-                        NSLog(@"JsonError: %@", jsonError);
-                    }
-                    NSString *retval = [jsonDic objectForKey:@"@returnValue"];
-                    NSLog(@"retval: %@", retval);
-                    if ([retval isEqual:@"0"]) {
-                        NSString *dbErr = [jsonDic objectForKey:@"@error"];
-                        NSLog(@"Error from DB: %@", dbErr);
-                    }
-                    else {
-                        //successfully returned operation record
-                        //update local talk
-                        
-                        NSMutableArray *narray = [[NSMutableArray alloc] init];
-                        NSMutableArray *retnArray = [[NSMutableArray alloc] init];
-                        NSString* appId = [dic objectForKey:@"AppId"];
-                        //NSString *appId = [LocalTalk localGetPatientAppId];
-                        NSDictionary *ndic = @{@"AppId": [NSString stringWithFormat:@"%@", appId],
-                                               @"Id": retval};
-                        narray[0] = ndic;
-                        
-                        retnArray = [LocalTalk setSQLiteTable:@"OperationRecord" withData:narray];
-                    }
+                    retnArray = [LocalTalk setSQLiteTable:@"OperationRecord" withData:narray];
                 }
             }
         }

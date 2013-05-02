@@ -10,7 +10,6 @@
 #import "PatientListViewCell.h"
 #import "UIImageView+AFNetworking.h"
 #import "DBTalk.h" 
-#import "Base64.h"
 #import "LocalTalk.h"
 #import "Patient.h"
 #import "Utility.h"
@@ -236,16 +235,12 @@
         patientRecordAppId = [[patients objectAtIndex:row] patientRecordAppId];
     }
     
-    NSData *data = UIImageJPEGRepresentation([[patients objectAtIndex:row] photoID], 1);
-    NSString *imageStr = [Base64 encode:data];
-    
     NSDictionary *params = @{@"viewName"    : @"patientListViewController",
                              @"FirstName"   :  [[patients objectAtIndex:row] firstName],
                              @"MiddleName"  : [[patients objectAtIndex:row] middleName],
                              @"LastName"    : [[patients objectAtIndex:row] lastName],
                              @"Birthday"    : [[patients objectAtIndex:row] birthday],
-                             //@"Data"        : [[patients objectAtIndex:row] photoID],
-                             @"Data"        : imageStr,
+                             @"Data"        : [[patients objectAtIndex:row] photoID],
                              @"SurgeryTypeId":[[patients objectAtIndex:row] chiefComplaint],
                              @"PatientId"   : patientId,
                              @"PatientRecordId" : patientRecordId,
@@ -253,8 +248,7 @@
                              @"DoctorId"    : @"1",
                              @"HasTimeout"  : @"0",
                              @"IsLive"      : @"1",
-                             @"IsCurrent"   : @"1",
-                             @"OperationRecordId" : [[patients objectAtIndex:row] operationRecordID]
+                             @"IsCurrent"   : @"1"
                              };
     
     
