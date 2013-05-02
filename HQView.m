@@ -96,7 +96,6 @@
     }
     
     questionId = [h getQuestionId];
-    [self restorePreviousAnswers];
 }
 
 -(void) checkHasAnswer{
@@ -325,6 +324,12 @@
     answerString = [Question getValueForQuestionId:questionId];
     NSArray *answers = [answerString componentsSeparatedByString:@", "];
     
+    if(answers == NULL){
+        return;
+    }
+    else if(!isEnglish){
+        return;
+    }
     if(type == TEXT_ENTRY){
         if([answers containsObject:@"YES"] && [answers count] > 1){
             textEntryField.text = [answers objectAtIndex:1];
@@ -347,7 +352,7 @@
                 [self checkPressed:cb];
             }
         }
-        if(![lables containsObject:[answers lastObject]] && ![[answers objectAtIndex:0] isEqualToString:@"NO"]){
+        if(!([lables containsObject:[answers lastObject]]) && (![[answers objectAtIndex:0] isEqualToString:@"NO"])){
             otherTextField.text = [answers lastObject];
             connectedView.otherTextField.text = [answers lastObject];
         }

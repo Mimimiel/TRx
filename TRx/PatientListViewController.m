@@ -70,6 +70,7 @@
         
     }
 }
+
 - (void)viewWillAppear:(BOOL)animated {
     NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(refreshPatients:) name:@"refreshPatients" object:nil];

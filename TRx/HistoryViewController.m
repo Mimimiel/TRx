@@ -26,16 +26,43 @@
     [super viewDidLoad];
 
     newPatient = [[Patient alloc] initWithFirstName:@"Rob" MiddleName:@"D" LastName:@"woMan" ChiefComplaint:@"1" PhotoID:NULL];
-    //newPatient.birthday = @"2001-02-03";
     
     _complaintsArray = [AdminInformation getSurgeryNames];
     
     _imageView.image = [UIImage imageNamed:@"PatientPhotoBlank.png"];
     
-//    firstNameText.delegate = self;
-//    middleNameText.delegate = self;
-//    lastNameText.delegate = self;
-  
+    NSArray *tables = @[@"Patient"];
+    NSDictionary *params = @{@"tableNames" : tables,@"location" : @"PACUViewController"};
+    NSMutableArray *retval;
+    NSMutableDictionary *data = [LocalTalk getData:params];
+    for(NSString *key in data){
+        if([key isEqualToString:@"Patient"]){
+            retval = [data objectForKey:key];
+        }
+    }
+    
+    NSURL *pictureURL = [DBTalk getProfileThumbURLFromServerForPatient:[LocalTalk localGetPatientId] andRecord:[LocalTalk localGetPatientRecordId]];
+    NSData *imageData = [NSData dataWithContentsOfURL:pictureURL];
+    UIImage *image = [UIImage imageWithData:imageData];
+    if(image) {
+        [_imageView setImage:image];
+    }
+    
+    NSDictionary *dict = retval[0];
+    
+    NSString *fname;
+    NSString *mname;
+    NSString *lname;
+    fname = [dict objectForKey:@"FirstName"];
+    mname = [dict objectForKey:@"MiddleName"];
+    lname = [dict objectForKey:@"LastName"];
+
+    
+    firstNameText.text = fname;
+    if(![mname isEqualToString:@"NULL"]){
+        middleNameText.text = mname;
+    }
+    lastNameText.text = lname;
     
 }
 
@@ -76,31 +103,9 @@
 -(void) addPatient:(id)sender{
     
     [self storeNames];
-//    
-//    if([firstName isEqualToString:@""] || [lastName isEqualToString:@""]){
-//        [Utility alertWithMessage:@"First and Last name must be filled out"];
-//        return;
-//    }
-//    
-//    NSDateFormatter *df = [[NSDateFormatter alloc] init];
-//    df.dateStyle = NSDateFormatterShortStyle;
-//    //NSInteger day = _birthdayPicker;
-//    pBirthday = [NSString stringWithFormat:@"%@", [df stringFromDate:_birthdayPicker.date]];
-//                 
-//
-//    
-//    /* Take patient Object and add its information to the local database */
-//    [LocalTalkWrapper addPatientObjectToLocal:newPatient];
-//    [LocalTalkWrapper addNewPatientAndSynchData];
-    
+
     NSDate * selected = [_birthdayPicker date];
     newPatient.birthday = [selected description];
-    
-//    NSDate * selected = [_birthdayPicker date];
-//    NSDateFormatter *df = [[NSDateFormatter alloc]init];
-//    [df setDateFormat:@"yyyy-MM-dd"];
-//    NSString *dateString = [df stringFromDate:selected];
-//    newPatient.birthday = dateString;
     
     if (!newPatient.middleName) {
         newPatient.middleName = @"NULL";
