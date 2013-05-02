@@ -120,12 +120,13 @@ static DBTalk *singleton;
     NSLog(@"Exiting DBTalk's pushLocalUnsyncedToServer");
 }
 
+//TODO: this only adds profile pictures
 +(void)synchTables {
     NSMutableArray *array = [LocalTalk localGetUnsyncedRecordsFromTable:@"OperationRecord"];
-    
     //FIXME this is only getting the current patient's ID; I need Id for any unsynced image
     NSString *patientId     = [LocalTalk localGetPatientId];
     NSString *recordTypeId, *patientRecordId;
+    
     if (array) {
         for (NSDictionary *dic in array) {
             recordTypeId = [NSString stringWithFormat:@"%@", dic[@"RecordTypeId"]];
@@ -140,18 +141,67 @@ static DBTalk *singleton;
             //need to get picture for each person
             
             if([recordTypeId isEqualToString:@"3"]){
-                NSLog(@"Attempting to add image for patientId: %@", patientId);
-                //TODO: MISCHAPICTURE
-                //[DBTalk uploadFileToServer:[LocalTalk localGetPortrait] fileType:@"image" fileName:dic[@"Name"] patientId:patientId];
+                //TODO: should make this handle multiple...etc...
+                //TODO: eventually asynchronous
+                NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@add/operationRecord", host]];
+                NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+                request.HTTPMethod = @"POST";
                 
+                NSString *operationRecordId = [dic objectForKey:@"Id"];
+                NSString *oname    = [dic objectForKey:@"Name"];
+                NSString *operationRecordData  = [dic objectForKey:@"Data"];
+                NSString *opatientRecordId     = [dic objectForKey:@"PatientRecordId"];
+                NSString *orecordTypeId      = [dic objectForKey:@"RecordTypeId"];
+                NSString *oisProfile      = [dic objectForKey:@"IsProfile"];
                 
-                //TODO: MISCHAPICTURE
-                //[DBTalk pictureInfoToDatabase:dic];
+                //into this string params thing pass each parameter my stored proc is expecting
+                //pass id as NULL
+                NSString *params = [NSString stringWithFormat:
+                                    @"Id=%@&Name=%@&Data=%@&PatientRecordId=%@&RecordTypeId=%@&IsProfile=%@", operationRecordId, oname, operationRecordData, opatientRecordId, orecordTypeId, oisProfile];
                 
-                //[DBTalk call Mischa's method'];
+                //leave all this alone
+                //TODO: encode params later
+                NSData *data = [params dataUsingEncoding:NSUTF8StringEncoding];
+                [request addValue:@"8bit" forHTTPHeaderField:@"Content-Transfer-Encoding"];
+                [request addValue:@"application/x-www-form-urlencoded" forHTTPHeaderField:@"Content-Type"];
+                [request addValue:[NSString stringWithFormat:@"%i", [data length]] forHTTPHeaderField:@"Content-Length"];
+                [request setHTTPBody:data];
+                NSError *err = nil;
+                NSURLResponse *response = nil;
                 
-                //need to set synced on return
-            }
+                //This really should be thrown off into its own thread
+                NSData *responseData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&err];
+                if (!responseData) {
+                    NSLog(@"Adding operation record failed");
+                }
+                if (err) {
+                    NSLog(@"Error in request: %@", err);
+                }
+                NSError *jsonError;
+                NSDictionary *jsonDic = [NSJSONSerialization JSONObjectWithData:responseData options:kNilOptions error:&jsonError];
+                if (jsonError) {
+                    NSLog(@"JsonError: %@", jsonError);
+                }
+                NSString *retval = [jsonDic objectForKey:@"@returnValue"];
+                NSLog(@"retval: %@", retval);
+                if ([retval isEqual:@"0"]) {
+                    NSString *dbErr = [jsonDic objectForKey:@"@error"];
+                    NSLog(@"Error from DB: %@", dbErr);
+                }
+                else {
+                    //successfully returned operation record
+                    //update local talk
+                    
+                    NSMutableArray *narray = [[NSMutableArray alloc] init];
+                    NSMutableArray *retnArray = [[NSMutableArray alloc] init];
+                    NSString* appId = [dic objectForKey:@"AppId"];
+                    //NSString *appId = [LocalTalk localGetPatientAppId];
+                    NSDictionary *ndic = @{@"AppId": appId,
+                                          @"Id": retval};
+                    narray[0] = ndic;
+                    retnArray = [LocalTalk setSQLiteTable:@"OperationRecord" withData:narray];
+                }
+        }
         }
     }
     
