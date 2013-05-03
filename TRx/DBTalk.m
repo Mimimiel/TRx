@@ -130,6 +130,7 @@ static DBTalk *singleton;
     
     if (array) {
         for (NSDictionary *dic in array) {
+            if([dic[@"LastSynced"] isEqualToString:"5555"){
             recordTypeId = [NSString stringWithFormat:@"%@", dic[@"RecordTypeId"]];
             patientId = dic[@"PatientId"];
             patientRecordId = dic[@"PatientRecordId"];
@@ -208,11 +209,13 @@ static DBTalk *singleton;
                     NSString* appId = [dic objectForKey:@"AppId"];
                     //NSString *appId = [LocalTalk localGetPatientAppId];
                     NSDictionary *ndic = @{@"AppId": [NSString stringWithFormat:@"%@", appId],
-                                          @"Id": retval};
+                                          @"Id": retval,
+                                           @"LastSynced": "100000"};
                     narray[0] = ndic;
                     
                     retnArray = [LocalTalk setSQLiteTable:@"OperationRecord" withData:narray];
                 }
+            }
             }
         }
     }
