@@ -285,6 +285,7 @@ static FMDatabaseQueue *queue;
                 tmpDic[@"Id"] = [params objectForKey:@"PatientRecordId"];
                 [tmpDic removeObjectForKey:@"PatientRecordId"];
             }
+            tmpDic[@"LastSynced"] = @"5555";
             paramsArray[0] = tmpDic;
         }
 
