@@ -68,8 +68,8 @@
 
 
 +(NSMutableArray *)localGetPatientList;
-+(NSString *)localGetPatient:(NSString *)key;
-+(UIImage *)localGetPortrait;
+//+(NSString *)localGetPatient:(NSString *)key;
+//+(UIImage *)localGetPortrait;
 +(id)localGetAudio:(NSString *)fileName;
 
 

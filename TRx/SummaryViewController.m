@@ -51,7 +51,9 @@
 //        [_patientPicture setImage:[LocalTalk localGetPortrait]];
 //    }
     
-    NSURL *pictureURL = [DBTalk getProfileThumbURLFromServerForPatient:[LocalTalk localGetPatientId] andRecord:[LocalTalk localGetPatientRecordId]];
+/*    //TODO: MISCHAPICTURE
+    NSURL *pictureURL = [NSURL fileURLWithPath:@"MISCHAPICTURE"];
+    //NSURL *pictureURL = [DBTalk getProfileThumbURLFromServerForPatient:[LocalTalk localGetPatientId] andRecord:[LocalTalk localGetPatientRecordId]];
     NSData *imageData = [NSData dataWithContentsOfURL:pictureURL];
     UIImage *image = [UIImage imageWithData:imageData];
     if(image) {
@@ -59,7 +61,7 @@
     }
     
     NSArray *tables = @[@"Patient"];
-    NSDictionary *params = @{@"tableNames" : tables,@"location" : @"PACUViewController"};
+    NSDictionary *params = @{@"tableNames" : tables,@"location" : @"summaryViewController"};
     NSMutableArray *retval;
     NSMutableDictionary *data = [LocalTalk getData:params];
     for(NSString *key in data){
@@ -67,6 +69,15 @@
             retval = [data objectForKey:key];
         }
     }
+    
+    
+    /* exits method if no patient data in local database */
+    if ([retval count] == 0) {
+        return;
+    }
+    
+    
+    
     
     NSDictionary *dict = retval[0];
     
@@ -87,7 +98,7 @@
     NSString *surgery;
     surgery = @"Surgery: Cataracts";
     //surgery = [surgery stringByAppendingString:[dict objectForKey:@"Surgery"]];
-    _pSurgery.text = surgery;
+    _pSurgery.text = surgery;*/
 }
 
 -(void)updatedDataListener:(NSNotification *)notification {

@@ -14,7 +14,7 @@
 
 +(void)addPatientObjectToLocal:(Patient *)newPatient;
 +(BOOL)addNewPatientAndSynchData;
-+(Patient *)initPatientFromLocal;
+//+(Patient *)initPatientFromLocal;
 
 
 @end

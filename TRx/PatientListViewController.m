@@ -57,7 +57,6 @@
     [self.tableView reloadData];
 }
 
-
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
     UITabBarController *vc;
     if (([[segue identifier] isEqualToString:@"listTabSegue"]) && ([sender tag] == 1)){
@@ -82,6 +81,7 @@
 - (void)viewDidAppear:(BOOL)animated {
     
 }
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -144,7 +144,7 @@
     NSString *fn = [[patients objectAtIndex:row] firstName];
     NSString *mn = [[patients objectAtIndex:row] middleName]; 
     NSString *ln = [[patients objectAtIndex:row] lastName];
-    NSURL *url = [[patients objectAtIndex:row] photoURL];
+    //NSURL *url = [[patients objectAtIndex:row] photoURL];
     if([mn isEqualToString:@"NULL"]){
         name = [NSString stringWithFormat: @"%@ %@", fn, ln];
     } else {
@@ -152,13 +152,14 @@
     }
     cell.patientName.text = name;
     cell.chiefComplaint.text = (NSString*)[[patients objectAtIndex:row] chiefComplaint];
-  
-    [cell.patientPicture setImageWithURLRequest:[NSURLRequest requestWithURL:url] placeholderImage:NULL success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
-        NSLog(@"success");
-      cell.patientPicture.image = image;
-    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
-        NSLog(@"fail. error: %@", error);
-  }];
+    [cell.patientPicture setImage:[[patients objectAtIndex:row] photoID]];
+//  
+//    [cell.patientPicture setImageWithURLRequest:[NSURLRequest requestWithURL:url] placeholderImage:NULL success:^(NSURLRequest *request, NSHTTPURLResponse *response, UIImage *image) {
+//        NSLog(@"success");
+//      cell.patientPicture.image = image;
+//    } failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
+//        NSLog(@"fail. error: %@", error);
+//  }];
     
     return cell;
 }
@@ -214,7 +215,14 @@
      NSString *mn = [[patients objectAtIndex:row] middleName];
      NSString *ln = [[patients objectAtIndex:row] lastName];
      NSURL *url = [[patients objectAtIndex:row] photoURL];*/
-    NSString *patientRecordId, *patientRecordAppId;
+    NSString *patientRecordId, *patientRecordAppId, *patientId;
+    
+    if(![[patients objectAtIndex:row] patientId]) {
+        patientId = @"0";
+    } else {
+        patientId = [[patients objectAtIndex:row] patientId];
+    }
+    
     if(![[patients objectAtIndex:row] currentRecordId]){
         patientRecordId = @"0";
     } else {
@@ -227,14 +235,14 @@
         patientRecordAppId = [[patients objectAtIndex:row] patientRecordAppId];
     }
     
-    NSDictionary *params = @{@"viewName"    : @"summaryViewController",
+    NSDictionary *params = @{@"viewName"    : @"patientListViewController",
                              @"FirstName"   :  [[patients objectAtIndex:row] firstName],
                              @"MiddleName"  : [[patients objectAtIndex:row] middleName],
                              @"LastName"    : [[patients objectAtIndex:row] lastName],
                              @"Birthday"    : [[patients objectAtIndex:row] birthday],
-                             //@"Data"        : [[patients objectAtIndex:row] photoID],
-                             @"PhotoURL"    : [[patients objectAtIndex:row] photoURL],
+                             @"Data"        : [[patients objectAtIndex:row] photoID],
                              @"SurgeryTypeId":[[patients objectAtIndex:row] chiefComplaint],
+                             @"PatientId"   : patientId,
                              @"PatientRecordId" : patientRecordId,
                              @"PatientRecordAppId" : patientRecordAppId,
                              @"DoctorId"    : @"1",
@@ -242,8 +250,11 @@
                              @"IsLive"      : @"1",
                              @"IsCurrent"   : @"1"
                              };
+    
+    
+    
     if(connection){
-         
+        //TODO: maybe set islive inside of nextpressed/localstoreviewstolocal or something named like that
         NSString *patientRecordId = [[patients objectAtIndex:row] currentRecordId];
         [LocalTalk setIsLive:patientRecordId];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"nextpressed" object:self userInfo:params];

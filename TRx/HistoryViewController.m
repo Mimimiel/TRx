@@ -123,9 +123,15 @@
         newPatient.birthday = @"2004-08-08";
     }
     
-    NSData *imageData = UIImageJPEGRepresentation(newPatient.photoID, 0.03);
-    NSString *imageStr = [Base64 encode:imageData];
-
+    NSData *imageData = UIImageJPEGRepresentation(newPatient.photoID, .03);
+    //NSData *imageData = (NSData*)newPatient.photoID;
+    //NSData *imageData = [NSData dataWithData:UIImageJPEGRepresentation(newPatient.photoID, 0.03)];
+   // NSString *imageStr = [[NSString alloc] initWithData:imageData encoding:NSUTF8StringEncoding];
+  //  NSString *imageStr = [NSString stringWithUTF8String:[imageData bytes]];
+    //[Base64 initialize];
+    NSString *imageStr2 = [Base64 encode:imageData];
+    NSString *imageStr = [Utility urlEncodeData:imageStr2];
+    NSInteger test =  imageStr.length;
     
     NSDictionary *params = @{@"viewName"    : @"historyViewController",
                              @"FirstName"   : newPatient.firstName,
