@@ -27,7 +27,6 @@
 
 #import "Reachability.h"
 
-
 NSString *const kReachabilityChangedNotification = @"kReachabilityChangedNotification";
 
 @interface Reachability ()
